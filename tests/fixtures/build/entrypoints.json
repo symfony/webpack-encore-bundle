@@ -1,0 +1,19 @@
+{
+  "my_entry": {
+    "js": [
+        "build/file1.js",
+        "build/file2.js"
+    ],
+    "css": [
+      "build/styles.css",
+      "build/styles2.css"
+    ]
+  },
+  "other_entry": {
+    "js": [
+        "build/file1.js",
+        "build/file3.js"
+    ],
+    "css": []
+  }
+}
