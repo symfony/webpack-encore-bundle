@@ -1,0 +1,21 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2018-10-02T05:06:50Z
+
+Updated! In a few days (and after the tests are working), I'll merge this. So, any additional feedback is warmly appreciated :).
+
+---------------------------------------------------------------------------
+
+by stof at 2018-10-16T14:20:13Z
+
+This should wait for https://github.com/symfony/webpack-encore/pull/410 which changes a bit the structure of the entrypoints file (CSS becomes a string rather than an array of strings)
+
+---------------------------------------------------------------------------
+
+by Nyholm at 2018-10-20T06:36:35Z
+
+Since this is the first lines of code to repo, I suggest we should merge it now. It may not be perfect but it does not have to be perfect now.
+
+If this is merged now we all can help to make it better.
+
+:+1: good job
