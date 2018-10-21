@@ -1,0 +1,7 @@
+{% for jsFile in encore_entry_js_files('other_entry') %}
+    <script src="{{ jsFile }}"></script>
+{% endfor %}
+
+{% for cssFile in encore_entry_css_files('other_entry') %}
+    <link rel="stylesheet" href="{{ cssFile }}" />
+{% endfor %}

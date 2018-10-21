@@ -1,0 +1,7 @@
+{
+  "build/file1.js": "/build/file1.js",
+  "build/file2.js": "/build/file2.js",
+  "build/file3.js": "/build/file3.js",
+  "build/styles.css": "/build/styles.css",
+  "build/styles2.css": "/build/styles2.css"
+}
