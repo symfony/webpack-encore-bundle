@@ -13,7 +13,6 @@
     "js": [
         "build/file1.js",
         "build/file3.js"
-    ],
-    "css": []
+    ]
   }
 }
