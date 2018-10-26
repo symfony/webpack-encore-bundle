@@ -18,7 +18,7 @@
         <service id="webpack_encore.tag_renderer" class="Symfony\WebpackEncoreBundle\Asset\TagRenderer">
             <argument type="service" id="webpack_encore.entrypoint_lookup" />
             <argument type="service" id="webpack_encore.manifest_lookup" />
-            <argument type="service" id="assets.packages" on-invalid="null" />
+            <argument type="service" id="assets.packages" />
         </service>
 
         <service id="webpack_encore.twig_entry_files_extension" class="Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension">
