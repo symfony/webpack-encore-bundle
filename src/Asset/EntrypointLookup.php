@@ -56,7 +56,8 @@ class EntrypointLookup
         $entryData = $entriesData[$entryName];
 
         if (!isset($entryData[$key])) {
-            throw new \InvalidArgumentException(sprintf('Could not find "%s" key for the "%s" entry.', $key, $entryName));
+            // If we don't find the file type then just send back nothing.
+            return [];
         }
 
         // make sure to not return the same file multiple times
