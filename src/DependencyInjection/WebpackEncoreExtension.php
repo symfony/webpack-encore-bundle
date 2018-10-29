@@ -26,7 +26,5 @@ final class WebpackEncoreExtension extends Extension
 
         $container->getDefinition('webpack_encore.entrypoint_lookup')
             ->replaceArgument(0, $config['output_path'].'/entrypoints.json');
-        $container->getDefinition('webpack_encore.manifest_lookup')
-            ->replaceArgument(0, $config['output_path'].'/manifest.json');
     }
 }
