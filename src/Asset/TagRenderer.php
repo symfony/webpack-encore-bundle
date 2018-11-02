@@ -15,14 +15,11 @@ final class TagRenderer
 {
     private $entrypointLookup;
 
-    private $manifestLookup;
-
     private $packages;
 
-    public function __construct(EntrypointLookup $entrypointLookup, ManifestLookup $manifestLookup, Packages $packages)
+    public function __construct(EntrypointLookup $entrypointLookup, Packages $packages)
     {
         $this->entrypointLookup = $entrypointLookup;
-        $this->manifestLookup = $manifestLookup;
         $this->packages = $packages;
     }
 
@@ -54,16 +51,12 @@ final class TagRenderer
 
     private function getAssetPath(string $assetPath, string $packageName = null): string
     {
-        // to help avoid issues, use the manifest.json path always
-        $newAssetPath = $this->manifestLookup->getManifestPath($assetPath);
-
-        // could not find the path in manifest.json?
-        if (null === $newAssetPath) {
-            throw new \InvalidArgumentException(sprintf('The path "%s" could not be found in the Encore "manifest.json" file. This could be a problem with the dumped entrypoints.json file.', $assetPath));
+        if (null === $this->packages) {
+            throw new \Exception('To render the script or link tags, run "composer require symfony/asset".');
         }
 
         return $this->packages->getUrl(
-            $newAssetPath,
+            $assetPath,
             $packageName
         );
     }
