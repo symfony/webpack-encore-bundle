@@ -35,18 +35,6 @@ class IntegrationTest extends TestCase
             $html2
         );
     }
-
-    /**
-     * @expectedException \Exception
-     * @expectedExceptionMessage composer require symfony/asset
-     */
-    public function testExceptionOnMissingAssets()
-    {
-        $kernel = new WebpackEncoreIntegrationTestKernel(false);
-        $kernel->boot();
-        $container = $kernel->getContainer();
-        $container->get('twig')->render('@integration_test/template.twig');
-    }
 }
 
 class WebpackEncoreIntegrationTestKernel extends Kernel

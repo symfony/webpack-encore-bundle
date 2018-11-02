@@ -19,7 +19,7 @@ final class TagRenderer
 
     private $packages;
 
-    public function __construct(EntrypointLookup $entrypointLookup, ManifestLookup $manifestLookup, Packages $packages = null)
+    public function __construct(EntrypointLookup $entrypointLookup, ManifestLookup $manifestLookup, Packages $packages)
     {
         $this->entrypointLookup = $entrypointLookup;
         $this->manifestLookup = $manifestLookup;
@@ -54,10 +54,6 @@ final class TagRenderer
 
     private function getAssetPath(string $assetPath, string $packageName = null): string
     {
-        if (null === $this->packages) {
-            throw new \Exception('To render the script or link tags, run "composer require symfony/asset".');
-        }
-
         // to help avoid issues, use the manifest.json path always
         $newAssetPath = $this->manifestLookup->getManifestPath($assetPath);
 
