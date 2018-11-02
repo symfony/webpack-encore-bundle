@@ -51,7 +51,7 @@ class EntrypointLookup
     {
         $this->validateEntryName($entryName);
         $entriesData = $this->getEntriesData();
-        $entryData = $entriesData[$entryName];
+        $entryData = $entriesData['entrypoints'][$entryName];
 
         if (!isset($entryData[$key])) {
             // If we don't find the file type then just send back nothing.
@@ -69,10 +69,10 @@ class EntrypointLookup
     private function validateEntryName(string $entryName)
     {
         $entriesData = $this->getEntriesData();
-        if (!isset($entriesData[$entryName])) {
+        if (!isset($entriesData['entrypoints'][$entryName])) {
             $withoutExtension = substr($entryName, 0, strrpos($entryName, '.'));
 
-            if (isset($entriesData[$withoutExtension])) {
+            if (isset($entriesData['entrypoints'][$withoutExtension])) {
                 throw new \InvalidArgumentException(sprintf('Could not find the entry "%s". Try "%s" instead (without the extension).', $entryName, $withoutExtension));
             }
 
@@ -91,6 +91,10 @@ class EntrypointLookup
 
             if (null === $this->entriesData) {
                 throw new \InvalidArgumentException(sprintf('There was a problem JSON decoding the "%s" file', $this->entrypointJsonPath));
+            }
+
+            if (!isset($this->entriesData['entrypoints'])) {
+                throw new \InvalidArgumentException(sprintf('Could not find an "entrypoints" key in the "%s" file', $this->entrypointJsonPath));
             }
         }
 

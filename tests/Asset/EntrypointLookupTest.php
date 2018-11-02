@@ -11,22 +11,24 @@ class EntrypointLookupTest extends TestCase
 
     private static $testJson = <<<EOF
 {
-  "my_entry": {
-    "js": [
-        "file1.js",
-        "file2.js"
-    ],
-    "css": [
-      "styles.css",
-      "styles2.css"
-    ]
-  },
-  "other_entry": {
-    "js": [
+  "entrypoints": {
+    "my_entry": {
+        "js": [
+          "file1.js",
+          "file2.js"
+        ],
+        "css": [
+          "styles.css",
+          "styles2.css"
+        ]
+    },
+    "other_entry": {
+      "js": [
         "file1.js",
         "file3.js"
-    ],
-    "css": []
+      ],
+      "css": []
+    }
   }
 }
 EOF;
