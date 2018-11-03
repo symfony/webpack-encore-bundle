@@ -4,6 +4,7 @@ namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use PHPUnit\Framework\TestCase;
+use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
 
 class EntrypointLookupTest extends TestCase
 {
@@ -89,7 +90,7 @@ EOF;
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException
      * @expectedExceptionMessage Could not find the entry
      */
     public function testExceptionOnMissingEntry()
@@ -98,7 +99,7 @@ EOF;
     }
 
     /**
-     * @expectedException \InvalidArgumentException
+     * @expectedException Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException
      * @expectedExceptionMessage Try "my_entry" instead
      */
     public function testExceptionOnEntryWithExtension()

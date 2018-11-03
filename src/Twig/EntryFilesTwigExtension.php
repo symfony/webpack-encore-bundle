@@ -9,9 +9,9 @@
 
 namespace Symfony\WebpackEncoreBundle\Twig;
 
-use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
-use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Psr\Container\ContainerInterface;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
+use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
@@ -58,7 +58,7 @@ final class EntryFilesTwigExtension extends AbstractExtension
             ->renderWebpackLinkTags($entryName, $packageName);
     }
 
-    private function getEntrypointLookup(): EntrypointLookup
+    private function getEntrypointLookup(): EntrypointLookupInterface
     {
         return $this->container->get('webpack_encore.entrypoint_lookup');
     }

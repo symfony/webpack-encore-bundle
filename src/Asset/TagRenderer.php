@@ -17,7 +17,7 @@ final class TagRenderer
 
     private $packages;
 
-    public function __construct(EntrypointLookup $entrypointLookup, Packages $packages)
+    public function __construct(EntrypointLookupInterface $entrypointLookup, Packages $packages)
     {
         $this->entrypointLookup = $entrypointLookup;
         $this->packages = $packages;

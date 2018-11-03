@@ -2,16 +2,16 @@
 
 namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
-use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
-use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Asset\Packages;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
+use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 
 class TagRendererTest extends TestCase
 {
     public function testRenderScriptTags()
     {
-        $entrypointLookup = $this->createMock(EntrypointLookup::class);
+        $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
             ->method('getJavaScriptFiles')
             ->willReturn(['/build/file1.js', '/build/file2.js']);
@@ -41,7 +41,7 @@ class TagRendererTest extends TestCase
 
     public function testRenderScriptTagsWithBadFilename()
     {
-        $entrypointLookup = $this->createMock(EntrypointLookup::class);
+        $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
             ->method('getJavaScriptFiles')
             ->willReturn(['/build/file<"bad_chars.js']);

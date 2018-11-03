@@ -9,6 +9,8 @@
 
 namespace Symfony\WebpackEncoreBundle\Asset;
 
+use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
+
 /**
  * Returns the CSS or JavaScript files needed for a Webpack entry.
  *
@@ -16,7 +18,7 @@ namespace Symfony\WebpackEncoreBundle\Asset;
  *
  * @final
  */
-class EntrypointLookup
+class EntrypointLookup implements EntrypointLookupInterface
 {
     private $entrypointJsonPath;
 
@@ -73,10 +75,10 @@ class EntrypointLookup
             $withoutExtension = substr($entryName, 0, strrpos($entryName, '.'));
 
             if (isset($entriesData['entrypoints'][$withoutExtension])) {
-                throw new \InvalidArgumentException(sprintf('Could not find the entry "%s". Try "%s" instead (without the extension).', $entryName, $withoutExtension));
+                throw new EntrypointNotFoundException(sprintf('Could not find the entry "%s". Try "%s" instead (without the extension).', $entryName, $withoutExtension));
             }
 
-            throw new \InvalidArgumentException(sprintf('Could not find the entry "%s" in "%s". Found: %s.', $entryName, $this->entrypointJsonPath, implode(', ', array_keys($entriesData))));
+            throw new EntrypointNotFoundException(sprintf('Could not find the entry "%s" in "%s". Found: %s.', $entryName, $this->entrypointJsonPath, implode(', ', array_keys($entriesData))));
         }
     }
 
