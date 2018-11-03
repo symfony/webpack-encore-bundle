@@ -33,9 +33,7 @@ class EntrypointLookup implements EntrypointLookupInterface
 
     public function getJavaScriptFiles(string $entryName): array
     {
-        $results = $this->getEntryFiles($entryName, 'js');
-
-        return $results;
+        return $this->getEntryFiles($entryName, 'js');
     }
 
     public function getCssFiles(string $entryName): array

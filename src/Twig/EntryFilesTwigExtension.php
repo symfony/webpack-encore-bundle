@@ -9,9 +9,9 @@
 
 namespace Symfony\WebpackEncoreBundle\Twig;
 
-use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Psr\Container\ContainerInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
+use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 

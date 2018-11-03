@@ -5,9 +5,7 @@ namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Asset\Packages;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
-use Symfony\WebpackEncoreBundle\Asset\ManifestLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
-use Symfony\WebpackEncoreBundle\Exception\ManifestKeyNotFoundException;
 
 class TagRendererTest extends TestCase
 {
