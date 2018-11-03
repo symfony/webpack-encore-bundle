@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+by codayblue at 2018-10-27T07:59:40Z
+
+I made the changes requested. I assumed that the exceptions should be implemented. So I tried implementing the way I thought they were meant to be.
+
+---------------------------------------------------------------------------
+
+by codayblue at 2018-10-30T15:06:37Z
+
+@weaverryan is there anything else needed for this PR?
+
+---------------------------------------------------------------------------
+
+by codayblue at 2018-11-03T14:49:45Z
+
+@weaverryan I have made the requested changes and resolved the conflicts
