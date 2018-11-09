@@ -19,7 +19,7 @@ matrix:
         - php: 7.2
           env: deps=low
         - php: 7.3
-          env: deps=low
+          env: dependencies="--ignore-platform-reqs"
 
     allow_failures:
           # Dev-master is allowed to fail.
