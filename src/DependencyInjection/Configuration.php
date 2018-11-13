@@ -12,6 +12,7 @@ namespace Symfony\WebpackEncoreBundle\DependencyInjection;
 use Symfony\Component\Config\Definition\Builder\ArrayNodeDefinition;
 use Symfony\Component\Config\Definition\Builder\TreeBuilder;
 use Symfony\Component\Config\Definition\ConfigurationInterface;
+use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
 
 final class Configuration implements ConfigurationInterface
 {
@@ -26,6 +27,19 @@ final class Configuration implements ConfigurationInterface
                 ->scalarNode('output_path')
                     ->isRequired()
                     ->info('The path where Encore is building the assets - i.e. Encore.setOutputPath()')
+                ->end()
+                ->arrayNode('builds')
+                    ->useAttributeAsKey('name')
+                    ->scalarPrototype()
+                    ->validate()
+                        ->always(function ($values) {
+                            if (isset($values['_default'])) {
+                                throw new InvalidDefinitionException("Key '_default' can't be used as build name.");
+                            }
+
+                            return $values;
+                        })
+                    ->end()
                 ->end()
             ->end()
         ;
