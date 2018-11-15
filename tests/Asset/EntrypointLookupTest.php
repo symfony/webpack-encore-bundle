@@ -48,6 +48,18 @@ EOF;
             ['file1.js', 'file2.js'],
             $this->entrypointLookup->getJavaScriptFiles('my_entry')
         );
+
+        $this->assertEquals(
+            [],
+            $this->entrypointLookup->getJavaScriptFiles('my_entry')
+        );
+
+        $this->entrypointLookup->reset();
+
+        $this->assertEquals(
+            ['file1.js', 'file2.js'],
+            $this->entrypointLookup->getJavaScriptFiles('my_entry')
+        );
     }
 
     public function testGetJavaScriptFilesReturnsUniqueFilesOnly()
@@ -77,6 +89,32 @@ EOF;
         $this->assertEmpty(
             $this->entrypointLookup->getCssFiles('other_entry')
         );
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessageContains There was a problem JSON decoding the
+     */
+    public function testExceptionOnInvalidJson()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
+        file_put_contents($filename, "abcd");
+
+        $this->entrypointLookup = new EntrypointLookup($filename);
+        $this->entrypointLookup->getJavaScriptFiles('an_entry');
+    }
+
+    /**
+     * @expectedException \InvalidArgumentException
+     * @expectedExceptionMessageContains Could not find an "entrypoints" key in the
+     */
+    public function testExceptionOnMissingEntrypointsKeyInJson()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
+        file_put_contents($filename, "{}");
+
+        $this->entrypointLookup = new EntrypointLookup($filename);
+        $this->entrypointLookup->getJavaScriptFiles('an_entry');
     }
 
     /**
