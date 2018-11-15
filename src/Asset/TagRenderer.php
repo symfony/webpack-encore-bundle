@@ -10,23 +10,39 @@
 namespace Symfony\WebpackEncoreBundle\Asset;
 
 use Symfony\Component\Asset\Packages;
+use Symfony\Component\DependencyInjection\ServiceLocator;
 
 final class TagRenderer
 {
-    private $entrypointLookup;
+    private $entrypointLookupCollection;
 
     private $packages;
 
-    public function __construct(EntrypointLookupInterface $entrypointLookup, Packages $packages)
-    {
-        $this->entrypointLookup = $entrypointLookup;
+    public function __construct(
+        $entrypointLookupCollection,
+        Packages $packages
+    ) {
+        if ($entrypointLookupCollection instanceof EntrypointLookupInterface) {
+            @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), E_USER_DEPRECATED);
+
+            $this->entrypointLookupCollection = new EntrypointLookupCollection(
+                new ServiceLocator(['_default' => function() use ($entrypointLookupCollection) {
+                    return $entrypointLookupCollection;
+                }])
+            );
+        } elseif ($entrypointLookupCollection instanceof EntrypointLookupCollection) {
+            $this->entrypointLookupCollection = $entrypointLookupCollection;
+        } else {
+            throw new \TypeError('The "$entrypointLookupCollection" argument must be an instance of EntrypointLookupCollection.');
+        }
+
         $this->packages = $packages;
     }
 
-    public function renderWebpackScriptTags(string $entryName, string $packageName = null): string
+    public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
     {
         $scriptTags = [];
-        foreach ($this->entrypointLookup->getJavaScriptFiles($entryName) as $filename) {
+        foreach ($this->getEntrypointLookup($entrypointName)->getJavaScriptFiles($entryName) as $filename) {
             $scriptTags[] = sprintf(
                 '<script src="%s"></script>',
                 htmlentities($this->getAssetPath($filename, $packageName))
@@ -36,10 +52,10 @@ final class TagRenderer
         return implode('', $scriptTags);
     }
 
-    public function renderWebpackLinkTags(string $entryName, string $packageName = null): string
+    public function renderWebpackLinkTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
     {
         $scriptTags = [];
-        foreach ($this->entrypointLookup->getCssFiles($entryName) as $filename) {
+        foreach ($this->getEntrypointLookup($entrypointName)->getCssFiles($entryName) as $filename) {
             $scriptTags[] = sprintf(
                 '<link rel="stylesheet" href="%s">',
                 htmlentities($this->getAssetPath($filename, $packageName))
@@ -59,5 +75,10 @@ final class TagRenderer
             $assetPath,
             $packageName
         );
+    }
+
+    private function getEntrypointLookup(string $buildName): EntrypointLookupInterface
+    {
+        return $this->entrypointLookupCollection->getEntrypointLookup($buildName);
     }
 }
