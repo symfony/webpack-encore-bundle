@@ -41,7 +41,7 @@ final class TagRenderer
         $scriptTags = [];
         foreach ($this->entrypointLookup->getCssFiles($entryName) as $filename) {
             $scriptTags[] = sprintf(
-                '<link rel="stylesheet" href="%s" />',
+                '<link rel="stylesheet" href="%s">',
                 htmlentities($this->getAssetPath($filename, $packageName))
             );
         }
