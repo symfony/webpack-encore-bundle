@@ -9,6 +9,9 @@
 
         <service id="webpack_encore.entrypoint_lookup" class="Symfony\WebpackEncoreBundle\Asset\EntrypointLookup">
             <argument /> <!-- entrypoints.json path -->
+            <call method="setCache">
+                <argument key="$cache" type="service" id="webpack_encore.cache" />
+            </call>
         </service>
         <service id="webpack_encore.entrypoint_lookup_collection" class="Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection">
             <argument /> <!-- build list of entrypoints path -->
@@ -31,6 +34,23 @@
                     </argument>
                 </service>
             </argument>
+        </service>
+
+        <service id="webpack_encore.entrypoint_lookup.warmer" class="Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer">
+            <tag name="kernel.cache_warmer" />
+            <argument />
+            <argument type="service" id="Symfony\Component\DependencyInjection\ContainerInterface" />
+        </service>
+
+        <service id="webpack_encore.cache_fallback" class="Symfony\Component\Cache\Adapter\FilesystemAdapter">
+            <argument />
+            <argument>0</argument>
+            <argument key="$directory">%kernel.cache_dir%/encore/</argument>
+        </service>
+
+        <service id="webpack_encore.cache" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter">
+            <argument key="$file">%kernel.cache_dir%/encore/lookup.cache</argument>
+            <argument key="$fallbackPool" type="service" id="webpack_encore.cache_fallback"/>
         </service>
     </services>
 </container>

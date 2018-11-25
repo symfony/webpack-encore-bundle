@@ -9,10 +9,11 @@
 
 namespace Symfony\WebpackEncoreBundle\Asset;
 
+use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Contracts\Service\ResetInterface;
 use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
 
-interface EntrypointLookupInterface extends ResetInterface
+interface EntrypointLookupInterface extends ResetInterface, WarmableInterface
 {
     /**
      * @throws EntrypointNotFoundException if an entry name is passed that does not exist in entrypoints.json

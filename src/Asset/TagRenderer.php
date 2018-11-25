@@ -26,7 +26,7 @@ final class TagRenderer
             @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), E_USER_DEPRECATED);
 
             $this->entrypointLookupCollection = new EntrypointLookupCollection(
-                new ServiceLocator(['_default' => function() use ($entrypointLookupCollection) {
+                new ServiceLocator(['_default' => function () use ($entrypointLookupCollection) {
                     return $entrypointLookupCollection;
                 }])
             );

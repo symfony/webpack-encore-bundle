@@ -29,11 +29,18 @@ final class WebpackEncoreExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $factories = [
-            '_default' => new Reference($this->entrypointFactory($container, '_default', $config['output_path']))
+            '_default' => new Reference($this->entrypointFactory($container, '_default', $config['output_path'])),
         ];
         foreach ($config['builds'] as $name => $path) {
             $factories[$name] = new Reference($this->entrypointFactory($container, $name, $path));
-        };
+        }
+
+        $builds = [
+            '_default' => $config['output_path'],
+        ];
+        $builds = array_merge($builds, $config['builds']);
+        $container->getDefinition('webpack_encore.entrypoint_lookup.warmer')
+            ->setArgument(0, $builds);
 
         $container->getDefinition('webpack_encore.entrypoint_lookup')
             ->replaceArgument(0, $factories['_default']);
@@ -44,7 +51,11 @@ final class WebpackEncoreExtension extends Extension
     private function entrypointFactory(ContainerBuilder $container, string $name, string $path): string
     {
         $id = sprintf('webpack_encore.entrypoint_lookup[%s]', $name);
-        $container->setDefinition($id, new Definition(EntrypointLookup::class, [$path.'/entrypoints.json']));
+        $cache = $container->findDefinition('webpack_encore.cache');
+        $definition = new Definition(EntrypointLookup::class, [$path.'/entrypoints.json']);
+        $definition->addMethodCall('setCache', [$cache]);
+        $container->setDefinition($id, $definition);
+
         return $id;
     }
 }

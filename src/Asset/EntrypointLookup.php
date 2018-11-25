@@ -9,6 +9,7 @@
 
 namespace Symfony\WebpackEncoreBundle\Asset;
 
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
 
 /**
@@ -26,6 +27,8 @@ class EntrypointLookup implements EntrypointLookupInterface
 
     private $returnedFiles = [];
 
+    private $cache;
+
     public function __construct(string $entrypointJsonPath)
     {
         $this->entrypointJsonPath = $entrypointJsonPath;
@@ -39,6 +42,11 @@ class EntrypointLookup implements EntrypointLookupInterface
     public function getCssFiles(string $entryName): array
     {
         return $this->getEntryFiles($entryName, 'css');
+    }
+
+    public function setCache(CacheItemPoolInterface $cache)
+    {
+        $this->cache = $cache;
     }
 
     /**
@@ -84,6 +92,13 @@ class EntrypointLookup implements EntrypointLookupInterface
 
     private function getEntriesData(): array
     {
+        if ($this->cache) {
+            $cached = $this->cache->getItem('entrypoint_lookup.data.'.$this->getCacheName());
+            if ($cached->isHit()) {
+                return $cached->get();
+            }
+        }
+
         if (null === $this->entriesData) {
             if (!file_exists($this->entrypointJsonPath)) {
                 throw new \InvalidArgumentException(sprintf('Could not find the entrypoints file from Webpack: the file "%s" does not exist.', $this->entrypointJsonPath));
@@ -100,6 +115,29 @@ class EntrypointLookup implements EntrypointLookupInterface
             }
         }
 
+        if ($this->cache) {
+            $cached->set($this->entriesData);
+            $this->cache->save($cached);
+        }
+
         return $this->entriesData;
+    }
+
+    private function getCacheName()
+    {
+        return str_replace('/', '.', $this->entrypointJsonPath);
+    }
+
+    public function warmUp($cacheDir)
+    {
+        // If cache is enabled then run through the parser since it will save the results to cache
+        if (!$this->cache) {
+            return;
+        }
+        try {
+            $this->getEntriesData();
+        } catch (\InvalidArgumentException $e) {
+            // If the fails are invalid for any reason just ignore it. 
+        }
     }
 }
