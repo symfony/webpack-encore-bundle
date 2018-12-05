@@ -11,9 +11,9 @@
             <argument /> <!-- entrypoints.json path -->
         </service>
 
-        <service id="webpack_encore.exceptionlistener" class="Symfony\WebpackEncoreBundle\EventListener\ExceptionListener">
+        <service id="webpack_encore.requestlistener" class="Symfony\WebpackEncoreBundle\EventListener\RequestListener">
             <argument type="service" id="webpack_encore.entrypoint_lookup" />
-            <tag name="kernel.event_listener" event="kernel.exception" />
+            <tag name="kernel.event_listener" event="kernel.request" />
         </service>
 
         <service id="webpack_encore.tag_renderer" class="Symfony\WebpackEncoreBundle\Asset\TagRenderer">

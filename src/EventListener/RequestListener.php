@@ -9,11 +9,10 @@
 
 namespace Symfony\WebpackEncoreBundle\EventListener;
 
-use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
+use Symfony\Component\HttpKernel\Event\GetResponseEvent;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
-use Twig_Error_Runtime;
 
-class ExceptionListener
+class RequestListener
 {
     private $entrypointLookup;
 
@@ -22,12 +21,10 @@ class ExceptionListener
         $this->entrypointLookup = $entrypointLookup;
     }
 
-    public function onKernelException(GetResponseForExceptionEvent $event)
+    public function onKernelRequest(GetResponseEvent $event)
     {
-        $exception = $event->getException();
-
-        // Reset the entrypointLookup list of previously returned entries, as Twig_Error_Runtime will initialise a sub-request
-        if ($exception instanceof Twig_Error_Runtime) {
+        if (!$event->isMasterRequest()) {
+            // reset the entrypointLookup list of previously returned entries for subrequests sub-request
             $this->entrypointLookup->reset();
         }
     }
