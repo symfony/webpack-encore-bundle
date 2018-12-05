@@ -13,7 +13,7 @@
 
         <service id="webpack_encore.exceptionlistener" class="Symfony\WebpackEncoreBundle\EventListener\ExceptionListener">
             <argument type="service" id="webpack_encore.entrypoint_lookup" />
-            <tag name="kernel.event_listener" event="kernel.request" />
+            <tag name="kernel.event_listener" event="kernel.exception" />
         </service>
 
         <service id="webpack_encore.tag_renderer" class="Symfony\WebpackEncoreBundle\Asset\TagRenderer">
