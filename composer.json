@@ -32,5 +32,11 @@
         "symfony/phpunit-bridge": "^3.4 || ^4.1",
         "symfony/twig-bundle": "^3.4 || ^4.0",
         "twig/twig": "^1.35 || ^2.0"
+    },
+    "extra": {
+        "thanks": {
+            "name": "symfony/webpack-encore",
+            "url": "https://github.com/symfony/webpack-encore"
+        }
     }
 }
