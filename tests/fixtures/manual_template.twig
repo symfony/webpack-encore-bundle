@@ -5,3 +5,11 @@
 {% for cssFile in encore_entry_css_files('other_entry') %}
     <link rel="stylesheet" href="{{ asset(cssFile) }}">
 {% endfor %}
+
+{% for jsFile in encore_entry_js_files('next_entry', 'different_build') %}
+    <script src="{{ asset(jsFile) }}"></script>
+{% endfor %}
+
+{% for cssFile in encore_entry_css_files('next_entry', 'different_build') %}
+    <link rel="stylesheet" href="{{ asset(cssFile) }}" />
+{% endfor %}

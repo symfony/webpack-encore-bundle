@@ -18,12 +18,44 @@ class IntegrationTest extends TestCase
         $kernel->boot();
         $container = $kernel->getContainer();
 
-        $html2 = $container->get('twig')->render('@integration_test/template.twig');
+        $html1 = $container->get('twig')->render('@integration_test/template.twig');
         $this->assertContains(
             '<script src="/build/file1.js"></script>',
-            $html2
+            $html1
+        );
+        $this->assertContains(
+            '<link rel="stylesheet" href="/build/styles.css">'.
+            '<link rel="stylesheet" href="/build/styles2.css">',
+            $html1
+        );
+        $this->assertContains(
+            '<script src="/build/other3.js"></script>',
+            $html1
+        );
+        $this->assertContains(
+            '<link rel="stylesheet" href="/build/styles3.css">'.
+            '<link rel="stylesheet" href="/build/styles4.css">',
+            $html1
         );
 
+        $html2 = $container->get('twig')->render('@integration_test/manual_template.twig');
+        $this->assertContains(
+            '<script src="/build/file3.js"></script>',
+            $html2
+        );
+        $this->assertContains(
+            '<script src="/build/other4.js"></script>',
+            $html2
+        );
+    }
+
+    public function testEntriesAreNotRepeteadWhenAlreadyOutputIntegration()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $container = $kernel->getContainer();
+
+        $html1 = $container->get('twig')->render('@integration_test/template.twig');
         $html2 = $container->get('twig')->render('@integration_test/manual_template.twig');
         $this->assertContains(
             '<script src="/build/file3.js"></script>',
@@ -32,6 +64,16 @@ class IntegrationTest extends TestCase
         // file1.js is not repeated
         $this->assertNotContains(
             '<script src="/build/file1.js"></script>',
+            $html2
+        );
+        // styles3.css is not repeated
+        $this->assertNotContains(
+            '<link rel="stylesheet" href="/build/styles3.css">',
+            $html2
+        );
+        // styles4.css is not repeated
+        $this->assertNotContains(
+            '<link rel="stylesheet" href="/build/styles4.css">',
             $html2
         );
     }
@@ -75,6 +117,9 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
 
             $container->loadFromExtension('webpack_encore', [
                 'output_path' => __DIR__.'/fixtures/build',
+                'builds' => [
+                    'different_build' =>  __DIR__.'/fixtures/different_build'
+                ]
             ]);
         });
     }

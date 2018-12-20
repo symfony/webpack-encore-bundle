@@ -1,0 +1,22 @@
+{
+  "entrypoints": {
+    "third_entry": {
+      "js": [
+          "build/other3.js"
+      ],
+      "css": [
+        "build/styles3.css",
+        "build/styles4.css"
+      ]
+    },
+    "next_entry": {
+      "js": [
+          "build/other4.js"
+      ],
+      "css": [
+        "build/styles3.css",
+        "build/styles4.css"
+      ]
+    }
+  }
+}

@@ -34,33 +34,34 @@ final class EntryFilesTwigExtension extends AbstractExtension
         ];
     }
 
-    public function getWebpackJsFiles(string $entryName): array
+    public function getWebpackJsFiles(string $entryName, string $entrypointName = '_default'): array
     {
-        return $this->getEntrypointLookup()
+        return $this->getEntrypointLookup($entrypointName)
             ->getJavaScriptFiles($entryName);
     }
 
-    public function getWebpackCssFiles(string $entryName): array
+    public function getWebpackCssFiles(string $entryName, string $entrypointName = '_default'): array
     {
-        return $this->getEntrypointLookup()
+        return $this->getEntrypointLookup($entrypointName)
             ->getCssFiles($entryName);
     }
 
-    public function renderWebpackScriptTags(string $entryName, string $packageName = null): string
+    public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
     {
         return $this->getTagRenderer()
-            ->renderWebpackScriptTags($entryName, $packageName);
+            ->renderWebpackScriptTags($entryName, $packageName, $entrypointName);
     }
 
-    public function renderWebpackLinkTags(string $entryName, string $packageName = null): string
+    public function renderWebpackLinkTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
     {
         return $this->getTagRenderer()
-            ->renderWebpackLinkTags($entryName, $packageName);
+            ->renderWebpackLinkTags($entryName, $packageName, $entrypointName);
     }
 
-    private function getEntrypointLookup(): EntrypointLookupInterface
+    private function getEntrypointLookup(string $entrypointName): EntrypointLookupInterface
     {
-        return $this->container->get('webpack_encore.entrypoint_lookup');
+        return $this->container->get('webpack_encore.entrypoint_lookup_collection')
+            ->getEntrypointLookup($entrypointName);
     }
 
     private function getTagRenderer(): TagRenderer
