@@ -18,6 +18,7 @@ matrix:
           env: deps=high
         - php: 7.2
           env: deps=low
+        - php: 7.3
 
     allow_failures:
           # Dev-master is allowed to fail.
