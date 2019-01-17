@@ -1,0 +1,25 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2019-01-12T15:20:10Z
+
+This is definitely a good idea. But, it would mean that the bundle should now require symfony/contracts at version 4.2 I believe.
+
+---------------------------------------------------------------------------
+
+by fionera at 2019-01-12T15:34:03Z
+
+It already does... http-kernel requires event-dispatcher wich depends on contracts
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2019-01-12T16:08:55Z
+
+Ah. But now we have a direct dependency on it - we shouldn’t rely on it indirectly. Also, we will need to specifically require version 4.2 or higher, not just 4.0 or higher (currently, if we don’t explicitly require it in this lib, someone could get 4.1 of everything, which does not rely on contracts).
+
+This will also make this bundle work for Symfony 4.2 only (well, at least 4.2 of the contracts library will be required).
+
+---------------------------------------------------------------------------
+
+by nicolas-grekas at 2019-01-12T17:15:08Z
+
+Contracts is a standalone package so the bundle will still be compatible with 4.0
