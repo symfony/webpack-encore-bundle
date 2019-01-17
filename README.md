@@ -26,7 +26,9 @@ webpack_encore:
 
 ## Usage
 
-First, enable the "Split Chunks" functionality in Webpack Encore:
+The "Split Chunks" functionality in Webpack Encore is enabled by default
+with the recipe if you install this bundle using Symfony Flex. Otherwise,
+enable it manually:
 
 ```diff
 // webpack.config.js
