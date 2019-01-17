@@ -9,9 +9,10 @@
 
 namespace Symfony\WebpackEncoreBundle\Asset;
 
+use Symfony\Contracts\Service\ResetInterface;
 use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
 
-interface EntrypointLookupInterface
+interface EntrypointLookupInterface extends ResetInterface
 {
     /**
      * @throws EntrypointNotFoundException if an entry name is passed that does not exist in entrypoints.json
