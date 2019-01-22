@@ -9,41 +9,37 @@
 
 namespace Symfony\WebpackEncoreBundle\CacheWarmer;
 
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\HttpKernel\CacheWarmer\CacheWarmerInterface;
-use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
+use Symfony\Bundle\FrameworkBundle\CacheWarmer\AbstractPhpFileCacheWarmer;
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 
-class EntrypointCacheWarmer implements CacheWarmerInterface
+class EntrypointCacheWarmer extends AbstractPhpFileCacheWarmer
 {
-    private $builds;
-    private $container;
+    private $cacheKeys;
 
-    public function __construct(array $builds, ContainerInterface $container)
+    public function __construct(array $cacheKeys, string $phpArrayFile, CacheItemPoolInterface $fallbackPool)
     {
-        $this->builds = $builds;
-        $this->container = $container;
+        $this->cacheKeys = $cacheKeys;
+        parent::__construct($phpArrayFile, $fallbackPool);
     }
 
-    public function isOptional()
+    /**
+     * {@inheritdoc}
+     */
+    protected function doWarmUp($cacheDir, ArrayAdapter $arrayAdapter)
     {
-        return true;
-    }
+        foreach ($this->cacheKeys as $cacheKey => $path) {
+            // If the file does not exist then just skip past this entry point.
+            if (!file_exists($path)) {
+                continue;
+            }
 
-    public function warmUp($cacheDir)
-    {
-        $entryPointCollection = $this->container->get('webpack_encore.entrypoint_lookup_collection');
+            $entryPointLookup = new EntrypointLookup($path, $arrayAdapter, $cacheKey);
 
-        if ($entryPointCollection instanceof EntrypointLookupCollection) {
-            foreach ($this->builds as $build => $path) {
-                $fullPath = $path.'/entrypoints.json';
-
-                // If the file does not exist then just skip past this entry point.
-                if (!file_exists($fullPath)) {
-                    continue;
-                }
-
-                $entryPointLookup = $entryPointCollection->getEntrypointLookup($build);
-                $entryPointLookup->warmUp($cacheDir);
+            try {
+                $entryPointLookup->getJavaScriptFiles('dummy');
+            } catch (EntrypointNotFoundException $e) {
+                // ignore exception
             }
         }
     }

@@ -29,33 +29,30 @@ final class WebpackEncoreExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $factories = [
-            '_default' => new Reference($this->entrypointFactory($container, '_default', $config['output_path'])),
+            '_default' => $this->entrypointFactory($container, '_default', $config['output_path']),
+        ];
+        $cacheKeys = [
+            '_default' => $config['output_path'].'/entrypoints.json',
         ];
         foreach ($config['builds'] as $name => $path) {
-            $factories[$name] = new Reference($this->entrypointFactory($container, $name, $path));
+            $path .= '/entrypoints.json';
+            $factories[$name] = $this->entrypointFactory($container, $name, $path);
+            $cacheKeys[rawurlencode($name)] = $path;
         }
 
-        $builds = [
-            '_default' => $config['output_path'],
-        ];
-        $builds = array_merge($builds, $config['builds']);
-        $container->getDefinition('webpack_encore.entrypoint_lookup.warmer')
-            ->setArgument(0, $builds);
+        $container->getDefinition('webpack_encore.entrypoint_lookup.cache_warmer')
+            ->replaceArgument(0, $cacheKeys);
 
-        $container->getDefinition('webpack_encore.entrypoint_lookup')
-            ->replaceArgument(0, $factories['_default']);
         $container->getDefinition('webpack_encore.entrypoint_lookup_collection')
             ->replaceArgument(0, ServiceLocatorTagPass::register($container, $factories));
     }
 
-    private function entrypointFactory(ContainerBuilder $container, string $name, string $path): string
+    private function entrypointFactory(ContainerBuilder $container, string $name, string $path): Reference
     {
         $id = sprintf('webpack_encore.entrypoint_lookup[%s]', $name);
-        $cache = $container->findDefinition('webpack_encore.cache');
-        $definition = new Definition(EntrypointLookup::class, [$path.'/entrypoints.json']);
-        $definition->addMethodCall('setCache', [$cache]);
-        $container->setDefinition($id, $definition);
+        $arguments = [$path, new Reference('webpack_encore.cache'), $name];
+        $container->setDefinition($id, new Definition(EntrypointLookup::class, $arguments));
 
-        return $id;
+        return new Reference($id);
     }
 }

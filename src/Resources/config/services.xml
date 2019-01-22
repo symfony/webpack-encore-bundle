@@ -7,14 +7,8 @@
     <services>
         <defaults public="false" />
 
-        <service id="webpack_encore.entrypoint_lookup" class="Symfony\WebpackEncoreBundle\Asset\EntrypointLookup">
-            <argument /> <!-- entrypoints.json path -->
-            <call method="setCache">
-                <argument key="$cache" type="service" id="webpack_encore.cache" />
-            </call>
-        </service>
         <service id="webpack_encore.entrypoint_lookup_collection" class="Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection">
-            <argument /> <!-- build list of entrypoints path -->
+            <argument /> <!-- build list of entrypoints locator -->
         </service>
 
         <service id="webpack_encore.tag_renderer" class="Symfony\WebpackEncoreBundle\Asset\TagRenderer">
@@ -36,21 +30,21 @@
             </argument>
         </service>
 
-        <service id="webpack_encore.entrypoint_lookup.warmer" class="Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer">
+        <service id="webpack_encore.entrypoint_lookup.cache_warmer" class="Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer">
             <tag name="kernel.cache_warmer" />
-            <argument />
-            <argument type="service" id="Symfony\Component\DependencyInjection\ContainerInterface" />
-        </service>
-
-        <service id="webpack_encore.cache_fallback" class="Symfony\Component\Cache\Adapter\FilesystemAdapter">
-            <argument />
-            <argument>0</argument>
-            <argument key="$directory">%kernel.cache_dir%/encore/</argument>
+            <argument /> <!-- build list of entrypoint paths -->
+            <argument>%kernel.cache_dir%/webpack_encore.cache.php</argument>
+            <argument type="service" id="cache.webpack_encore" />
         </service>
 
         <service id="webpack_encore.cache" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter">
-            <argument key="$file">%kernel.cache_dir%/encore/lookup.cache</argument>
-            <argument key="$fallbackPool" type="service" id="webpack_encore.cache_fallback"/>
+            <factory class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" method="create" />
+            <argument>%kernel.cache_dir%/webpack_encore.cache.php</argument>
+            <argument type="service" id="cache.webpack_encore" />
+        </service>
+
+        <service id="cache.webpack_encore" parent="cache.system" public="false">
+            <tag name="cache.pool" />
         </service>
     </services>
 </container>
