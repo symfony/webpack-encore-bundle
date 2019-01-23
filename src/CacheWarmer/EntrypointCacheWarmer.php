@@ -9,6 +9,7 @@
 
 namespace Symfony\WebpackEncoreBundle\CacheWarmer;
 
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\Bundle\FrameworkBundle\CacheWarmer\AbstractPhpFileCacheWarmer;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;

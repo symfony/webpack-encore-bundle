@@ -153,15 +153,14 @@ EOF;
         file_put_contents($filename, self::$testJson);
 
         $cache = new ArrayAdapter();
-        $entrypointLookup = new EntrypointLookup($filename);
-        $entrypointLookup->setCache($cache);
+        $entrypointLookup = new EntrypointLookup($filename, $cache, 'cacheKey');
 
         $this->assertEquals(
             ['file1.js', 'file2.js'],
             $entrypointLookup->getJavaScriptFiles('my_entry')
         );
         // Test it saved the result to cache
-        $cached = $cache->getItem('entrypoint_lookup.data.' . str_replace('/', '.', $filename));
+        $cached = $cache->getItem('cacheKey');
         $this->assertTrue($cached->isHit());
         $this->assertEquals(json_decode(self::$testJson, true), $cached->get());
     }
@@ -172,10 +171,9 @@ EOF;
         file_put_contents($filename, self::$testJson);
 
         $cache = new ArrayAdapter();
-        $entrypointLookup = new EntrypointLookup($filename);
-        $entrypointLookup->setCache($cache);
+        $entrypointLookup = new EntrypointLookup($filename, $cache, 'cacheKey');
 
-        $cached = $cache->getItem('entrypoint_lookup.data');
+        $cached = $cache->getItem('cacheKey');
         $cached->set(json_decode(self::$testJson, true));
         $cache->save($cached);
 

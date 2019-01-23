@@ -22,7 +22,6 @@
                 <service class="Symfony\Component\DependencyInjection\ServiceLocator">
                     <tag name="container.service_locator" />
                     <argument type="collection">
-                        <argument key="webpack_encore.entrypoint_lookup" type="service" id="webpack_encore.entrypoint_lookup" />
                         <argument key="webpack_encore.entrypoint_lookup_collection" type="service" id="webpack_encore.entrypoint_lookup_collection" />
                         <argument key="webpack_encore.tag_renderer" type="service" id="webpack_encore.tag_renderer" />
                     </argument>

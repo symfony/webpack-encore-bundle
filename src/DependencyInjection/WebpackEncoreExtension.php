@@ -35,7 +35,6 @@ final class WebpackEncoreExtension extends Extension
             '_default' => $config['output_path'].'/entrypoints.json',
         ];
         foreach ($config['builds'] as $name => $path) {
-            $path .= '/entrypoints.json';
             $factories[$name] = $this->entrypointFactory($container, $name, $path);
             $cacheKeys[rawurlencode($name)] = $path;
         }
@@ -50,7 +49,7 @@ final class WebpackEncoreExtension extends Extension
     private function entrypointFactory(ContainerBuilder $container, string $name, string $path): Reference
     {
         $id = sprintf('webpack_encore.entrypoint_lookup[%s]', $name);
-        $arguments = [$path, new Reference('webpack_encore.cache'), $name];
+        $arguments = [$path.'/entrypoints.json', new Reference('webpack_encore.cache'), $name];
         $container->setDefinition($id, new Definition(EntrypointLookup::class, $arguments));
 
         return new Reference($id);
