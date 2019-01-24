@@ -10,12 +10,12 @@
 namespace Symfony\WebpackEncoreBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
-use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 
 final class WebpackEncoreExtension extends Extension
@@ -29,13 +29,13 @@ final class WebpackEncoreExtension extends Extension
         $config = $this->processConfiguration($configuration, $configs);
 
         $factories = [
-            '_default' => $this->entrypointFactory($container, '_default', $config['output_path']),
+            '_default' => $this->entrypointFactory($container, '_default', $config['output_path'], $config['cache']),
         ];
         $cacheKeys = [
             '_default' => $config['output_path'].'/entrypoints.json',
         ];
         foreach ($config['builds'] as $name => $path) {
-            $factories[$name] = $this->entrypointFactory($container, $name, $path);
+            $factories[$name] = $this->entrypointFactory($container, $name, $path, $config['cache']);
             $cacheKeys[rawurlencode($name)] = $path;
         }
 
@@ -46,10 +46,10 @@ final class WebpackEncoreExtension extends Extension
             ->replaceArgument(0, ServiceLocatorTagPass::register($container, $factories));
     }
 
-    private function entrypointFactory(ContainerBuilder $container, string $name, string $path): Reference
+    private function entrypointFactory(ContainerBuilder $container, string $name, string $path, bool $cacheEnabled): Reference
     {
         $id = sprintf('webpack_encore.entrypoint_lookup[%s]', $name);
-        $arguments = [$path.'/entrypoints.json', new Reference('webpack_encore.cache'), $name];
+        $arguments = [$path.'/entrypoints.json', $cacheEnabled ? new Reference('webpack_encore.cache') : null, $name];
         $container->setDefinition($id, new Definition(EntrypointLookup::class, $arguments));
 
         return new Reference($id);
