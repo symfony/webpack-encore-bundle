@@ -30,12 +30,14 @@ final class WebpackEncoreExtension extends Extension
         $configuration = $this->getConfiguration($configs, $container);
         $config = $this->processConfiguration($configuration, $configs);
 
-        $factories = [
-            '_default' => $this->entrypointFactory($container, '_default', $config['output_path'], $config['cache']),
-        ];
-        $cacheKeys = [
-            '_default' => $config['output_path'].'/'.self::ENTRYPOINTS_FILE_NAME,
-        ];
+        $factories = [];
+        $cacheKeys = [];
+
+        if (false !== $config['output_path']) {
+            $factories['_default'] = $this->entrypointFactory($container, '_default', $config['output_path'], $config['cache']);
+            $cacheKeys['_default'] = $config['output_path'].'/'.self::ENTRYPOINTS_FILE_NAME;
+        }
+
         foreach ($config['builds'] as $name => $path) {
             $factories[$name] = $this->entrypointFactory($container, $name, $path, $config['cache']);
             $cacheKeys[rawurlencode($name)] = $path.'/'.self::ENTRYPOINTS_FILE_NAME;

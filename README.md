@@ -22,6 +22,8 @@ file:
 webpack_encore:
     # The path where Encore is building the assets - i.e. Encore.setOutputPath()
     output_path: '%kernel.project_dir%/public/build'
+    # If multiple builds are defined (as shown below), you can disable the default build:
+    # output_path: false
 
     # if you have multiple builds:
     # builds:
