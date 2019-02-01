@@ -36,7 +36,7 @@ final class WebpackEncoreExtension extends Extension
         };
 
         $container->getDefinition('webpack_encore.entrypoint_lookup')
-            ->replaceArgument(0, $factories['_default']);
+            ->replaceArgument(0, $config['output_path'].'/entrypoints.json');
         $container->getDefinition('webpack_encore.entrypoint_lookup_collection')
             ->replaceArgument(0, ServiceLocatorTagPass::register($container, $factories));
     }
