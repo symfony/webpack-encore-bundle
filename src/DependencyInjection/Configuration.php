@@ -30,6 +30,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->arrayNode('builds')
                     ->useAttributeAsKey('name')
+                    ->normalizeKeys(false)
                     ->scalarPrototype()
                     ->validate()
                         ->always(function ($values) {
