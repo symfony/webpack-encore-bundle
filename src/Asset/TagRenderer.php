@@ -42,10 +42,27 @@ final class TagRenderer
     public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
     {
         $scriptTags = [];
-        foreach ($this->getEntrypointLookup($entrypointName)->getJavaScriptFiles($entryName) as $filename) {
+        $entryPointLookup = $this->getEntrypointLookup($entrypointName);
+        $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
+
+        foreach ($entryPointLookup->getJavaScriptFiles($entryName) as $filename) {
+            $attributes = [
+                'src' => $this->getAssetPath($filename, $packageName),
+            ];
+
+            if (!empty($integrityHashes[$filename])) {
+                $attributes['integrity'] = $integrityHashes[$filename];
+            }
+
             $scriptTags[] = sprintf(
-                '<script src="%s"></script>',
-                htmlentities($this->getAssetPath($filename, $packageName))
+                '<script %s></script>',
+                implode(' ', array_map(
+                    function ($key, $value) {
+                        return sprintf('%s="%s"', $key, htmlentities($value));
+                    },
+                    array_keys($attributes),
+                    $attributes
+                ))
             );
         }
 
@@ -55,10 +72,28 @@ final class TagRenderer
     public function renderWebpackLinkTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
     {
         $scriptTags = [];
-        foreach ($this->getEntrypointLookup($entrypointName)->getCssFiles($entryName) as $filename) {
+        $entryPointLookup = $this->getEntrypointLookup($entrypointName);
+        $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
+
+        foreach ($entryPointLookup->getCssFiles($entryName) as $filename) {
+            $attributes = [
+                'rel' => 'stylesheet',
+                'href' => $this->getAssetPath($filename, $packageName),
+            ];
+
+            if (!empty($integrityHashes[$filename])) {
+                $attributes['integrity'] = $integrityHashes[$filename];
+            }
+
             $scriptTags[] = sprintf(
-                '<link rel="stylesheet" href="%s">',
-                htmlentities($this->getAssetPath($filename, $packageName))
+                '<link %s>',
+                implode(' ', array_map(
+                    function ($key, $value) {
+                        return sprintf('%s="%s"', $key, htmlentities($value));
+                    },
+                    array_keys($attributes),
+                    $attributes
+                ))
             );
         }
 
