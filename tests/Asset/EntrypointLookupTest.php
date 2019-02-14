@@ -30,6 +30,10 @@ class EntrypointLookupTest extends TestCase
       ],
       "css": []
     }
+  },
+  "integrity": {
+    "file1.js": "sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc",
+    "styles.css": "sha384-ymG7OyjISWrOpH9jsGvajKMDEOP/mKJq8bHC0XdjQA6P8sg2nu+2RLQxcNNwE/3J"
   }
 }
 EOF;
@@ -89,6 +93,23 @@ EOF;
         $this->assertEmpty(
             $this->entrypointLookup->getCssFiles('other_entry')
         );
+    }
+
+    public function testGetIntegrityData()
+    {
+        $this->assertEquals([
+            'file1.js' => 'sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc',
+            'styles.css' => 'sha384-ymG7OyjISWrOpH9jsGvajKMDEOP/mKJq8bHC0XdjQA6P8sg2nu+2RLQxcNNwE/3J',
+        ], $this->entrypointLookup->getIntegrityData());
+    }
+
+    public function testMissingIntegrityData()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
+        file_put_contents($filename, '{ "entrypoints": { "other_entry": { "js": { } } } }');
+
+        $this->entrypointLookup = new EntrypointLookup($filename);
+        $this->assertEquals([], $this->entrypointLookup->getIntegrityData());
     }
 
     /**
