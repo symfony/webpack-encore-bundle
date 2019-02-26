@@ -54,18 +54,15 @@ class EntrypointLookup implements EntrypointLookupInterface
         $this->validateEntryName($entryName);
         $entriesData = $this->getEntriesData();
         $entryData = $entriesData['entrypoints'][$entryName];
-
         if (!isset($entryData[$key])) {
             // If we don't find the file type then just send back nothing.
             return [];
         }
-
-        // make sure to not return the same file multiple times
-        $entryFiles = $entryData[$key];
-        $newFiles = array_values(array_diff($entryFiles, $this->returnedFiles));
+        // we don't add a file twice
+        $newFiles = array_values(array_diff($entryData[$key], $this->returnedFiles));
         $this->returnedFiles = array_merge($this->returnedFiles, $newFiles);
 
-        return $newFiles;
+        return $this->returnedFiles;
     }
 
     private function validateEntryName(string $entryName)
