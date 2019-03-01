@@ -92,3 +92,39 @@ and `build/entry1.js`, then `encore_entry_script_tags()` is equivalent to:
 If you want more control, you can use the `encore_entry_js_files()` and
 `encore_entry_css_files()` methods to get the list of files needed, then
 loop and create the `script` and `link` tags manually.
+
+## Rendering Multiple Times in a Request (e.g. to Generate a PDF)
+
+When you render your script or link tags, the bundle is smart enough
+not to repeat the same JavaScript or CSS file within the same request.
+This prevents you from having duplicate `<link>` or `<script>` tags
+if you render multiple entries that both rely on the same file.
+
+In some cases, however, you may want to render the script & link
+tags for the same entry multiple times in a request. For example,
+if you render multiple Twig templates to create multiple PDF files
+during a single request.
+
+In that case, before each render, you'll need to "reset" the internal
+cache so that the bundle re-renders CSS or JS files that it previously
+rendered. For example, in a controller:
+
+```php
+// src/Controller/SomeController.php
+
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
+
+class SomeController
+{
+    public function index(EntrypointLookupCollectionInterface $entrypointLookups)
+    {
+        $entrypointLookups->getEntrypointLookup()->reset();
+        // render a template
+
+        $entrypointLookups->getEntrypointLookup()->reset();
+        // render another template
+
+        // ...
+    }
+}
+```
