@@ -9,7 +9,6 @@
 
 namespace Symfony\WebpackEncoreBundle\Asset;
 
-use Symfony\Component\HttpKernel\CacheWarmer\WarmableInterface;
 use Symfony\Contracts\Service\ResetInterface;
 use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
 
