@@ -14,8 +14,9 @@ matrix:
     fast_finish: true
     include:
         - php: 7.1
+          env: SYMFONY_PHPUNIT_VERSION=7.4
         - php: 7.1
-          env: deps=high
+          env: deps=high SYMFONY_PHPUNIT_VERSION=7.4
         - php: 7.2
           env: deps=low
         - php: 7.3
