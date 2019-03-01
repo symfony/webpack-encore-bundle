@@ -2,6 +2,8 @@
 
 namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
+use Symfony\Component\Cache\Adapter\ArrayAdapter;
+use Symfony\Component\Cache\Adapter\NullAdapter;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use PHPUnit\Framework\TestCase;
 use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
@@ -143,5 +145,41 @@ EOF;
     public function testExceptionOnEntryWithExtension()
     {
         $this->entrypointLookup->getJavaScriptFiles('my_entry.js');
+    }
+
+    public function testCachingEntryPointLookupCacheMissed()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
+        file_put_contents($filename, self::$testJson);
+
+        $cache = new ArrayAdapter();
+        $entrypointLookup = new EntrypointLookup($filename, $cache, 'cacheKey');
+
+        $this->assertEquals(
+            ['file1.js', 'file2.js'],
+            $entrypointLookup->getJavaScriptFiles('my_entry')
+        );
+        // Test it saved the result to cache
+        $cached = $cache->getItem('cacheKey');
+        $this->assertTrue($cached->isHit());
+        $this->assertEquals(json_decode(self::$testJson, true), $cached->get());
+    }
+
+    public function testCachingEntryPointLookupCacheHit()
+    {
+        $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
+        file_put_contents($filename, self::$testJson);
+
+        $cache = new ArrayAdapter();
+        $entrypointLookup = new EntrypointLookup($filename, $cache, 'cacheKey');
+
+        $cached = $cache->getItem('cacheKey');
+        $cached->set(json_decode(self::$testJson, true));
+        $cache->save($cached);
+
+        $this->assertEquals(
+            ['file1.js', 'file2.js'],
+            $entrypointLookup->getJavaScriptFiles('my_entry')
+        );
     }
 }

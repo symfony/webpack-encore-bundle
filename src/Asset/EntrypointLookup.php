@@ -9,6 +9,7 @@
 
 namespace Symfony\WebpackEncoreBundle\Asset;
 
+use Psr\Cache\CacheItemPoolInterface;
 use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
 
 /**
@@ -26,9 +27,13 @@ class EntrypointLookup implements EntrypointLookupInterface
 
     private $returnedFiles = [];
 
-    public function __construct(string $entrypointJsonPath)
+    private $cache;
+
+    public function __construct(string $entrypointJsonPath, CacheItemPoolInterface $cache = null, string $cacheKey = null)
     {
         $this->entrypointJsonPath = $entrypointJsonPath;
+        $this->cache = $cache;
+        $this->cacheKey = $cacheKey;
     }
 
     public function getJavaScriptFiles(string $entryName): array
@@ -84,20 +89,34 @@ class EntrypointLookup implements EntrypointLookupInterface
 
     private function getEntriesData(): array
     {
+        if (null !== $this->entriesData) {
+            return $this->entriesData;
+        }
+
+        if ($this->cache) {
+            $cached = $this->cache->getItem($this->cacheKey);
+
+            if ($cached->isHit()) {
+                return $this->entriesData = $cached->get();
+            }
+        }
+
+        if (!file_exists($this->entrypointJsonPath)) {
+            throw new \InvalidArgumentException(sprintf('Could not find the entrypoints file from Webpack: the file "%s" does not exist.', $this->entrypointJsonPath));
+        }
+
+        $this->entriesData = json_decode(file_get_contents($this->entrypointJsonPath), true);
+
         if (null === $this->entriesData) {
-            if (!file_exists($this->entrypointJsonPath)) {
-                throw new \InvalidArgumentException(sprintf('Could not find the entrypoints file from Webpack: the file "%s" does not exist.', $this->entrypointJsonPath));
-            }
+            throw new \InvalidArgumentException(sprintf('There was a problem JSON decoding the "%s" file', $this->entrypointJsonPath));
+        }
 
-            $this->entriesData = json_decode(file_get_contents($this->entrypointJsonPath), true);
+        if (!isset($this->entriesData['entrypoints'])) {
+            throw new \InvalidArgumentException(sprintf('Could not find an "entrypoints" key in the "%s" file', $this->entrypointJsonPath));
+        }
 
-            if (null === $this->entriesData) {
-                throw new \InvalidArgumentException(sprintf('There was a problem JSON decoding the "%s" file', $this->entrypointJsonPath));
-            }
-
-            if (!isset($this->entriesData['entrypoints'])) {
-                throw new \InvalidArgumentException(sprintf('Could not find an "entrypoints" key in the "%s" file', $this->entrypointJsonPath));
-            }
+        if ($this->cache) {
+            $this->cache->save($cached->set($this->entriesData));
         }
 
         return $this->entriesData;
