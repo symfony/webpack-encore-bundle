@@ -21,14 +21,14 @@ file:
 # config/packages/webpack_encore.yaml
 webpack_encore:
     # The path where Encore is building the assets - i.e. Encore.setOutputPath()
-    output_path: '%kernel.public_dir%/build'
+    output_path: '%kernel.project_dir%/public/build'
 
     # if you have multiple builds:
     # builds:
         # pass "frontend" as the 3rg arg to the Twig functions
         # {{ encore_entry_script_tags('entry1', null, 'frontend') }}
 
-        # frontend: '%kernel.public_dir%/frontend/build'
+        # frontend: '%kernel.project_dir%/public/frontend/build'
 ```
 
 ## Usage
@@ -53,7 +53,7 @@ enable it manually:
 When you enable `splitEntryChunks()`, instead of just needing 1 script tag
 for `entry1.js` and 1 link tag for `entry1.css`, you may now need *multiple*
 script and link tags. This is because Webpack ["splits" your files](https://webpack.js.org/plugins/split-chunks-plugin/)
-into smaller pieces for greater optimization. 
+into smaller pieces for greater optimization.
 
 To help with this, Encore writes a `entrypoints.json` file that contains
 all of the files needed for each "entry".
