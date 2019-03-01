@@ -3,6 +3,8 @@
 namespace Symfony\WebpackEncoreBundle\Tests;
 
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 use PHPUnit\Framework\TestCase;
@@ -96,6 +98,14 @@ class IntegrationTest extends TestCase
         // check for both build keys
         $this->assertEquals(['_default' => 0, 'different_build' => 1], $data[0]);
     }
+
+    public function testAutowireableInterfaces()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $container = $kernel->getContainer();
+        $this->assertInstanceOf(WebpackEncoreAutowireTestService::class, $container->get(WebpackEncoreAutowireTestService::class));
+    }
 }
 
 class WebpackEncoreIntegrationTestKernel extends Kernel
@@ -145,6 +155,9 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
             $container->register(WebpackEncoreCacheWarmerTester::class)
                 ->addArgument(new Reference('webpack_encore.entrypoint_lookup.cache_warmer'))
                 ->setPublic(true);
+
+            $container->autowire(WebpackEncoreAutowireTestService::class)
+                ->setPublic(true);
         });
     }
 
@@ -171,5 +184,12 @@ class WebpackEncoreCacheWarmerTester
     public function warmCache(string $cacheDir)
     {
         $this->entrypointCacheWarmer->warmUp($cacheDir);
+    }
+}
+
+class WebpackEncoreAutowireTestService
+{
+    public function __construct(EntrypointLookupInterface $entrypointLookup, EntrypointLookupCollectionInterface $entrypointLookupCollection)
+    {
     }
 }

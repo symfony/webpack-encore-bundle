@@ -112,19 +112,23 @@ rendered. For example, in a controller:
 ```php
 // src/Controller/SomeController.php
 
-use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 
 class SomeController
 {
-    public function index(EntrypointLookupCollectionInterface $entrypointLookups)
+    public function index(EntrypointLookupInterface $entrypointLookup)
     {
-        $entrypointLookups->getEntrypointLookup()->reset();
+        $entrypointLookup->reset();
         // render a template
 
-        $entrypointLookups->getEntrypointLookup()->reset();
+        $entrypointLookup->reset();
         // render another template
 
         // ...
     }
 }
 ```
+
+If you have multiple builds, you can also autowire
+`Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface`
+and use it to get the `EntrypointLookupInterface` object for any build.
