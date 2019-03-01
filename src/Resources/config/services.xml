@@ -11,6 +11,8 @@
             <argument /> <!-- build list of entrypoints locator -->
         </service>
 
+        <service id="Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface" alias="webpack_encore.entrypoint_lookup_collection" />
+
         <service id="webpack_encore.tag_renderer" class="Symfony\WebpackEncoreBundle\Asset\TagRenderer">
             <argument type="service" id="webpack_encore.entrypoint_lookup_collection" />
             <argument type="service" id="assets.packages" />

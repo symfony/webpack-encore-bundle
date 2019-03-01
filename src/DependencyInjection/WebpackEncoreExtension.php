@@ -10,6 +10,7 @@
 namespace Symfony\WebpackEncoreBundle\DependencyInjection;
 
 use Symfony\Component\Config\FileLocator;
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Compiler\ServiceLocatorTagPass;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Definition;
@@ -17,6 +18,7 @@ use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 
 final class WebpackEncoreExtension extends Extension
 {
@@ -46,14 +48,20 @@ final class WebpackEncoreExtension extends Extension
 
         $container->getDefinition('webpack_encore.entrypoint_lookup_collection')
             ->replaceArgument(0, ServiceLocatorTagPass::register($container, $factories));
+        $container->setAlias(EntrypointLookupInterface::class, new Alias($this->getEntrypointServiceId('_default')));
     }
 
     private function entrypointFactory(ContainerBuilder $container, string $name, string $path, bool $cacheEnabled): Reference
     {
-        $id = sprintf('webpack_encore.entrypoint_lookup[%s]', $name);
+        $id = $this->getEntrypointServiceId($name);
         $arguments = [$path.'/'.self::ENTRYPOINTS_FILE_NAME, $cacheEnabled ? new Reference('webpack_encore.cache') : null, $name];
         $container->setDefinition($id, new Definition(EntrypointLookup::class, $arguments));
 
         return new Reference($id);
+    }
+
+    private function getEntrypointServiceId(string $name): string
+    {
+        return sprintf('webpack_encore.entrypoint_lookup[%s]', $name);
     }
 }
