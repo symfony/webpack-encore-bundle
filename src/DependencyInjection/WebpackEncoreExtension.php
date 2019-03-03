@@ -36,7 +36,7 @@ final class WebpackEncoreExtension extends Extension
         ];
         foreach ($config['builds'] as $name => $path) {
             $factories[$name] = $this->entrypointFactory($container, $name, $path, $config['cache']);
-            $cacheKeys[rawurlencode($name)] = $path;
+            $cacheKeys[rawurlencode($name)] = $path.'/entrypoints.json';
         }
 
         $container->getDefinition('webpack_encore.entrypoint_lookup.cache_warmer')
