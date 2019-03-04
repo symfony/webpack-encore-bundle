@@ -44,5 +44,7 @@ class EntrypointCacheWarmer extends AbstractPhpFileCacheWarmer
                 // ignore exception
             }
         }
+
+        return true;
     }
 }

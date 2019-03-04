@@ -2,6 +2,7 @@
 
 namespace Symfony\WebpackEncoreBundle\Tests;
 
+use Symfony\Component\DependencyInjection\Reference;
 use Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 use PHPUnit\Framework\TestCase;
@@ -81,15 +82,19 @@ class IntegrationTest extends TestCase
 
     public function testCacheWarmer()
     {
-        $kernal = new WebpackEncoreIntegrationTestKernel(true);
-        $kernal->boot();
-        $container = $kernal->getContainer();
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $container = $kernel->getContainer();
 
-        $cacheWarmer = $container->get(CacheWarmerTester::class);
+        $cacheWarmer = $container->get(WebpackEncoreCacheWarmerTester::class);
 
-        $cacheWarmer->warmCache($kernal->getCacheDir());
+        $cacheWarmer->warmCache($kernel->getCacheDir());
 
-        $this->assertTrue(true, 'Cache warmer has successfully filled that cache and went without exceptions');
+        $cachePath = $kernel->getCacheDir().'/webpack_encore.cache.php';
+        $this->assertFileExists($cachePath);
+        $data = require $cachePath;
+        // check for both build keys
+        $this->assertEquals(['_default' => 0, 'different_build' => 1], $data[0]);
     }
 }
 
@@ -137,7 +142,9 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
                 ]
             ]);
 
-            $container->autowire(CacheWarmerTester::class)->setPublic(true);
+            $container->register(WebpackEncoreCacheWarmerTester::class)
+                ->addArgument(new Reference('webpack_encore.entrypoint_lookup.cache_warmer'))
+                ->setPublic(true);
         });
     }
 
@@ -152,7 +159,7 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
     }
 }
 
-class CacheWarmerTester
+class WebpackEncoreCacheWarmerTester
 {
     private $entrypointCacheWarmer;
 
