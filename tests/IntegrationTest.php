@@ -2,6 +2,7 @@
 
 namespace Symfony\WebpackEncoreBundle\Tests;
 
+use Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 use PHPUnit\Framework\TestCase;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
@@ -77,6 +78,19 @@ class IntegrationTest extends TestCase
             $html2
         );
     }
+
+    public function testCacheWarmer()
+    {
+        $kernal = new WebpackEncoreIntegrationTestKernel(true);
+        $kernal->boot();
+        $container = $kernal->getContainer();
+
+        $cacheWarmer = $container->get(CacheWarmerTester::class);
+
+        $cacheWarmer->warmCache($kernal->getCacheDir());
+
+        $this->assertTrue(true, 'Cache warmer has successfully filled that cache and went without exceptions');
+    }
 }
 
 class WebpackEncoreIntegrationTestKernel extends Kernel
@@ -117,11 +131,13 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
 
             $container->loadFromExtension('webpack_encore', [
                 'output_path' => __DIR__.'/fixtures/build',
-                'cache' => false,
+                'cache' => true,
                 'builds' => [
                     'different_build' =>  __DIR__.'/fixtures/different_build'
                 ]
             ]);
+
+            $container->autowire(CacheWarmerTester::class)->setPublic(true);
         });
     }
 
@@ -133,5 +149,20 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
     public function getLogDir()
     {
         return sys_get_temp_dir().'/logs'.spl_object_hash($this);
+    }
+}
+
+class CacheWarmerTester
+{
+    private $entrypointCacheWarmer;
+
+    public function __construct(EntrypointCacheWarmer $entrypointCacheWarmer)
+    {
+        $this->entrypointCacheWarmer = $entrypointCacheWarmer;
+    }
+
+    public function warmCache(string $cacheDir)
+    {
+        $this->entrypointCacheWarmer->warmUp($cacheDir);
     }
 }
