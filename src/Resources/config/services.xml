@@ -36,8 +36,6 @@
             <argument type="service" id="cache.webpack_encore" />
         </service>
 
-        <service id="Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer" alias="webpack_encore.entrypoint_lookup.cache_warmer" />
-
         <service id="webpack_encore.cache" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter">
             <factory class="Symfony\Component\Cache\Adapter\PhpArrayAdapter" method="create" />
             <argument>%kernel.cache_dir%/webpack_encore.cache.php</argument>
