@@ -29,6 +29,10 @@ webpack_encore:
         # {{ encore_entry_script_tags('entry1', null, 'frontend') }}
 
         # frontend: '%kernel.project_dir%/public/frontend/build'
+
+    # Cache the entrypoints.json (rebuild Symfony's cache when entrypoints.json changes)
+    # Available in version 1.2
+    #cache: '%kernel.debug%'
 ```
 
 ## Usage
