@@ -28,7 +28,7 @@ class EntrypointLookupCollection
         $this->buildEntrypoints = $buildEntrypoints;
     }
 
-    public function getEntrypointLookup(string $buildName): EntrypointLookupInterface
+    public function getEntrypointLookup(string $buildName = '_default'): EntrypointLookupInterface
     {
         if (!$this->buildEntrypoints->has($buildName)) {
             throw new UndefinedBuildException(sprintf('Given entry point "%s" is not configured', $buildName));
