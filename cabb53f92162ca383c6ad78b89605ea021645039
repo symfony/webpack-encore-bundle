@@ -1,0 +1,7 @@
+---------------------------------------------------------------------------
+
+by MrMitch at 2019-03-04T09:22:35Z
+
+I really love this, it would make autowiring and autoconfiguring way easier for those of us who need to `reset` the EntryPointLookup (when used multiple times in the same request).
+
+@weaverryan do you need any help on this to get it released as soon as possible ? I'd be glad to help.
