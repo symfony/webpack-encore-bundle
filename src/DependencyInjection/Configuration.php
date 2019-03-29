@@ -23,6 +23,12 @@ final class Configuration implements ConfigurationInterface
         $rootNode = method_exists($treeBuilder, 'getRootNode') ? $treeBuilder->getRootNode() : $treeBuilder->root('webpack_encore');
 
         $rootNode
+            ->validate()
+                ->ifTrue(function (array $v): bool {
+                    return false === $v['output_path'] && empty($v['builds']);
+                })
+                ->thenInvalid('Default build can only be disabled if multiple entry points are defined.')
+            ->end()
             ->children()
                 ->scalarNode('output_path')
                     ->isRequired()
