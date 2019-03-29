@@ -1,0 +1,13 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2019-03-01T15:27:29Z
+
+@Lyrkan What do you think about *not* making this optional? What I mean is, we *always* look for the `integrity` key. And if it is present, we add the integrity attribute. If not, we skip it. I think we can avoid the added option, because you've already "opted into it" by activating it in Encore.
+
+---------------------------------------------------------------------------
+
+by Lyrkan at 2019-03-01T21:47:17Z
+
+@weaverryan I removed the toggle and no `integrity` key is now the same thing than `integrity: {}`.
+
+I also made some changes in order to support the latest version of https://github.com/symfony/webpack-encore/pull/522 (that allows to generate multiple hashes per file) and updated the demo link of my first post :)
