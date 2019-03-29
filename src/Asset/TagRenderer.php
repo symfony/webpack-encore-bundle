@@ -50,19 +50,13 @@ final class TagRenderer
                 'src' => $this->getAssetPath($filename, $packageName),
             ];
 
-            if (!empty($integrityHashes[$filename])) {
+            if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
             }
 
             $scriptTags[] = sprintf(
                 '<script %s></script>',
-                implode(' ', array_map(
-                    function ($key, $value) {
-                        return sprintf('%s="%s"', $key, htmlentities($value));
-                    },
-                    array_keys($attributes),
-                    $attributes
-                ))
+                $this->convertArrayToAttributes($attributes)
             );
         }
 
@@ -81,19 +75,13 @@ final class TagRenderer
                 'href' => $this->getAssetPath($filename, $packageName),
             ];
 
-            if (!empty($integrityHashes[$filename])) {
+            if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
             }
 
             $scriptTags[] = sprintf(
                 '<link %s>',
-                implode(' ', array_map(
-                    function ($key, $value) {
-                        return sprintf('%s="%s"', $key, htmlentities($value));
-                    },
-                    array_keys($attributes),
-                    $attributes
-                ))
+                $this->convertArrayToAttributes($attributes)
             );
         }
 
@@ -115,5 +103,16 @@ final class TagRenderer
     private function getEntrypointLookup(string $buildName): EntrypointLookupInterface
     {
         return $this->entrypointLookupCollection->getEntrypointLookup($buildName);
+    }
+
+    private function convertArrayToAttributes(array $attributesMap): string
+    {
+        return implode(' ', array_map(
+            function ($key, $value) {
+                return sprintf('%s="%s"', $key, htmlentities($value));
+            },
+            array_keys($attributesMap),
+            $attributesMap
+        ));
     }
 }
