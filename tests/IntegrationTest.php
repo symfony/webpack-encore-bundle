@@ -24,12 +24,12 @@ class IntegrationTest extends TestCase
 
         $html1 = $container->get('twig')->render('@integration_test/template.twig');
         $this->assertContains(
-            '<script src="/build/file1.js"></script>',
+            '<script src="/build/file1.js" integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc"></script>',
             $html1
         );
         $this->assertContains(
-            '<link rel="stylesheet" href="/build/styles.css">'.
-            '<link rel="stylesheet" href="/build/styles2.css">',
+            '<link rel="stylesheet" href="/build/styles.css" integrity="sha384-4g+Zv0iELStVvA4/B27g4TQHUMwZttA5TEojjUyB8Gl5p7sarU4y+VTSGMrNab8n">' .
+            '<link rel="stylesheet" href="/build/styles2.css" integrity="sha384-hfZmq9+2oI5Cst4/F4YyS2tJAAYdGz7vqSMP8cJoa8bVOr2kxNRLxSw6P8UZjwUn">',
             $html1
         );
         $this->assertContains(
