@@ -1,0 +1,40 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2019-03-01T18:48:56Z
+
+#45 will also help and affect this PR
+
+---------------------------------------------------------------------------
+
+by emodric at 2019-03-01T18:50:42Z
+
+@weaverryan Will get back to you next week, can't get to it any sooner.
+
+---------------------------------------------------------------------------
+
+by emodric at 2019-03-11T13:36:46Z
+
+@weaverryan I've pushed the rebased commit. As for #45, how will it help and affect this PR?
+
+When someone uses a default build which has been disabled, the error message is: `Given entry point "_default" is not configured`.
+
+Maybe we could try to determine which builds are configured and offer them as an alternative in the error message, e.g: `The default build is not enabled. Use one of "frontend", "backend", "app1", "app2" builds.`
+
+---------------------------------------------------------------------------
+
+by jRexhmati at 2019-03-27T14:15:13Z
+
+Hello @emodric do you plan to merge this pr anytime soon?
+
+---------------------------------------------------------------------------
+
+by emodric at 2019-03-27T14:16:25Z
+
+You should probably be asking @weaverryan that :)
+
+---------------------------------------------------------------------------
+
+by jRexhmati at 2019-03-27T14:20:04Z
+
+@emodric  Thanks for the info :)
+@weaverryan Do you plan to merge this soon? I can give you a hand ✋if you need
