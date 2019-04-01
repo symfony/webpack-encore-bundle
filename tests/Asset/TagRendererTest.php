@@ -33,7 +33,7 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages);
+        $renderer = new TagRenderer($entrypointCollection, $packages, 'anonymous');
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
@@ -64,7 +64,7 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages);
+        $renderer = new TagRenderer($entrypointCollection, $packages, 'anonymous');
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
@@ -110,7 +110,7 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages);
+        $renderer = new TagRenderer($entrypointCollection, $packages, 'anonymous');
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
@@ -160,7 +160,7 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080' . $path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages, true);
+        $renderer = new TagRenderer($entrypointCollection, $packages, 'anonymous');
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
