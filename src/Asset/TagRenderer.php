@@ -56,7 +56,7 @@ final class TagRenderer
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
-                $attributes['crossorigin'] =  $this->crossorigin;
+                $attributes['crossorigin'] = $this->crossorigin;
             }
 
             $scriptTags[] = sprintf(
@@ -82,7 +82,7 @@ final class TagRenderer
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
-                $attributes['crossorigin'] =  $this->crossorigin;
+                $attributes['crossorigin'] = $this->crossorigin;
             }
 
             $scriptTags[] = sprintf(
