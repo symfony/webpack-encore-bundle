@@ -164,11 +164,11 @@ class TagRendererTest extends TestCase
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
-            '<script src="http://localhost:8080/build/file1.js" integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc"></script>',
+            '<script src="http://localhost:8080/build/file1.js" integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc" crossorigin="anonymous"></script>',
             $output
         );
         $this->assertContains(
-            '<script src="http://localhost:8080/build/file2.js" integrity="sha384-ymG7OyjISWrOpH9jsGvajKMDEOP/mKJq8bHC0XdjQA6P8sg2nu+2RLQxcNNwE/3J"></script>',
+            '<script src="http://localhost:8080/build/file2.js" integrity="sha384-ymG7OyjISWrOpH9jsGvajKMDEOP/mKJq8bHC0XdjQA6P8sg2nu+2RLQxcNNwE/3J" crossorigin="anonymous"></script>',
             $output
         );
     }
