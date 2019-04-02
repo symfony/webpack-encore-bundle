@@ -50,16 +50,12 @@ final class TagRenderer
         $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
 
         foreach ($entryPointLookup->getJavaScriptFiles($entryName) as $filename) {
-            $attributes = [
-                'src' => $this->getAssetPath($filename, $packageName),
-            ];
+
+            $attributes = $this->defaultAttributes;
+            $attributes['src'] = $this->getAssetPath($filename, $packageName);
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
-            }
-
-            if (isset($this->defaultAttributes['crossorigin']) && false !== $this->defaultAttributes['crossorigin']) {
-                $attributes['crossorigin'] =  $this->defaultAttributes['crossorigin'];
             }
 
             $scriptTags[] = sprintf(
@@ -78,17 +74,13 @@ final class TagRenderer
         $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
 
         foreach ($entryPointLookup->getCssFiles($entryName) as $filename) {
-            $attributes = [
-                'rel' => 'stylesheet',
-                'href' => $this->getAssetPath($filename, $packageName),
-            ];
+
+            $attributes = $this->defaultAttributes;
+            $attributes['rel'] = 'stylesheet';
+            $attributes['href'] = $this->getAssetPath($filename, $packageName);
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
-            }
-
-            if (isset($this->defaultAttributes['crossorigin']) && false !== $this->defaultAttributes['crossorigin']) {
-                $attributes['crossorigin'] =  $this->defaultAttributes['crossorigin'];
             }
 
             $scriptTags[] = sprintf(

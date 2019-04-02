@@ -52,10 +52,14 @@ final class WebpackEncoreExtension extends Extension
             ->replaceArgument(0, ServiceLocatorTagPass::register($container, $factories));
         $container->setAlias(EntrypointLookupInterface::class, new Alias($this->getEntrypointServiceId('_default')));
 
+        $defaultAttributes = [];
+
+        if (false !== $config['crossorigin']){
+            $defaultAttributes['crossorigin'] = $config['crossorigin'];
+        }
+
         $container->getDefinition('webpack_encore.tag_renderer')
-            ->replaceArgument(2, [
-                'crossorigin' => $config['crossorigin'],
-            ]);
+            ->replaceArgument(2, $defaultAttributes);
     }
 
     private function entrypointFactory(ContainerBuilder $container, string $name, string $path, bool $cacheEnabled): Reference
