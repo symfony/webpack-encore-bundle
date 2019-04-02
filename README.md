@@ -25,8 +25,8 @@ webpack_encore:
     # If multiple builds are defined (as shown below), you can disable the default build:
     # output_path: false
     
-    # if using Encore.enableIntegrityHashes() specify the crossorigin attribute value (default: anonymous)
-    # crossorigin: 'use-credentials'
+    # if using Encore.enableIntegrityHashes() and need the crossorigin attribute (default: false, or use 'anonymous' or 'use-credentials')
+    # crossorigin: 'anonymous'
     
     # if you have multiple builds:
     # builds:

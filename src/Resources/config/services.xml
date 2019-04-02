@@ -16,7 +16,9 @@
         <service id="webpack_encore.tag_renderer" class="Symfony\WebpackEncoreBundle\Asset\TagRenderer">
             <argument type="service" id="webpack_encore.entrypoint_lookup_collection" />
             <argument type="service" id="assets.packages" />
-            <argument /><!-- crossorigin -->
+            <argument type="collection">
+                <argument key="crossorigin" />
+            </argument>
         </service>
 
         <service id="webpack_encore.twig_entry_files_extension" class="Symfony\WebpackEncoreBundle\Twig\EntryFilesTwigExtension">

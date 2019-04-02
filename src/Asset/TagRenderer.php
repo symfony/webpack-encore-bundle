@@ -18,12 +18,12 @@ final class TagRenderer
 
     private $packages;
 
-    private $crossorigin;
+    private $defaultAttributes;
 
     public function __construct(
         $entrypointLookupCollection,
         Packages $packages,
-        string $crossorigin
+        array $defaultAttributes
     ) {
         if ($entrypointLookupCollection instanceof EntrypointLookupInterface) {
             @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), E_USER_DEPRECATED);
@@ -40,7 +40,7 @@ final class TagRenderer
         }
 
         $this->packages = $packages;
-        $this->crossorigin = $crossorigin;
+        $this->defaultAttributes = $defaultAttributes;
     }
 
     public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
@@ -56,7 +56,10 @@ final class TagRenderer
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
-                $attributes['crossorigin'] = $this->crossorigin;
+            }
+
+            if (isset($this->defaultAttributes['crossorigin']) && false !== $this->defaultAttributes['crossorigin']) {
+                $attributes['crossorigin'] =  $this->defaultAttributes['crossorigin'];
             }
 
             $scriptTags[] = sprintf(
@@ -82,7 +85,10 @@ final class TagRenderer
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
-                $attributes['crossorigin'] = $this->crossorigin;
+            }
+
+            if (isset($this->defaultAttributes['crossorigin']) && false !== $this->defaultAttributes['crossorigin']) {
+                $attributes['crossorigin'] =  $this->defaultAttributes['crossorigin'];
             }
 
             $scriptTags[] = sprintf(

@@ -53,7 +53,9 @@ final class WebpackEncoreExtension extends Extension
         $container->setAlias(EntrypointLookupInterface::class, new Alias($this->getEntrypointServiceId('_default')));
 
         $container->getDefinition('webpack_encore.tag_renderer')
-            ->replaceArgument(2, $config['crossorigin']);
+            ->replaceArgument(2, [
+                'crossorigin' => $config['crossorigin'],
+            ]);
     }
 
     private function entrypointFactory(ContainerBuilder $container, string $name, string $path, bool $cacheEnabled): Reference
