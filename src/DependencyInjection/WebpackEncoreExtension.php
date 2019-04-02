@@ -54,7 +54,7 @@ final class WebpackEncoreExtension extends Extension
 
         $defaultAttributes = [];
 
-        if (false !== $config['crossorigin']){
+        if (false !== $config['crossorigin']) {
             $defaultAttributes['crossorigin'] = $config['crossorigin'];
         }
 

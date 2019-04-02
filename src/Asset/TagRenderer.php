@@ -50,7 +50,6 @@ final class TagRenderer
         $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
 
         foreach ($entryPointLookup->getJavaScriptFiles($entryName) as $filename) {
-
             $attributes = $this->defaultAttributes;
             $attributes['src'] = $this->getAssetPath($filename, $packageName);
 
@@ -74,7 +73,6 @@ final class TagRenderer
         $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
 
         foreach ($entryPointLookup->getCssFiles($entryName) as $filename) {
-
             $attributes = $this->defaultAttributes;
             $attributes['rel'] = 'stylesheet';
             $attributes['href'] = $this->getAssetPath($filename, $packageName);
