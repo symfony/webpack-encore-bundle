@@ -11,7 +11,7 @@ use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 
 class TagRendererTest extends TestCase
 {
-    public function testRenderScriptTags()
+    public function testRenderScriptTagsWithDefaultAttributes()
     {
         $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
@@ -33,15 +33,15 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages,  ['crossorigin'=>'anonymous']);
+        $renderer = new TagRenderer($entrypointCollection, $packages,  []);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
-            '<script crossorigin="anonymous" src="http://localhost:8080/build/file1.js"></script>',
+            '<script src="http://localhost:8080/build/file1.js"></script>',
             $output
         );
         $this->assertContains(
-            '<script crossorigin="anonymous" src="http://localhost:8080/build/file2.js"></script>',
+            '<script src="http://localhost:8080/build/file2.js"></script>',
             $output
         );
     }
