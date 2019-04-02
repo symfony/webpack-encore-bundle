@@ -33,15 +33,15 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages, 'anonymous');
+        $renderer = new TagRenderer($entrypointCollection, $packages,  ['crossorigin'=>'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
-            '<script src="http://localhost:8080/build/file1.js"></script>',
+            '<script src="http://localhost:8080/build/file1.js" crossorigin="anonymous"></script>',
             $output
         );
         $this->assertContains(
-            '<script src="http://localhost:8080/build/file2.js"></script>',
+            '<script src="http://localhost:8080/build/file2.js" crossorigin="anonymous"></script>',
             $output
         );
     }
@@ -64,11 +64,11 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages, 'anonymous');
+        $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin'=>'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
-            '<script src="http://localhost:8080/build/file&lt;&quot;bad_chars.js"></script>',
+            '<script src="http://localhost:8080/build/file&lt;&quot;bad_chars.js" crossorigin="anonymous"></script>',
             $output
         );
     }
@@ -110,21 +110,21 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages, 'anonymous');
+        $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin'=>'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
-            '<script src="http://localhost:8080/build/file1.js"></script>',
+            '<script src="http://localhost:8080/build/file1.js" crossorigin="anonymous"></script>',
             $output
         );
         $output = $renderer->renderWebpackScriptTags('my_entry', null, 'second');
         $this->assertContains(
-            '<script src="http://localhost:8080/build/file2.js"></script>',
+            '<script src="http://localhost:8080/build/file2.js" crossorigin="anonymous"></script>',
             $output
         );
         $output = $renderer->renderWebpackScriptTags('my_entry', 'specific_package', 'third');
         $this->assertContains(
-            '<script src="http://localhost:8080/build/file3.js"></script>',
+            '<script src="http://localhost:8080/build/file3.js" crossorigin="anonymous"></script>',
             $output
         );
     }
@@ -160,7 +160,7 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080' . $path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages, 'anonymous');
+        $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin'=>'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
