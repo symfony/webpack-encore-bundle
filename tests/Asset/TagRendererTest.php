@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Symfony WebpackEncoreBundle package.
+ * (c) Fabien Potencier <fabien@symfony.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
 use PHPUnit\Framework\TestCase;
@@ -30,7 +37,7 @@ class TagRendererTest extends TestCase
                 ['/build/file1.js', 'custom_package'],
                 ['/build/file2.js', 'custom_package']
             )
-            ->willReturnCallback(function($path) {
+            ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080'.$path;
             });
         $renderer = new TagRenderer($entrypointCollection, $packages);
@@ -61,7 +68,7 @@ class TagRendererTest extends TestCase
         $packages = $this->createMock(Packages::class);
         $packages->expects($this->once())
             ->method('getUrl')
-            ->willReturnCallback(function($path) {
+            ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080'.$path;
             });
         $renderer = new TagRenderer($entrypointCollection, $packages);
@@ -107,7 +114,7 @@ class TagRendererTest extends TestCase
                 ['/build/file2.js', null],
                 ['/build/file3.js', 'specific_package']
             )
-            ->willReturnCallback(function($path) {
+            ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080'.$path;
             });
         $renderer = new TagRenderer($entrypointCollection, $packages);
@@ -158,7 +165,7 @@ class TagRendererTest extends TestCase
                 ['/build/file2.js', 'custom_package']
             )
             ->willReturnCallback(function ($path) {
-                return 'http://localhost:8080' . $path;
+                return 'http://localhost:8080'.$path;
             });
         $renderer = new TagRenderer($entrypointCollection, $packages, true);
 
