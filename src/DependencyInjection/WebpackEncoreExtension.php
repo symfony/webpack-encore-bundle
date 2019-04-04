@@ -50,7 +50,10 @@ final class WebpackEncoreExtension extends Extension
 
         $container->getDefinition('webpack_encore.entrypoint_lookup_collection')
             ->replaceArgument(0, ServiceLocatorTagPass::register($container, $factories));
-        $container->setAlias(EntrypointLookupInterface::class, new Alias($this->getEntrypointServiceId('_default')));
+
+        if (false !== $config['output_path']) {
+            $container->setAlias(EntrypointLookupInterface::class, new Alias($this->getEntrypointServiceId('_default')));
+        }
     }
 
     private function entrypointFactory(ContainerBuilder $container, string $name, string $path, bool $cacheEnabled): Reference
