@@ -18,9 +18,12 @@ final class TagRenderer
 
     private $packages;
 
+    private $defaultAttributes;
+
     public function __construct(
         $entrypointLookupCollection,
-        Packages $packages
+        Packages $packages,
+        array $defaultAttributes = []
     ) {
         if ($entrypointLookupCollection instanceof EntrypointLookupInterface) {
             @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), E_USER_DEPRECATED);
@@ -37,6 +40,7 @@ final class TagRenderer
         }
 
         $this->packages = $packages;
+        $this->defaultAttributes = $defaultAttributes;
     }
 
     public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
@@ -46,9 +50,8 @@ final class TagRenderer
         $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
 
         foreach ($entryPointLookup->getJavaScriptFiles($entryName) as $filename) {
-            $attributes = [
-                'src' => $this->getAssetPath($filename, $packageName),
-            ];
+            $attributes = $this->defaultAttributes;
+            $attributes['src'] = $this->getAssetPath($filename, $packageName);
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
@@ -70,10 +73,9 @@ final class TagRenderer
         $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
 
         foreach ($entryPointLookup->getCssFiles($entryName) as $filename) {
-            $attributes = [
-                'rel' => 'stylesheet',
-                'href' => $this->getAssetPath($filename, $packageName),
-            ];
+            $attributes = $this->defaultAttributes;
+            $attributes['rel'] = 'stylesheet';
+            $attributes['href'] = $this->getAssetPath($filename, $packageName);
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];

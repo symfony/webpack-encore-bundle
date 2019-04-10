@@ -24,7 +24,10 @@ webpack_encore:
     output_path: '%kernel.project_dir%/public/build'
     # If multiple builds are defined (as shown below), you can disable the default build:
     # output_path: false
-
+    
+    # if using Encore.enableIntegrityHashes() and need the crossorigin attribute (default: false, or use 'anonymous' or 'use-credentials')
+    # crossorigin: 'anonymous'
+    
     # if you have multiple builds:
     # builds:
         # pass "frontend" as the 3rg arg to the Twig functions

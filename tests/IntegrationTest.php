@@ -154,6 +154,7 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
             $container->loadFromExtension('webpack_encore', [
                 'output_path' => __DIR__.'/fixtures/build',
                 'cache' => true,
+                'crossorigin' => false,
                 'builds' => [
                     'different_build' => __DIR__.'/fixtures/different_build',
                 ],
