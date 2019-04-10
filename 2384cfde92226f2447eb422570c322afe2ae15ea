@@ -1,0 +1,133 @@
+---------------------------------------------------------------------------
+
+by Lyrkan at 2019-04-01T16:20:21Z
+
+Hi @PhilETaylor,
+
+Indeed, that's an issue in a cross-domain context (which is not always the case).
+
+I'm not against adding `crossorigin="anonymous"` but are we sure that other people with different setups won't want/need to use other (or no) values for that attribute?
+
+I would 100% agree with using `anonymous` as the default value if there was also a way to override it, either by adding something to `enableIntegrityHashes` or directly when calling `{{ encore_entry_script_tags }}` (kinda related: https://github.com/symfony/webpack-encore-bundle/issues/10)
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-01T16:22:32Z
+
+> Indeed, that's an issue in a cross-domain context (which is not always the case).
+
+Its the case 100% of the time if you are using a CDN to serve your assets :)
+
+I dont have any strong opinion either way, however when I upgraded and deployed to production (which uses a cdn) it broke my site.. hence I had to work out why, document it, and find a solution.. which I have proposed.
+
+The current situation is that anyone that follow what I did, updates, enables integrity, and then deploys with assets from a cdn will break their site...
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-01T16:25:57Z
+
+there are only two options really for the crossorigin attribute. https://developer.mozilla.org/en-US/docs/Web/HTML/CORS_settings_attributes
+
+`anonymous` and `use-credentials`
+
+I've never seen anyone use the latter... but at the moment this feature is BROKEN because deploying assets on a CDN with the integrity attribute and no crossorigin attribute **WILL BREAK THE PRODUCTION SITE!**  (break == asset loading will be blocked by Google Chrome)
+
+I would say a quick fix would be the hard coding of crossorigin as proposed by this PR and then further discussion on making it configurable can be had later, it seems #10 has been open since last year with no progress and you cant expect to leave this feature broken for the majority while someone makes that decision
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-01T17:06:49Z
+
+ok with 768a820 I have now made the value of crossorigin attribute configurable  :-)
+
+if none is set in the config, then it still defaults to anonymous
+
+PLEASE TEST!
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-01T17:16:43Z
+
+flex recipe also updated here https://github.com/symfony/recipes/pull/562
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-01T17:22:44Z
+
+@stof Thanks for the comments... coding on the sofa on laptop is not my best place to code :) also still learning some of the deep symfony stuff :) ... "it works" is not enough :) I'll go grab a coffee and update this PR with your comments - thanks for the feedback
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-01T17:42:58Z
+
+@stof c304692 has changes based on your feedback, only thing Im not sure is if the services xml should be
+
+`<argument/>`
+
+or the repetition of the default value like
+
+`<argument>anonymous</argument>`
+
+I could not find any examples to learn from on this :)
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-01T17:50:51Z
+
+ok I have settled on
+
+`<argument /><!-- crossorigin -->`
+
+as I found that example in symfony/security-bundle like that :)
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-01T23:00:05Z
+
+This is ready for testing/feedback again now :)
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-02T10:39:29Z
+
+@Lyrkan all your feedback has now been applied. Ready for testing/feedback/merging again now
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-02T10:54:29Z
+
+flex recipe also updated here symfony/recipes#562
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-02T18:20:50Z
+
+In 7eeb941 I have reverted (and renamed) one of the tests so that it renders with no configured attributes, this is a quick win and covers the [TagRenderer](https://github.com/symfony/webpack-encore-bundle/blob/master/src/Asset/TagRenderer.php) class only, I guess what is really needed is some coverage of the [WebpackEncoreExtension](https://github.com/symfony/webpack-encore-bundle/blob/master/src/DependencyInjection/WebpackEncoreExtension.php) final class to check if the configuration attributes resolve correctly but there was no existing test and im not in the mood for that challenge today, sorry :) :)
+
+I have also notices that LOADS of DocBlocks are missing on methods in this bundle - any ideas if that is on purpose or is that another quick win we could make using phpStorm to generate these missing DocBlocks?
+
+---------------------------------------------------------------------------
+
+by Lyrkan at 2019-04-02T20:58:33Z
+
+>  I guess what is really needed is some coverage of the WebpackEncoreExtension final class to check if the configuration attributes resolve correctly but there was no existing test
+
+The extension is tested by the [`IntegrationTest`](https://github.com/symfony/webpack-encore-bundle/blob/master/tests/IntegrationTest.php):
+
+https://github.com/symfony/webpack-encore-bundle/blob/fc18456ed44737995f912c2084505fb67d040e11/tests/IntegrationTest.php#L147-L153
+
+> I have also notices that LOADS of DocBlocks are missing on methods in this bundle - any ideas if that is on purpose or is that another quick win we could make using phpStorm to generate these missing DocBlocks?
+
+Do you have an example of what you'd add? Most methods are already typed (params and return) so it wouldn't be really useful to add the same thing using PHPDoc.
+
+Anyway, this should probably be in a separate PR to avoid mixing those changes with the ones here :)
+
+---------------------------------------------------------------------------
+
+by PhilETaylor at 2019-04-03T10:32:23Z
+
+I'm just not used to seeing code without the additional PHPDoc for every method :-) I'll ignore that for now, phpStorm is great at reading the typehints so doesnt need the documentation to build its index anyway
+
+I have added the default crossorigin = false in the IntegrationTest, the tests pass with it set to false, or not there at all.
+
+I guess this is ready for merging ?
