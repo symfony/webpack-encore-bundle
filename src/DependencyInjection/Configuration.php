@@ -37,7 +37,7 @@ final class Configuration implements ConfigurationInterface
                 ->enumNode('crossorigin')
                     ->defaultFalse()
                     ->values([false, 'anonymous', 'use-credentials'])
-                    ->info('crossorigin value when Encore.enableIntegrityHashes is used, can be false (default), anonymous or use-credentials')
+                    ->info('crossorigin value when Encore.enableIntegrityHashes() is used, can be false (default), anonymous or use-credentials')
                 ->end()
                 ->booleanNode('cache')
                     ->info('Enable caching of the entry point file(s)')
