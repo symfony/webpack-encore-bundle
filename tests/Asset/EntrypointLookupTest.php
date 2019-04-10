@@ -1,12 +1,17 @@
 <?php
 
+/*
+ * This file is part of the Symfony WebpackEncoreBundle package.
+ * (c) Fabien Potencier <fabien@symfony.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
-use Symfony\Component\Cache\Adapter\NullAdapter;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use PHPUnit\Framework\TestCase;
-use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
 
 class EntrypointLookupTest extends TestCase
 {
@@ -121,7 +126,7 @@ EOF;
     public function testExceptionOnInvalidJson()
     {
         $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
-        file_put_contents($filename, "abcd");
+        file_put_contents($filename, 'abcd');
 
         $this->entrypointLookup = new EntrypointLookup($filename);
         $this->entrypointLookup->getJavaScriptFiles('an_entry');
@@ -134,7 +139,7 @@ EOF;
     public function testExceptionOnMissingEntrypointsKeyInJson()
     {
         $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
-        file_put_contents($filename, "{}");
+        file_put_contents($filename, '{}');
 
         $this->entrypointLookup = new EntrypointLookup($filename);
         $this->entrypointLookup->getJavaScriptFiles('an_entry');
@@ -151,7 +156,7 @@ EOF;
     }
 
     /**
-     * @expectedException Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException
+     * @expectedException \Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException
      * @expectedExceptionMessage Could not find the entry
      */
     public function testExceptionOnMissingEntry()
@@ -160,7 +165,7 @@ EOF;
     }
 
     /**
-     * @expectedException Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException
+     * @expectedException \Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException
      * @expectedExceptionMessage Try "my_entry" instead
      */
     public function testExceptionOnEntryWithExtension()

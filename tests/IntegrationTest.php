@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Symfony WebpackEncoreBundle package.
+ * (c) Fabien Potencier <fabien@symfony.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\WebpackEncoreBundle\Tests;
 
 use Symfony\Component\DependencyInjection\Reference;
@@ -28,7 +35,7 @@ class IntegrationTest extends TestCase
             $html1
         );
         $this->assertContains(
-            '<link rel="stylesheet" href="/build/styles.css" integrity="sha384-4g+Zv0iELStVvA4/B27g4TQHUMwZttA5TEojjUyB8Gl5p7sarU4y+VTSGMrNab8n">' .
+            '<link rel="stylesheet" href="/build/styles.css" integrity="sha384-4g+Zv0iELStVvA4/B27g4TQHUMwZttA5TEojjUyB8Gl5p7sarU4y+VTSGMrNab8n">'.
             '<link rel="stylesheet" href="/build/styles2.css" integrity="sha384-hfZmq9+2oI5Cst4/F4YyS2tJAAYdGz7vqSMP8cJoa8bVOr2kxNRLxSw6P8UZjwUn">',
             $html1
         );
@@ -129,7 +136,7 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
 
     public function registerContainerConfiguration(LoaderInterface $loader)
     {
-        $loader->load(function(ContainerBuilder $container) {
+        $loader->load(function (ContainerBuilder $container) {
             $container->loadFromExtension('framework', [
                 'secret' => 'foo',
                 'assets' => [
@@ -139,7 +146,7 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
 
             $container->loadFromExtension('twig', [
                 'paths' => [
-                    __DIR__.'/fixtures' => 'integration_test'
+                    __DIR__.'/fixtures' => 'integration_test',
                 ],
                 'strict_variables' => true,
             ]);
@@ -149,8 +156,8 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
                 'cache' => true,
                 'crossorigin' => false,
                 'builds' => [
-                    'different_build' =>  __DIR__.'/fixtures/different_build'
-                ]
+                    'different_build' => __DIR__.'/fixtures/different_build',
+                ],
             ]);
 
             $container->register(WebpackEncoreCacheWarmerTester::class)
