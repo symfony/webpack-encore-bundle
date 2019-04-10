@@ -23,7 +23,7 @@ final class TagRenderer
     public function __construct(
         $entrypointLookupCollection,
         Packages $packages,
-        array $defaultAttributes
+        array $defaultAttributes = []
     ) {
         if ($entrypointLookupCollection instanceof EntrypointLookupInterface) {
             @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), E_USER_DEPRECATED);
