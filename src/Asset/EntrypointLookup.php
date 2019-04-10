@@ -50,7 +50,7 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
     {
         $entriesData = $this->getEntriesData();
 
-        if (!array_key_exists('integrity', $entriesData)) {
+        if (!\array_key_exists('integrity', $entriesData)) {
             return [];
         }
 
