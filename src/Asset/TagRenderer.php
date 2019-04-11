@@ -11,14 +11,20 @@ namespace Symfony\WebpackEncoreBundle\Asset;
 
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Contracts\Service\ResetInterface;
 
-final class TagRenderer
+/**
+ * @final
+ */
+class TagRenderer implements ResetInterface
 {
     private $entrypointLookupCollection;
 
     private $packages;
 
     private $defaultAttributes;
+
+    private $renderedFiles = [];
 
     public function __construct(
         $entrypointLookupCollection,
@@ -41,6 +47,8 @@ final class TagRenderer
 
         $this->packages = $packages;
         $this->defaultAttributes = $defaultAttributes;
+
+        $this->reset();
     }
 
     public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
@@ -61,6 +69,8 @@ final class TagRenderer
                 '<script %s></script>',
                 $this->convertArrayToAttributes($attributes)
             );
+
+            $this->renderedFiles['scripts'][] = $attributes['src'];
         }
 
         return implode('', $scriptTags);
@@ -85,9 +95,34 @@ final class TagRenderer
                 '<link %s>',
                 $this->convertArrayToAttributes($attributes)
             );
+
+            $this->renderedFiles['styles'][] = $attributes['href'];
         }
 
         return implode('', $scriptTags);
+    }
+
+    public function getRenderedScripts(): array
+    {
+        return $this->renderedFiles['scripts'];
+    }
+
+    public function getRenderedStyles(): array
+    {
+        return $this->renderedFiles['styles'];
+    }
+
+    public function getDefaultAttributes(): array
+    {
+        return $this->defaultAttributes;
+    }
+
+    public function reset()
+    {
+        $this->renderedFiles = [
+            'scripts' => [],
+            'styles' => [],
+        ];
     }
 
     private function getAssetPath(string $assetPath, string $packageName = null): string

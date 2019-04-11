@@ -40,7 +40,7 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages,  []);
+        $renderer = new TagRenderer($entrypointCollection, $packages, []);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
@@ -71,7 +71,7 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin'=>'anonymous']);
+        $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin' => 'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
@@ -117,7 +117,7 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin'=>'anonymous']);
+        $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin' => 'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
@@ -167,7 +167,7 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin'=>'anonymous']);
+        $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin' => 'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertContains(
@@ -178,5 +178,37 @@ class TagRendererTest extends TestCase
             '<script crossorigin="anonymous" src="http://localhost:8080/build/file2.js" integrity="sha384-ymG7OyjISWrOpH9jsGvajKMDEOP/mKJq8bHC0XdjQA6P8sg2nu+2RLQxcNNwE/3J"></script>',
             $output
         );
+    }
+
+    public function testGetRenderedFilesAndReset()
+    {
+        $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
+        $entrypointLookup->expects($this->once())
+            ->method('getJavaScriptFiles')
+            ->willReturn(['/build/file1.js', '/build/file2.js']);
+        $entrypointLookup->expects($this->once())
+            ->method('getCssFiles')
+            ->willReturn(['/build/file1.css']);
+        $entrypointCollection = $this->createMock(EntrypointLookupCollection::class);
+        $entrypointCollection->expects($this->any())
+            ->method('getEntrypointLookup')
+            ->willReturn($entrypointLookup);
+
+        $packages = $this->createMock(Packages::class);
+        $packages->expects($this->any())
+            ->method('getUrl')
+            ->willReturnCallback(function ($path) {
+                return 'http://localhost:8080'.$path;
+            });
+        $renderer = new TagRenderer($entrypointCollection, $packages);
+
+        $renderer->renderWebpackScriptTags('my_entry');
+        $renderer->renderWebpackLinkTags('my_entry');
+        $this->assertSame(['http://localhost:8080/build/file1.js', 'http://localhost:8080/build/file2.js'], $renderer->getRenderedScripts());
+        $this->assertSame(['http://localhost:8080/build/file1.css'], $renderer->getRenderedStyles());
+
+        $renderer->reset();
+        $this->assertEmpty($renderer->getRenderedScripts());
+        $this->assertEmpty($renderer->getRenderedStyles());
     }
 }

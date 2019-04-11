@@ -48,5 +48,10 @@
         <service id="cache.webpack_encore" parent="cache.system" public="false">
             <tag name="cache.pool" />
         </service>
+
+        <service id="webpack_encore.preload_assets_event_listener" class="Symfony\WebpackEncoreBundle\EventListener\PreLoadAssetsEventListener">
+            <tag name="kernel.event_subscriber" />
+            <argument type="service" id="webpack_encore.tag_renderer" />
+        </service>
     </services>
 </container>
