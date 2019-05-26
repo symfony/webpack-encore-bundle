@@ -27,6 +27,12 @@ webpack_encore:
     
     # if using Encore.enableIntegrityHashes() and need the crossorigin attribute (default: false, or use 'anonymous' or 'use-credentials')
     # crossorigin: 'anonymous'
+
+    # preload all rendered script and link tags automatically via the http2 Link header
+    # preload: true
+
+    # Throw an exception if the entrypoints.json file is missing or an entry is missing from the data
+    # strict_mode: false
     
     # if you have multiple builds:
     # builds:
@@ -37,7 +43,8 @@ webpack_encore:
 
     # Cache the entrypoints.json (rebuild Symfony's cache when entrypoints.json changes)
     # Available in version 1.2
-    #cache: '%kernel.debug%'
+    # Put in config/packages/prod/webpack_encore.yaml
+    # cache: true
 ```
 
 ## Usage
