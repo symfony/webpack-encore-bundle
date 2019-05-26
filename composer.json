@@ -32,7 +32,9 @@
         "symfony/framework-bundle": "^3.4 || ^4.0",
         "symfony/phpunit-bridge": "^3.4 || ^4.1",
         "symfony/twig-bundle": "^3.4 || ^4.0",
-        "twig/twig": "^1.35 || ^2.0"
+        "twig/twig": "^1.35 || ^2.0",
+        "symfony/web-link": "^3.4 || ^4.0",
+        "fig/link-util": "^1.0"
     },
     "extra": {
         "thanks": {

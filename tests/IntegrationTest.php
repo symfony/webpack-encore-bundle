@@ -9,9 +9,17 @@
 
 namespace Symfony\WebpackEncoreBundle\Tests;
 
+use Psr\Log\LogLevel;
+use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\Reference;
+use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Log\Logger;
+use Symfony\Component\Routing\RouteCollectionBuilder;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
+use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 use PHPUnit\Framework\TestCase;
@@ -60,7 +68,7 @@ class IntegrationTest extends TestCase
         );
     }
 
-    public function testEntriesAreNotRepeteadWhenAlreadyOutputIntegration()
+    public function testEntriesAreNotRepeatedWhenAlreadyOutputIntegration()
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
@@ -139,10 +147,28 @@ class IntegrationTest extends TestCase
         $container = $kernel->getContainer();
         $this->assertInstanceOf(WebpackEncoreAutowireTestService::class, $container->get(WebpackEncoreAutowireTestService::class));
     }
+
+    public function testPreload()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $container = $kernel->getContainer();
+
+        /** @var TagRenderer $tagRenderer */
+        $tagRenderer = $container->get('public.webpack_encore.tag_renderer');
+        $tagRenderer->renderWebpackLinkTags('my_entry');
+        $tagRenderer->renderWebpackScriptTags('my_entry');
+
+        $request = Request::create('/foo');
+        $response = $kernel->handle($request);
+        $this->assertContains('</build/file1.js>; rel="preload"; as="script"', $response->headers->get('Link'));
+    }
 }
 
 class WebpackEncoreIntegrationTestKernel extends Kernel
 {
+    use MicroKernelTrait;
+
     private $enableAssets;
     public $strictMode = true;
     public $outputPath = __DIR__.'/fixtures/build';
@@ -150,7 +176,7 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
         'different_build' =>  __DIR__.'/fixtures/different_build'
     ];
 
-    public function __construct($enableAssets)
+    public function __construct(bool $enableAssets)
     {
         parent::__construct('test', true);
         $this->enableAssets = $enableAssets;
@@ -165,38 +191,49 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
         ];
     }
 
-    public function registerContainerConfiguration(LoaderInterface $loader)
+    protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $loader->load(function (ContainerBuilder $container) {
-            $container->loadFromExtension('framework', [
-                'secret' => 'foo',
-                'assets' => [
-                    'enabled' => $this->enableAssets,
-                ],
-            ]);
+        $routes->add('/foo', ['kernel::renderFoo']);
+    }
 
-            $container->loadFromExtension('twig', [
-                'paths' => [
-                    __DIR__.'/fixtures' => 'integration_test',
-                ],
-                'strict_variables' => true,
-            ]);
+    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)
+    {
+        $container->loadFromExtension('framework', [
+            'secret' => 'foo',
+            'assets' => [
+                'enabled' => $this->enableAssets,
+            ],
+        ]);
 
-            $container->loadFromExtension('webpack_encore', [
-                'output_path' => $this->outputPath,
-                'cache' => true,
-                'crossorigin' => false,
-                'builds' => $this->builds,
-                'strict_mode' => $this->strictMode,
-            ]);
+        $container->loadFromExtension('twig', [
+            'paths' => [
+                __DIR__.'/fixtures' => 'integration_test',
+            ],
+            'strict_variables' => true,
+        ]);
 
-            $container->register(WebpackEncoreCacheWarmerTester::class)
-                ->addArgument(new Reference('webpack_encore.entrypoint_lookup.cache_warmer'))
-                ->setPublic(true);
+        $container->loadFromExtension('webpack_encore', [
+            'output_path' => $this->outputPath,
+            'cache' => true,
+            'crossorigin' => false,
+            'preload' => true,
+            'builds' => $this->builds,
+            'strict_mode' => $this->strictMode,
+        ]);
 
-            $container->autowire(WebpackEncoreAutowireTestService::class)
-                ->setPublic(true);
-        });
+        $container->register(WebpackEncoreCacheWarmerTester::class)
+            ->addArgument(new Reference('webpack_encore.entrypoint_lookup.cache_warmer'))
+            ->setPublic(true);
+
+        $container->autowire(WebpackEncoreAutowireTestService::class)
+            ->setPublic(true);
+
+        $container->setAlias(new Alias('public.webpack_encore.tag_renderer', true), 'webpack_encore.tag_renderer');
+        $container->getAlias('public.webpack_encore.tag_renderer')->setPrivate(false);
+
+        // avoid logging request logs
+        $container->register('logger', Logger::class)
+            ->setArgument(0, LogLevel::EMERGENCY);
     }
 
     public function getCacheDir()
@@ -207,6 +244,11 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
     public function getLogDir()
     {
         return sys_get_temp_dir().'/logs'.spl_object_hash($this);
+    }
+
+    public function renderFoo()
+    {
+        return new Response('I am a page!');
     }
 }
 

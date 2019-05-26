@@ -17,6 +17,7 @@ use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Loader\XmlFileLoader;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpKernel\DependencyInjection\Extension;
+use Symfony\Component\WebLink\EventListener\AddLinkHeaderListener;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 
@@ -62,6 +63,14 @@ final class WebpackEncoreExtension extends Extension
 
         $container->getDefinition('webpack_encore.tag_renderer')
             ->replaceArgument(2, $defaultAttributes);
+
+        if ($config['preload']) {
+            if (!class_exists(AddLinkHeaderListener::class)) {
+                throw new \LogicException('To use the "preload" option, the WebLink component must be installed. Try running "composer require symfony/web-link".');
+            }
+        } else {
+            $container->removeDefinition('webpack_encore.preload_assets_event_listener');
+        }
     }
 
     private function entrypointFactory(ContainerBuilder $container, string $name, string $path, bool $cacheEnabled, bool $strictMode): Reference
