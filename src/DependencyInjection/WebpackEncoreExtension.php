@@ -36,12 +36,12 @@ final class WebpackEncoreExtension extends Extension
         $cacheKeys = [];
 
         if (false !== $config['output_path']) {
-            $factories['_default'] = $this->entrypointFactory($container, '_default', $config['output_path'], $config['cache']);
+            $factories['_default'] = $this->entrypointFactory($container, '_default', $config['output_path'], $config['cache'], $config['strict_mode']);
             $cacheKeys['_default'] = $config['output_path'].'/'.self::ENTRYPOINTS_FILE_NAME;
         }
 
         foreach ($config['builds'] as $name => $path) {
-            $factories[$name] = $this->entrypointFactory($container, $name, $path, $config['cache']);
+            $factories[$name] = $this->entrypointFactory($container, $name, $path, $config['cache'], $config['strict_mode']);
             $cacheKeys[rawurlencode($name)] = $path.'/'.self::ENTRYPOINTS_FILE_NAME;
         }
 
@@ -64,10 +64,15 @@ final class WebpackEncoreExtension extends Extension
             ->replaceArgument(2, $defaultAttributes);
     }
 
-    private function entrypointFactory(ContainerBuilder $container, string $name, string $path, bool $cacheEnabled): Reference
+    private function entrypointFactory(ContainerBuilder $container, string $name, string $path, bool $cacheEnabled, bool $strictMode): Reference
     {
         $id = $this->getEntrypointServiceId($name);
-        $arguments = [$path.'/'.self::ENTRYPOINTS_FILE_NAME, $cacheEnabled ? new Reference('webpack_encore.cache') : null, $name];
+        $arguments = [
+            $path.'/'.self::ENTRYPOINTS_FILE_NAME,
+            $cacheEnabled ? new Reference('webpack_encore.cache') : null,
+            $name,
+            $strictMode,
+        ];
         $container->setDefinition($id, new Definition(EntrypointLookup::class, $arguments));
 
         return new Reference($id);

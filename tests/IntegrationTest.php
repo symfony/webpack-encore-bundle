@@ -106,6 +106,32 @@ class IntegrationTest extends TestCase
         $this->assertEquals(['_default' => 0, 'different_build' => 1], $data[0]);
     }
 
+    /**
+     * @expectedException \Twig\Error\RuntimeError
+     * @expectedExceptionMessageRegExp /Could not find the entrypoints file/
+     */
+    public function testEnabledStrictMode_throwsException_ifBuildMissing()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->outputPath = 'missing_build';
+        $kernel->builds = ['different_build' => 'missing_build'];
+        $kernel->boot();
+        $container = $kernel->getContainer();
+        $container->get('twig')->render('@integration_test/template.twig');
+    }
+
+    public function testDisabledStrictMode_ignoresMissingBuild()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->outputPath = 'missing_build';
+        $kernel->strictMode = false;
+        $kernel->builds = ['different_build' => 'missing_build'];
+        $kernel->boot();
+        $container = $kernel->getContainer();
+        $html = $container->get('twig')->render('@integration_test/template.twig');
+        self::assertSame('', trim($html));
+    }
+
     public function testAutowireableInterfaces()
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
@@ -118,6 +144,11 @@ class IntegrationTest extends TestCase
 class WebpackEncoreIntegrationTestKernel extends Kernel
 {
     private $enableAssets;
+    public $strictMode = true;
+    public $outputPath = __DIR__.'/fixtures/build';
+    public $builds = [
+        'different_build' =>  __DIR__.'/fixtures/different_build'
+    ];
 
     public function __construct($enableAssets)
     {
@@ -152,12 +183,11 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
             ]);
 
             $container->loadFromExtension('webpack_encore', [
-                'output_path' => __DIR__.'/fixtures/build',
+                'output_path' => $this->outputPath,
                 'cache' => true,
                 'crossorigin' => false,
-                'builds' => [
-                    'different_build' => __DIR__.'/fixtures/different_build',
-                ],
+                'builds' => $this->builds,
+                'strict_mode' => $this->strictMode,
             ]);
 
             $container->register(WebpackEncoreCacheWarmerTester::class)

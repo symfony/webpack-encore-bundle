@@ -29,11 +29,14 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
 
     private $cache;
 
-    public function __construct(string $entrypointJsonPath, CacheItemPoolInterface $cache = null, string $cacheKey = null)
+    private $strictMode;
+
+    public function __construct(string $entrypointJsonPath, CacheItemPoolInterface $cache = null, string $cacheKey = null, bool $strictMode = true)
     {
         $this->entrypointJsonPath = $entrypointJsonPath;
         $this->cache = $cache;
         $this->cacheKey = $cacheKey;
+        $this->strictMode = $strictMode;
     }
 
     public function getJavaScriptFiles(string $entryName): array
@@ -69,7 +72,7 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
     {
         $this->validateEntryName($entryName);
         $entriesData = $this->getEntriesData();
-        $entryData = $entriesData['entrypoints'][$entryName];
+        $entryData = $entriesData['entrypoints'][$entryName] ?? [];
 
         if (!isset($entryData[$key])) {
             // If we don't find the file type then just send back nothing.
@@ -87,7 +90,7 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
     private function validateEntryName(string $entryName)
     {
         $entriesData = $this->getEntriesData();
-        if (!isset($entriesData['entrypoints'][$entryName])) {
+        if (!isset($entriesData['entrypoints'][$entryName]) && $this->strictMode) {
             $withoutExtension = substr($entryName, 0, strrpos($entryName, '.'));
 
             if (isset($entriesData['entrypoints'][$withoutExtension])) {
@@ -113,6 +116,9 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
         }
 
         if (!file_exists($this->entrypointJsonPath)) {
+            if (!$this->strictMode) {
+                return [];
+            }
             throw new \InvalidArgumentException(sprintf('Could not find the entrypoints file from Webpack: the file "%s" does not exist.', $this->entrypointJsonPath));
         }
 
