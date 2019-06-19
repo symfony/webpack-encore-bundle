@@ -163,6 +163,19 @@ class IntegrationTest extends TestCase
         $response = $kernel->handle($request);
         $this->assertContains('</build/file1.js>; rel="preload"; as="script"', $response->headers->get('Link'));
     }
+    
+    public function testAutowireDefaultBuildArgument()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $container = $kernel->getContainer();
+
+        $container->get('public.webpack_encore.entrypoint_lookup_collection')
+            ->getEntrypointLookup();
+
+        // Testing that it doesn't throw an exception is enough
+        $this->assertTrue(true);
+    }
 }
 
 class WebpackEncoreIntegrationTestKernel extends Kernel
@@ -230,6 +243,9 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
 
         $container->setAlias(new Alias('public.webpack_encore.tag_renderer', true), 'webpack_encore.tag_renderer');
         $container->getAlias('public.webpack_encore.tag_renderer')->setPrivate(false);
+
+        $container->setAlias(new Alias('public.webpack_encore.entrypoint_lookup_collection', true), 'webpack_encore.entrypoint_lookup_collection');
+        $container->getAlias('public.webpack_encore.entrypoint_lookup_collection')->setPrivate(false);
 
         // avoid logging request logs
         $container->register('logger', Logger::class)
