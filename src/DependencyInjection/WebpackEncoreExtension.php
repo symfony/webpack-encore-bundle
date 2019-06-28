@@ -82,7 +82,9 @@ final class WebpackEncoreExtension extends Extension
             $name,
             $strictMode,
         ];
-        $container->setDefinition($id, new Definition(EntrypointLookup::class, $arguments));
+        $definition = new Definition(EntrypointLookup::class, $arguments);
+        $definition->addTag('kernel.reset', ['method'=>'reset']);
+        $container->setDefinition($id, $definition);
 
         return new Reference($id);
     }
