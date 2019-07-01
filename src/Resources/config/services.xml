@@ -14,6 +14,7 @@
         <service id="Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface" alias="webpack_encore.entrypoint_lookup_collection" />
 
         <service id="webpack_encore.tag_renderer" class="Symfony\WebpackEncoreBundle\Asset\TagRenderer">
+            <tag name="kernel.reset" method="reset" />
             <argument type="service" id="webpack_encore.entrypoint_lookup_collection" />
             <argument type="service" id="assets.packages" />
             <argument type="collection" />
