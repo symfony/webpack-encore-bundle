@@ -1,0 +1,63 @@
+---------------------------------------------------------------------------
+
+by vkhramtsov at 2019-06-03T20:01:40Z
+
+@wbrinkman @nicolas-grekas Any news here?
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2019-06-11T10:56:06Z
+
+I just saw this in the Symfony Demo app. Looking forward to the merge and new version release! Thank you.
+
+```
+$ composer dump-autoload -o
+
+Restricting packages listed in "symfony/symfony" to "4.3.*"
+Generating optimized autoload files
+
+Warning: Ambiguous class resolution, "Symfony\Contracts\Cache\CallbackInterface" was found in both "vendor/symfony/cache-contracts/CallbackInterface.php" and "vendor/symfony/contracts/Cache/CallbackInterface.php", the first will be used.
+
+Warning: Ambiguous class resolution, "Symfony\Contracts\Cache\ItemInterface" was found in both "vendor/symfony/cache-contracts/ItemInterface.php" and "vendor/symfony/contracts/Cache/ItemInterface.php", the first will be used.
+
+Warning: Ambiguous class resolution, "Symfony\Contracts\Cache\CacheInterface" was found in both "vendor/symfony/cache-contracts/CacheInterface.php" and "vendor/symfony/contracts/Cache/CacheInterface.php", the first will be used.
+
+[...]
+```
+
+---------------------------------------------------------------------------
+
+by javer at 2019-06-18T11:49:15Z
+
+Any update on this?
+I see 25 warnings every time I run composer in Symfony 4.3 project with this bundle.
+
+---------------------------------------------------------------------------
+
+by javer at 2019-06-24T10:08:38Z
+
+@weaverryan Could you please press "Merge pull request" button and make a new release? We already have 3 approvals in this PR.
+
+---------------------------------------------------------------------------
+
+by tompiard at 2019-07-01T12:47:00Z
+
+I love how webpack encore improved my frontend workflow in so many ways. But the wait for this PR is very worrisome. It is a very basic commit that keep this bundle in sync with the Symfony ecosystem that it's supposed to be part of.
+
+---------------------------------------------------------------------------
+
+by luispabon at 2019-07-01T12:57:22Z
+
+Anybody else have merge & versioning rights that could possibly push this through the finishing line pls?
+
+---------------------------------------------------------------------------
+
+by javer at 2019-07-01T21:05:16Z
+
+@weaverryan @nicolas-grekas @fabpot Please help someone to press Merge button in this PR, which is ready for a month, has 3 approvals and have just been ignored one more time during creating a new release 5 hours ago.
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2019-07-02T23:49:04Z
+
+Sorry - will merge tonight. This bundle is my responsibility and I’ve been a bit busy - apologies for the inconvenience!
