@@ -49,6 +49,9 @@ final class WebpackEncoreExtension extends Extension
             $cacheKeys[rawurlencode($name)] = $path.'/'.self::ENTRYPOINTS_FILE_NAME;
         }
 
+        $container->getDefinition('webpack_encore.exception_listener')
+            ->replaceArgument(1, array_keys($factories));
+
         $container->getDefinition('webpack_encore.entrypoint_lookup.cache_warmer')
             ->replaceArgument(0, $cacheKeys);
 
