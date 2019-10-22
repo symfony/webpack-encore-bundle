@@ -9,34 +9,28 @@ env:
     global:
         - PHPUNIT_FLAGS="-v"
         - SYMFONY_PHPUNIT_DIR="$HOME/symfony-bridge/.phpunit"
+        - SYMFONY_REQUIRE='>=2.8'
 
 matrix:
     fast_finish: true
     include:
         - php: 7.1
-          env: SYMFONY_PHPUNIT_VERSION=7.4
-        - php: 7.1
-          env: deps=high SYMFONY_PHPUNIT_VERSION=7.4
         - php: 7.2
-          env: deps=low
         - php: 7.3
-
-    allow_failures:
-          # Dev-master is allowed to fail.
-        - env: STABILITY="dev"
+          env: deps=low
 
 before_install:
-    - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
-    - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
-    - |
-      # Install symfony/flex
-      if [[ $deps = low ]]; then
-          export SYMFONY_REQUIRE='>=2.3'
-      fi
-      composer global require --no-progress --no-scripts --no-plugins symfony/flex dev-master
+    - phpenv config-rm xdebug.ini || true
+    - composer global require --no-progress --no-scripts --no-plugins symfony/flex dev-master
 
 install:
-    - composer install
+    - |
+      if [[ $deps = low ]]; then
+          export SYMFONY_DEPRECATIONS_HELPER=weak
+          composer update --prefer-dist --prefer-lowest --prefer-stable
+      else
+          composer update --prefer-dist
+      fi
     - ./vendor/bin/simple-phpunit install
 
 script:

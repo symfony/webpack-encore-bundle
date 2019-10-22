@@ -12,7 +12,7 @@ namespace Symfony\WebpackEncoreBundle\EventListener;
 use Fig\Link\GenericLinkProvider;
 use Fig\Link\Link;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
-use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 
 /**
@@ -27,7 +27,10 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
         $this->tagRenderer = $tagRenderer;
     }
 
-    public function onKernelResponse(FilterResponseEvent $event)
+    /**
+     * @param ResponseEvent $event
+     */
+    public function onKernelResponse($event)
     {
         if (!$event->isMasterRequest()) {
             return;

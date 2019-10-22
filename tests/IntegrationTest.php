@@ -9,12 +9,19 @@
 
 namespace Symfony\WebpackEncoreBundle\Tests;
 
+use PHPUnit\Framework\TestCase;
 use Psr\Log\LogLevel;
+use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
+use Symfony\Bundle\TwigBundle\TwigBundle;
+use Symfony\Bundle\TwigBundle\Controller\ExceptionController;
+use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Alias;
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Log\Logger;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
@@ -22,12 +29,6 @@ use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
-use PHPUnit\Framework\TestCase;
-use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
-use Symfony\Bundle\TwigBundle\TwigBundle;
-use Symfony\Component\Config\Loader\LoaderInterface;
-use Symfony\Component\DependencyInjection\ContainerBuilder;
-use Symfony\Component\HttpKernel\Kernel;
 
 class IntegrationTest extends TestCase
 {
@@ -38,31 +39,31 @@ class IntegrationTest extends TestCase
         $container = $kernel->getContainer();
 
         $html1 = $container->get('twig')->render('@integration_test/template.twig');
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script src="/build/file1.js" integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc"></script>',
             $html1
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<link rel="stylesheet" href="/build/styles.css" integrity="sha384-4g+Zv0iELStVvA4/B27g4TQHUMwZttA5TEojjUyB8Gl5p7sarU4y+VTSGMrNab8n">'.
             '<link rel="stylesheet" href="/build/styles2.css" integrity="sha384-hfZmq9+2oI5Cst4/F4YyS2tJAAYdGz7vqSMP8cJoa8bVOr2kxNRLxSw6P8UZjwUn">',
             $html1
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script src="/build/other3.js"></script>',
             $html1
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<link rel="stylesheet" href="/build/styles3.css">'.
             '<link rel="stylesheet" href="/build/styles4.css">',
             $html1
         );
 
         $html2 = $container->get('twig')->render('@integration_test/manual_template.twig');
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script src="/build/file3.js"></script>',
             $html2
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script src="/build/other4.js"></script>',
             $html2
         );
@@ -76,22 +77,22 @@ class IntegrationTest extends TestCase
 
         $html1 = $container->get('twig')->render('@integration_test/template.twig');
         $html2 = $container->get('twig')->render('@integration_test/manual_template.twig');
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script src="/build/file3.js"></script>',
             $html2
         );
         // file1.js is not repeated
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             '<script src="/build/file1.js"></script>',
             $html2
         );
         // styles3.css is not repeated
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             '<link rel="stylesheet" href="/build/styles3.css">',
             $html2
         );
         // styles4.css is not repeated
-        $this->assertNotContains(
+        $this->assertStringNotContainsString(
             '<link rel="stylesheet" href="/build/styles4.css">',
             $html2
         );
@@ -111,15 +112,14 @@ class IntegrationTest extends TestCase
         $this->assertFileExists($cachePath);
         $data = require $cachePath;
         // check for both build keys
-        $this->assertEquals(['_default' => 0, 'different_build' => 1], $data[0]);
+        $this->assertSame(['_default', 'different_build'], array_keys($data[0] ?? $data));
     }
 
-    /**
-     * @expectedException \Twig\Error\RuntimeError
-     * @expectedExceptionMessageRegExp /Could not find the entrypoints file/
-     */
     public function testEnabledStrictMode_throwsException_ifBuildMissing()
     {
+        $this->expectException(\Twig\Error\RuntimeError::class);
+        $this->expectExceptionMessageRegExp('/Could not find the entrypoints file/');
+
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->outputPath = 'missing_build';
         $kernel->builds = ['different_build' => 'missing_build'];
@@ -161,9 +161,9 @@ class IntegrationTest extends TestCase
 
         $request = Request::create('/foo');
         $response = $kernel->handle($request);
-        $this->assertContains('</build/file1.js>; rel="preload"; as="script"', $response->headers->get('Link'));
+        $this->assertStringContainsString('</build/file1.js>; rel="preload"; as="script"', $response->headers->get('Link'));
     }
-    
+
     public function testAutowireDefaultBuildArgument()
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
@@ -186,7 +186,7 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
     public $strictMode = true;
     public $outputPath = __DIR__.'/fixtures/build';
     public $builds = [
-        'different_build' =>  __DIR__.'/fixtures/different_build'
+        'different_build' => __DIR__.'/fixtures/different_build',
     ];
 
     public function __construct(bool $enableAssets)
@@ -206,7 +206,7 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
 
     protected function configureRoutes(RouteCollectionBuilder $routes)
     {
-        $routes->add('/foo', ['kernel::renderFoo']);
+        $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');
     }
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)
@@ -223,6 +223,7 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
                 __DIR__.'/fixtures' => 'integration_test',
             ],
             'strict_variables' => true,
+            'exception_controller' => null,
         ]);
 
         $container->loadFromExtension('webpack_encore', [

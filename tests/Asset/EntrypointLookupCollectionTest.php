@@ -9,29 +9,27 @@
 
 namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
-use PHPUnit\Framework\TestCase;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 
 class EntrypointLookupCollectionTest extends TestCase
 {
-    /**
-     * @expectedException \Symfony\WebpackEncoreBundle\Exception\UndefinedBuildException
-     * @expectedExceptionMessage The build "something" is not configured
-     */
     public function testExceptionOnMissingEntry()
     {
+        $this->expectException(\Symfony\WebpackEncoreBundle\Exception\UndefinedBuildException::class);
+        $this->expectExceptionMessage('The build "something" is not configured');
+
         $collection = new EntrypointLookupCollection(new ServiceLocator([]));
         $collection->getEntrypointLookup('something');
     }
 
-    /**
-     * @expectedException \Symfony\WebpackEncoreBundle\Exception\UndefinedBuildException
-     * @expectedExceptionMessage There is no default build configured: please pass an argument to getEntrypointLookup().
-     */
     public function testExceptionOnMissingDefaultBuildEntry()
     {
+        $this->expectException(\Symfony\WebpackEncoreBundle\Exception\UndefinedBuildException::class);
+        $this->expectExceptionMessage('There is no default build configured: please pass an argument to getEntrypointLookup().');
+
         $collection = new EntrypointLookupCollection(new ServiceLocator([]));
         $collection->getEntrypointLookup();
     }
