@@ -28,16 +28,15 @@ matrix:
 before_install:
     - if [[ $COVERAGE != true ]]; then phpenv config-rm xdebug.ini || true; fi
     - if ! [ -z "$STABILITY" ]; then composer config minimum-stability ${STABILITY}; fi;
-    - if ! [ -v "$DEPENDENCIES" ]; then composer require --no-update ${DEPENDENCIES}; fi;
-    - composer install
-
-install:
     - |
       # Install symfony/flex
       if [[ $deps = low ]]; then
           export SYMFONY_REQUIRE='>=2.3'
       fi
       composer global require --no-progress --no-scripts --no-plugins symfony/flex dev-master
+
+install:
+    - composer install
     - ./vendor/bin/simple-phpunit install
 
 script:
