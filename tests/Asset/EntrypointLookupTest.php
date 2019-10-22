@@ -9,9 +9,9 @@
 
 namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
-use PHPUnit\Framework\TestCase;
 
 class EntrypointLookupTest extends TestCase
 {
@@ -45,7 +45,7 @@ class EntrypointLookupTest extends TestCase
 }
 EOF;
 
-    public function setUp()
+    protected function setUp(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
         file_put_contents($filename, self::$testJson);
@@ -119,12 +119,11 @@ EOF;
         $this->assertEquals([], $this->entrypointLookup->getIntegrityData());
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageContains There was a problem JSON decoding the
-     */
     public function testExceptionOnInvalidJson()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('There was a problem JSON decoding the');
+
         $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
         file_put_contents($filename, 'abcd');
 
@@ -132,12 +131,11 @@ EOF;
         $this->entrypointLookup->getJavaScriptFiles('an_entry');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessageContains Could not find an "entrypoints" key in the
-     */
     public function testExceptionOnMissingEntrypointsKeyInJson()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not find an "entrypoints" key in the');
+
         $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
         file_put_contents($filename, '{}');
 
@@ -145,31 +143,28 @@ EOF;
         $this->entrypointLookup->getJavaScriptFiles('an_entry');
     }
 
-    /**
-     * @expectedException \InvalidArgumentException
-     * @expectedExceptionMessage Could not find the entrypoints file
-     */
     public function testExceptionOnBadFilename()
     {
+        $this->expectException(\InvalidArgumentException::class);
+        $this->expectExceptionMessage('Could not find the entrypoints file');
+
         $entrypointLookup = new EntrypointLookup('fake_file');
         $entrypointLookup->getCssFiles('anything');
     }
 
-    /**
-     * @expectedException \Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException
-     * @expectedExceptionMessage Could not find the entry
-     */
     public function testExceptionOnMissingEntry()
     {
+        $this->expectException(\Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException::class);
+        $this->expectExceptionMessage('Could not find the entry');
+
         $this->entrypointLookup->getCssFiles('fake_entry');
     }
 
-    /**
-     * @expectedException \Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException
-     * @expectedExceptionMessage Try "my_entry" instead
-     */
     public function testExceptionOnEntryWithExtension()
     {
+        $this->expectException(\Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException::class);
+        $this->expectExceptionMessage('Try "my_entry" instead');
+
         $this->entrypointLookup->getJavaScriptFiles('my_entry.js');
     }
 

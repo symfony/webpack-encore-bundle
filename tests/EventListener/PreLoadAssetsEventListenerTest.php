@@ -11,11 +11,12 @@ namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
 use Fig\Link\GenericLinkProvider;
 use Fig\Link\Link;
+use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Event\FilterResponseEvent;
+use Symfony\Component\HttpKernel\Event\ResponseEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
-use PHPUnit\Framework\TestCase;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\EventListener\PreLoadAssetsEventListener;
 
@@ -30,12 +31,7 @@ class PreLoadAssetsEventListenerTest extends TestCase
 
         $request = new Request();
         $response = new Response();
-        $event = new FilterResponseEvent(
-            $this->createMock(HttpKernelInterface::class),
-            $request,
-            HttpKernelInterface::MASTER_REQUEST,
-            $response
-        );
+        $event = $this->createResponseEvent($request, HttpKernelInterface::MASTER_REQUEST, $response);
         $listener = new PreLoadAssetsEventListener($tagRenderer);
         $listener->onKernelResponse($event);
         $this->assertTrue($request->attributes->has('_links'));
@@ -66,12 +62,7 @@ class PreLoadAssetsEventListenerTest extends TestCase
         $request->attributes->set('_links', $linkProvider);
 
         $response = new Response();
-        $event = new FilterResponseEvent(
-            $this->createMock(HttpKernelInterface::class),
-            $request,
-            HttpKernelInterface::MASTER_REQUEST,
-            $response
-        );
+        $event = $this->createResponseEvent($request, HttpKernelInterface::MASTER_REQUEST, $response);
         $listener = new PreLoadAssetsEventListener($tagRenderer);
         $listener->onKernelResponse($event);
         /** @var GenericLinkProvider $linkProvider */
@@ -87,13 +78,15 @@ class PreLoadAssetsEventListenerTest extends TestCase
 
         $request = new Request();
         $response = new Response();
-        $event = new FilterResponseEvent(
-            $this->createMock(HttpKernelInterface::class),
-            $request,
-            HttpKernelInterface::SUB_REQUEST,
-            $response
-        );
+        $event = $this->createResponseEvent($request, HttpKernelInterface::SUB_REQUEST, $response);
         $listener = new PreLoadAssetsEventListener($tagRenderer);
         $listener->onKernelResponse($event);
+    }
+
+    private function createResponseEvent(Request $request, int $type, Response $response)
+    {
+        $class = class_exists(ResponseEvent::class) ? ResponseEvent::class : FilterResponseEvent::class;
+
+        return new $class($this->createMock(HttpKernelInterface::class), $request, $type, $response);
     }
 }

@@ -9,8 +9,8 @@
 
 namespace Symfony\WebpackEncoreBundle\Asset;
 
-use Symfony\WebpackEncoreBundle\Exception\UndefinedBuildException;
 use Psr\Container\ContainerInterface;
+use Symfony\WebpackEncoreBundle\Exception\UndefinedBuildException;
 
 /**
  * Aggregate the different entry points configured in the container.

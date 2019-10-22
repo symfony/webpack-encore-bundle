@@ -11,8 +11,8 @@ namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Asset\Packages;
-use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\IntegrityDataProviderInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 
@@ -43,11 +43,11 @@ class TagRendererTest extends TestCase
         $renderer = new TagRenderer($entrypointCollection, $packages, []);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script src="http://localhost:8080/build/file1.js"></script>',
             $output
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script src="http://localhost:8080/build/file2.js"></script>',
             $output
         );
@@ -74,7 +74,7 @@ class TagRendererTest extends TestCase
         $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin' => 'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script crossorigin="anonymous" src="http://localhost:8080/build/file&lt;&quot;bad_chars.js"></script>',
             $output
         );
@@ -120,17 +120,17 @@ class TagRendererTest extends TestCase
         $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin' => 'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script crossorigin="anonymous" src="http://localhost:8080/build/file1.js"></script>',
             $output
         );
         $output = $renderer->renderWebpackScriptTags('my_entry', null, 'second');
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script crossorigin="anonymous" src="http://localhost:8080/build/file2.js"></script>',
             $output
         );
         $output = $renderer->renderWebpackScriptTags('my_entry', 'specific_package', 'third');
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script crossorigin="anonymous" src="http://localhost:8080/build/file3.js"></script>',
             $output
         );
@@ -170,11 +170,11 @@ class TagRendererTest extends TestCase
         $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin' => 'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script crossorigin="anonymous" src="http://localhost:8080/build/file1.js" integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc"></script>',
             $output
         );
-        $this->assertContains(
+        $this->assertStringContainsString(
             '<script crossorigin="anonymous" src="http://localhost:8080/build/file2.js" integrity="sha384-ymG7OyjISWrOpH9jsGvajKMDEOP/mKJq8bHC0XdjQA6P8sg2nu+2RLQxcNNwE/3J"></script>',
             $output
         );
