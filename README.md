@@ -71,7 +71,7 @@ for `entry1.js` and 1 link tag for `entry1.css`, you may now need *multiple*
 script and link tags. This is because Webpack ["splits" your files](https://webpack.js.org/plugins/split-chunks-plugin/)
 into smaller pieces for greater optimization.
 
-To help with this, Encore writes a `entrypoints.json` file that contains
+To help with this, Encore writes an `entrypoints.json` file that contains
 all of the files needed for each "entry".
 
 For example, to render all of the `script` and `link` tags for a specific
