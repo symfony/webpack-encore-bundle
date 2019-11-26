@@ -9,8 +9,10 @@
 
 namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
-use Fig\Link\GenericLinkProvider;
-use Fig\Link\Link;
+use Fig\Link\GenericLinkProvider as FigGenericLinkProvider;
+use Fig\Link\Link as FigLink;
+use Symfony\Component\WebLink\GenericLinkProvider;
+use Symfony\Component\WebLink\Link;
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -35,10 +37,12 @@ class PreLoadAssetsEventListenerTest extends TestCase
         $listener = new PreLoadAssetsEventListener($tagRenderer);
         $listener->onKernelResponse($event);
         $this->assertTrue($request->attributes->has('_links'));
-        /** @var GenericLinkProvider $linkProvider */
+        /** @var GenericLinkProvider|FigGenericLinkProvider $linkProvider */
         $linkProvider = $request->attributes->get('_links');
-        $this->assertInstanceOf(GenericLinkProvider::class, $linkProvider);
-        /** @var Link[] $links */
+
+        $expectedProviderClass = class_exists(GenericLinkProvider::class) ? GenericLinkProvider::class : FigGenericLinkProvider::class;
+        $this->assertInstanceOf($expectedProviderClass, $linkProvider);
+        /** @var Link[]|FigLink[] $links */
         $links = array_values($linkProvider->getLinks());
         $this->assertCount(2, $links);
         $this->assertSame('/file1.js', $links[0]->getHref());
@@ -58,14 +62,16 @@ class PreLoadAssetsEventListenerTest extends TestCase
         $tagRenderer->expects($this->once())->method('getRenderedStyles')->willReturn([]);
 
         $request = new Request();
-        $linkProvider = new GenericLinkProvider([new Link('preload', 'bar.js')]);
+        $linkProviderClass = class_exists(GenericLinkProvider::class) ? GenericLinkProvider::class : FigGenericLinkProvider::class;
+        $linkClass = class_exists(Link::class) ? Link::class : FigLink::class;
+        $linkProvider = new $linkProviderClass([new $linkClass('preload', 'bar.js')]);
         $request->attributes->set('_links', $linkProvider);
 
         $response = new Response();
         $event = $this->createResponseEvent($request, HttpKernelInterface::MASTER_REQUEST, $response);
         $listener = new PreLoadAssetsEventListener($tagRenderer);
         $listener->onKernelResponse($event);
-        /** @var GenericLinkProvider $linkProvider */
+        /** @var GenericLinkProvider|FigGenericLinkProvider $linkProvider */
         $linkProvider = $request->attributes->get('_links');
         $this->assertCount(2, $linkProvider->getLinks());
     }
