@@ -14,7 +14,6 @@ use Psr\Log\LogLevel;
 use Symfony\Bundle\FrameworkBundle\FrameworkBundle;
 use Symfony\Bundle\FrameworkBundle\Kernel\MicroKernelTrait;
 use Symfony\Bundle\TwigBundle\TwigBundle;
-use Symfony\Bundle\TwigBundle\Controller\ExceptionController;
 use Symfony\Component\Config\Loader\LoaderInterface;
 use Symfony\Component\DependencyInjection\Alias;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
@@ -23,6 +22,7 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Log\Logger;
+use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
 use Symfony\Component\Routing\RouteCollectionBuilder;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
@@ -178,7 +178,7 @@ class IntegrationTest extends TestCase
     }
 }
 
-class WebpackEncoreIntegrationTestKernel extends Kernel
+abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
 {
     use MicroKernelTrait;
 
@@ -202,11 +202,6 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
             new TwigBundle(),
             new WebpackEncoreBundle(),
         ];
-    }
-
-    protected function configureRoutes(RouteCollectionBuilder $routes)
-    {
-        $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');
     }
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)
@@ -266,6 +261,22 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
     public function renderFoo()
     {
         return new Response('I am a page!');
+    }
+}
+
+if (method_exists(AbstractWebpackEncoreIntegrationTestKernel::class, 'configureRouting')) {
+    class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel {
+        protected function configureRouting(RoutingConfigurator $routes): void
+        {
+            $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');
+        }
+    }
+} else {
+    class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel {
+        protected function configureRoutes(RouteCollectionBuilder $routes)
+        {
+            $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');
+        }
     }
 }
 
