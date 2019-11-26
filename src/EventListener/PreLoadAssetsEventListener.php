@@ -85,7 +85,7 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
     }
 
     /**
-     * For backwards-compat with symfony/web-link 4.3 and lower
+     * For backwards-compat with symfony/web-link 4.3 and lower.
      *
      * @return Link|FigLink
      */
