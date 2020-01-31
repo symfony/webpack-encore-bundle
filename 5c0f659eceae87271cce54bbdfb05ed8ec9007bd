@@ -1,0 +1,29 @@
+---------------------------------------------------------------------------
+
+by Lyrkan at 2019-08-08T21:42:53Z
+
+> I don't like having _default hardcoded in the listener, but I see no other options right now.
+> I thought about adding a resetAll() method to EntrypointLookupCollection, but there were a couple of issues with that
+
+Wouldn't it be possible to handle that using the `WebpackEncoreExtension` (even though I agree that having a `all()` and/or a `resetAll()` in the `EntrypointLookupCollection` would have been a better solution)?
+
+1) add a `$builds` argument to the constructor of `webpack_encore.exception_listener`
+2) use `$container->getDefinition('webpack_encore.exception_listener')->replaceArgument(...)` to inject the list of available builds in it
+
+---------------------------------------------------------------------------
+
+by tbmatuka at 2019-08-08T23:39:01Z
+
+I made it work like you suggested. I still don't love it, but I like it a lot better than before.
+
+---------------------------------------------------------------------------
+
+by tbmatuka at 2019-08-09T14:59:01Z
+
+@weaverryan should be all done, can you take a look?
+
+---------------------------------------------------------------------------
+
+by tbmatuka at 2019-11-05T10:23:31Z
+
+@weaverryan @Lyrkan this has been waiting for review/merge almost three months now, can we please move it along?
