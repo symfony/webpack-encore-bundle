@@ -14,32 +14,17 @@ use Symfony\Component\Asset\Packages;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\IntegrityDataProviderInterface;
+use Symfony\WebpackEncoreBundle\Asset\NonceNullProvider;
+use Symfony\WebpackEncoreBundle\Asset\NonceProviderInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 
 class TagRendererTest extends TestCase
 {
     public function testRenderScriptTagsWithDefaultAttributes()
     {
-        $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
-        $entrypointLookup->expects($this->once())
-            ->method('getJavaScriptFiles')
-            ->willReturn(['/build/file1.js', '/build/file2.js']);
-        $entrypointCollection = $this->createMock(EntrypointLookupCollection::class);
-        $entrypointCollection->expects($this->once())
-            ->method('getEntrypointLookup')
-            ->withConsecutive(['_default'])
-            ->will($this->onConsecutiveCalls($entrypointLookup));
+        $entrypointCollection = $this->getMockEntryPointLookup();
 
-        $packages = $this->createMock(Packages::class);
-        $packages->expects($this->exactly(2))
-            ->method('getUrl')
-            ->withConsecutive(
-                ['/build/file1.js', 'custom_package'],
-                ['/build/file2.js', 'custom_package']
-            )
-            ->willReturnCallback(function ($path) {
-                return 'http://localhost:8080'.$path;
-            });
+        $packages = $this->getMockPackges();
         $renderer = new TagRenderer($entrypointCollection, $packages, []);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
@@ -69,7 +54,7 @@ class TagRendererTest extends TestCase
         $packages->expects($this->once())
             ->method('getUrl')
             ->willReturnCallback(function ($path) {
-                return 'http://localhost:8080'.$path;
+                return 'http://localhost:8080' . $path;
             });
         $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin' => 'anonymous']);
 
@@ -115,7 +100,7 @@ class TagRendererTest extends TestCase
                 ['/build/file3.js', 'specific_package']
             )
             ->willReturnCallback(function ($path) {
-                return 'http://localhost:8080'.$path;
+                return 'http://localhost:8080' . $path;
             });
         $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin' => 'anonymous']);
 
@@ -157,16 +142,7 @@ class TagRendererTest extends TestCase
             ->withConsecutive(['_default'])
             ->will($this->onConsecutiveCalls($entrypointLookup));
 
-        $packages = $this->createMock(Packages::class);
-        $packages->expects($this->exactly(2))
-            ->method('getUrl')
-            ->withConsecutive(
-                ['/build/file1.js', 'custom_package'],
-                ['/build/file2.js', 'custom_package']
-            )
-            ->willReturnCallback(function ($path) {
-                return 'http://localhost:8080'.$path;
-            });
+        $packages = $this->getMockPackges();
         $renderer = new TagRenderer($entrypointCollection, $packages, ['crossorigin' => 'anonymous']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
@@ -198,7 +174,7 @@ class TagRendererTest extends TestCase
         $packages->expects($this->any())
             ->method('getUrl')
             ->willReturnCallback(function ($path) {
-                return 'http://localhost:8080'.$path;
+                return 'http://localhost:8080' . $path;
             });
         $renderer = new TagRenderer($entrypointCollection, $packages);
 
@@ -210,5 +186,96 @@ class TagRendererTest extends TestCase
         $renderer->reset();
         $this->assertEmpty($renderer->getRenderedScripts());
         $this->assertEmpty($renderer->getRenderedStyles());
+    }
+
+    /**
+     * @dataProvider nonceProvider()
+     */
+    public function testRenderScriptWithNonceNullNonce($nonceProvider): void
+    {
+        $entrypointCollection = $this->getMockEntryPointLookup();
+
+        $packages = $this->getMockPackges();
+
+        $renderer = new TagRenderer($entrypointCollection, $packages, [], $nonceProvider);
+
+        $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
+        $this->assertStringContainsString(
+            '<script src="http://localhost:8080/build/file1.js"></script>',
+            $output
+        );
+
+        $this->assertStringContainsString(
+            '<script src="http://localhost:8080/build/file2.js"></script>',
+            $output
+        );
+
+    }
+
+    public function testRenderScriptWithCustomNonce(): void
+    {
+        $entrypointCollection = $this->getMockEntryPointLookup();
+
+        $packages = $this->getMockPackges();
+
+        $customNonce = (new  class implements NonceProviderInterface {
+            /**
+             * @inheritDoc
+             */
+            public function getNonceValue(): string
+            {
+                return '123456-nonce';
+            }
+        });
+
+        $renderer = new TagRenderer($entrypointCollection, $packages, [], $customNonce);
+
+        $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
+        $this->assertStringContainsString(
+            '<script nonce="123456-nonce" src="http://localhost:8080/build/file1.js"></script>',
+            $output
+        );
+
+        $this->assertStringContainsString(
+            '<script nonce="123456-nonce" src="http://localhost:8080/build/file2.js"></script>',
+            $output
+        );
+
+    }
+
+
+    private function getMockEntryPointLookup()
+    {
+        $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
+        $entrypointLookup->expects($this->once())
+            ->method('getJavaScriptFiles')
+            ->willReturn(['/build/file1.js', '/build/file2.js']);
+        $entrypointCollection = $this->createMock(EntrypointLookupCollection::class);
+        $entrypointCollection->expects($this->once())
+            ->method('getEntrypointLookup')
+            ->withConsecutive(['_default'])
+            ->will($this->onConsecutiveCalls($entrypointLookup));
+        return $entrypointCollection;
+    }
+
+    private function getMockPackges()
+    {
+        $packages = $this->createMock(Packages::class);
+        $packages->expects($this->exactly(2))
+            ->method('getUrl')
+            ->withConsecutive(
+                ['/build/file1.js', 'custom_package'],
+                ['/build/file2.js', 'custom_package']
+            )
+            ->willReturnCallback(function ($path) {
+                return 'http://localhost:8080' . $path;
+            });
+        return $packages;
+    }
+
+    public function nonceProvider(): \Generator
+    {
+        yield [ new NonceNullProvider()];
+        yield [ null ];
     }
 }
