@@ -18,6 +18,8 @@ use Symfony\Contracts\Service\ResetInterface;
  */
 class TagRenderer implements ResetInterface
 {
+    private const NONCE_ATTRIBUTE_NAME = 'nonce';
+
     private $entrypointLookupCollection;
 
     private $packages;
@@ -26,10 +28,13 @@ class TagRenderer implements ResetInterface
 
     private $renderedFiles = [];
 
+    private $nonceProvider;
+    
     public function __construct(
         $entrypointLookupCollection,
         Packages $packages,
-        array $defaultAttributes = []
+        array $defaultAttributes = [],
+        NonceProviderInterface $nonceProvider = null
     ) {
         if ($entrypointLookupCollection instanceof EntrypointLookupInterface) {
             @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), E_USER_DEPRECATED);
@@ -47,7 +52,7 @@ class TagRenderer implements ResetInterface
 
         $this->packages = $packages;
         $this->defaultAttributes = $defaultAttributes;
-
+        $this->nonceProvider = $nonceProvider;
         $this->reset();
     }
 
@@ -67,7 +72,7 @@ class TagRenderer implements ResetInterface
 
             $scriptTags[] = sprintf(
                 '<script %s></script>',
-                $this->convertArrayToAttributes($attributes)
+                $this->convertArrayToAttributes($attributes,'script')
             );
 
             $this->renderedFiles['scripts'][] = $attributes['src'];
@@ -93,7 +98,7 @@ class TagRenderer implements ResetInterface
 
             $scriptTags[] = sprintf(
                 '<link %s>',
-                $this->convertArrayToAttributes($attributes)
+                $this->convertArrayToAttributes($attributes,'link')
             );
 
             $this->renderedFiles['styles'][] = $attributes['href'];
@@ -142,8 +147,12 @@ class TagRenderer implements ResetInterface
         return $this->entrypointLookupCollection->getEntrypointLookup($buildName);
     }
 
-    private function convertArrayToAttributes(array $attributesMap): string
+    private function convertArrayToAttributes(array $attributesMap,string $targetTag=''): string
     {
+        if (\in_array($targetTag,['script','style'],true) && null !== $this->nonceProvider && $this->nonceProvider->getNonceValue() != '') {
+            $attributesMap = array_merge([self::NONCE_ATTRIBUTE_NAME => $this->nonceProvider->getNonceValue()], $attributesMap);
+        }
+        
         return implode(' ', array_map(
             function ($key, $value) {
                 return sprintf('%s="%s"', $key, htmlentities($value));

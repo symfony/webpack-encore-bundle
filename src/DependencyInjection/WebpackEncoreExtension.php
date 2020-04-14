@@ -69,6 +69,8 @@ final class WebpackEncoreExtension extends Extension
 
         $container->getDefinition('webpack_encore.tag_renderer')
             ->replaceArgument(2, $defaultAttributes);
+        
+
 
         if ($config['preload']) {
             if (!class_exists(AddLinkHeaderListener::class)) {
@@ -77,6 +79,21 @@ final class WebpackEncoreExtension extends Extension
         } else {
             $container->removeDefinition('webpack_encore.preload_assets_event_listener');
         }
+
+        if (false !== $config['nonce_enable']) {
+
+            if (empty($config['nonce_provider'])) {
+                throw new \LogicException('If nonce_enable it is true must be provide nonce_provider service class');
+            }
+
+            $serviceId = $config['nonce_provider'];
+            $serviceNonceProvider = new Reference($serviceId);
+
+            $container->getDefinition('webpack_encore.tag_renderer')
+                ->replaceArgument(3, $serviceNonceProvider);
+
+        }
+
     }
 
     private function entrypointFactory(ContainerBuilder $container, string $name, string $path, bool $cacheEnabled, bool $strictMode): Reference
