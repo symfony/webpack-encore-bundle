@@ -10,6 +10,7 @@
 namespace Symfony\WebpackEncoreBundle\Tests\EventListener;
 
 use Symfony\Component\HttpFoundation\Request;
+use Symfony\Component\HttpKernel\Event\ExceptionEvent;
 use Symfony\Component\HttpKernel\Event\GetResponseForExceptionEvent;
 use Symfony\Component\HttpKernel\HttpKernelInterface;
 use PHPUnit\Framework\TestCase;
@@ -39,7 +40,8 @@ class ExceptionListenerTest extends TestCase
 
         $request = new Request();
         $exception = new \Exception();
-        $event = new GetResponseForExceptionEvent(
+        $exceptionClass = class_exists(ExceptionEvent::class) ? ExceptionEvent::class : GetResponseForExceptionEvent::class;
+        $event = new $exceptionClass(
             $this->createMock(HttpKernelInterface::class),
             $request,
             HttpKernelInterface::MASTER_REQUEST,

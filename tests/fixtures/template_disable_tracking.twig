@@ -1,0 +1,6 @@
+{% do encore_disable_file_tracking() %}
+{{ encore_entry_script_tags('my_entry') }}
+{{ encore_entry_link_tags('my_entry') }}
+{{ encore_entry_script_tags('other_entry') }}
+{{ encore_entry_link_tags('other_entry') }}
+{% do encore_enable_file_tracking() %}

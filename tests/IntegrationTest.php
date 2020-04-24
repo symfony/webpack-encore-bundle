@@ -69,6 +69,22 @@ class IntegrationTest extends TestCase
         );
     }
 
+    public function testTwigIntegrationWithTrackingDisabled()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $container = $kernel->getContainer();
+
+        $html = $container->get('twig')->render('@integration_test/template_disable_tracking.twig');
+
+        $this->assertStringContainsStringCount(
+            '/build/file1.js',
+            $html,
+            // 1 time for my_entry, again for other_entry
+            2
+        );
+    }
+
     public function testEntriesAreNotRepeatedWhenAlreadyOutputIntegration()
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
@@ -176,6 +192,23 @@ class IntegrationTest extends TestCase
         // Testing that it doesn't throw an exception is enough
         $this->assertTrue(true);
     }
+
+    private function assertStringContainsStringCount(string $needle, $haystack, int $expectedCount)
+    {
+        $actualCount = substr_count($haystack, $needle);
+
+        $this->assertSame(
+            $expectedCount,
+            $actualCount,
+            sprintf(
+                'Expected to find string "%s" in haystack "%s" "%d" times but only found it "%d" times',
+                $needle,
+                $haystack,
+                $expectedCount,
+                $actualCount
+            )
+        );
+    }
 }
 
 abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
@@ -208,6 +241,9 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
     {
         $container->loadFromExtension('framework', [
             'secret' => 'foo',
+            'router' => [
+                'utf8' => true,
+            ],
             'assets' => [
                 'enabled' => $this->enableAssets,
             ],
@@ -264,9 +300,9 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
     }
 }
 
-if (method_exists(AbstractWebpackEncoreIntegrationTestKernel::class, 'configureRouting')) {
+if (Kernel::VERSION_ID >= 50100) {
     class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel {
-        protected function configureRouting(RoutingConfigurator $routes): void
+        protected function configureRoutes(RoutingConfigurator $routes): void
         {
             $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');
         }

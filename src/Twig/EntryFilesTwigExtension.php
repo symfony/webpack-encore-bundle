@@ -10,6 +10,7 @@
 namespace Symfony\WebpackEncoreBundle\Twig;
 
 use Psr\Container\ContainerInterface;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Twig\Extension\AbstractExtension;
@@ -31,6 +32,8 @@ final class EntryFilesTwigExtension extends AbstractExtension
             new TwigFunction('encore_entry_css_files', [$this, 'getWebpackCssFiles']),
             new TwigFunction('encore_entry_script_tags', [$this, 'renderWebpackScriptTags'], ['is_safe' => ['html']]),
             new TwigFunction('encore_entry_link_tags', [$this, 'renderWebpackLinkTags'], ['is_safe' => ['html']]),
+            new TwigFunction('encore_disable_file_tracking', [$this, 'disableReturnedFileTracking']),
+            new TwigFunction('encore_enable_file_tracking', [$this, 'enableReturnedFileTracking']),
         ];
     }
 
@@ -56,6 +59,27 @@ final class EntryFilesTwigExtension extends AbstractExtension
     {
         return $this->getTagRenderer()
             ->renderWebpackLinkTags($entryName, $packageName, $entrypointName);
+    }
+
+    public function disableReturnedFileTracking(string $entrypointName = '_default')
+    {
+        $this->changeReturnedFileTracking(false, $entrypointName);
+    }
+
+    public function enableReturnedFileTracking(string $entrypointName = '_default')
+    {
+        $this->changeReturnedFileTracking(true, $entrypointName);
+    }
+
+    private function changeReturnedFileTracking(bool $isEnabled, string $entrypointName)
+    {
+        $lookup = $this->getEntrypointLookup($entrypointName);
+
+        if (!$lookup instanceof EntrypointLookup) {
+            throw new \LogicException('In order to use encore_disable_returned_file_tracking/encore_enable_returned_file_tracking, the EntrypointLookupInterface must be an instance of EntrypointLookup.');
+        }
+
+        $lookup->enableReturnedFileTracking($isEnabled);
     }
 
     private function getEntrypointLookup(string $entrypointName): EntrypointLookupInterface

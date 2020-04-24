@@ -87,6 +87,33 @@ EOF;
         );
     }
 
+    public function testGetJavaScriptFilesWithFileTrackingDisabled()
+    {
+        // with file tracking on, grab a few files
+        $this->entrypointLookup->getJavaScriptFiles('my_entry');
+
+        $this->entrypointLookup->enableReturnedFileTracking(false);
+        $this->assertEquals(
+            ['file1.js', 'file3.js'],
+            $this->entrypointLookup->getJavaScriptFiles('other_entry'),
+            'file1.js is returned even though it was also returned above',
+        );
+
+        $this->assertEquals(
+            // file1.js is returned even though it was also returned above
+            ['file1.js', 'file3.js'],
+            $this->entrypointLookup->getJavaScriptFiles('other_entry'),
+            'repeat calls always return all the files'
+        );
+
+        $this->entrypointLookup->enableReturnedFileTracking(true);
+        $this->assertEquals(
+            ['file3.js'],
+            $this->entrypointLookup->getJavaScriptFiles('other_entry'),
+            'file1.js is not returned once tracking is re-enabled'
+        );
+    }
+
     public function testGetCssFiles()
     {
         $this->assertEquals(
