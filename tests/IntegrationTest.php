@@ -29,6 +29,7 @@ use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
+use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 class IntegrationTest extends TestCase
 {
@@ -82,6 +83,33 @@ class IntegrationTest extends TestCase
             $html,
             // 1 time for my_entry, again for other_entry
             2
+        );
+    }
+
+    public function testTwigIntegrationWithSourceFiles()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $container = $kernel->getContainer();
+
+        $html = $container->get('twig')->render('@integration_test/inline_css_template.twig');
+
+        $this->assertStringContainsString(
+            '<h1 style="font-size: 20px;">Hello</h1>',
+            $html
+        );
+        $this->assertStringContainsString(
+            '<h2 style="color: purple;">World!</h2>',
+            $html
+        );
+
+        $this->assertStringContainsString(
+            "alert('Hello file1 JavaScript!')",
+            $html
+        );
+        $this->assertStringContainsString(
+            "alert('Hello file2 JavaScript!')",
+            $html
         );
     }
 
@@ -234,6 +262,7 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
             new FrameworkBundle(),
             new TwigBundle(),
             new WebpackEncoreBundle(),
+            new TwigExtraBundle(),
         ];
     }
 

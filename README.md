@@ -105,21 +105,67 @@ If you want more control, you can use the `encore_entry_js_files()` and
 `encore_entry_css_files()` methods to get the list of files needed, then
 loop and create the `script` and `link` tags manually.
 
-## Rendering Multiple Times in a Request (e.g. to Generate a PDF)
+## Rendering Multiple Templates (e.g. Emails or PDFs)
 
 When you render your script or link tags, the bundle is smart enough
 not to repeat the same JavaScript or CSS file within the same request.
 This prevents you from having duplicate `<link>` or `<script>` tags
-if you render multiple entries that both rely on the same file.
+if you render multiple entries that rely on the same file.
 
-In some cases, however, you may want to render the script & link
-tags for the same entry multiple times in a request. For example,
-if you render multiple Twig templates to create multiple PDF files
-during a single request.
+But if you're purposely rendering multiple templates in the same
+request - e.g. rendering a template for a PDF or to send an email -
+then this can cause problems: the later templates won't include any
+`<link>` or `<script>` tags that were rendered in an earlier template.
 
-In that case, before each render, you'll need to "reset" the internal
-cache so that the bundle re-renders CSS or JS files that it previously
-rendered. For example, in a controller:
+The easiest solution is to render the raw CSS and JavaScript using
+a special function that *always* returns the full source, even for files
+that were already rendered.
+
+This works especially well in emails thanks to the
+[inline_css](https://github.com/twigphp/cssinliner-extra) filter:
+
+```twig
+{% apply inline_css(encore_entry_css_source('my_entry')) %}
+    <div>
+        Hi! The CSS from my_entry will be converted into
+        inline styles on any HTML elements inside.
+    </div>
+{% endapply %}
+```
+
+Or you can just render the source directly.
+
+```twig
+<style>
+    {{ encore_entry_css_source('my_entry')|raw }}
+</style>
+
+<script>
+    {{ encore_entry_js_source('my_entry')|raw }}
+</script>
+```
+
+If you can't use these `encore_entry_*_source` functions, you can instead
+manually disable and enable "file tracking":
+
+```twig
+{# some template that renders a PDF or an email #}
+
+{% do encore_disable_file_tracking() %}
+    {{ encore_entry_link_tags('entry1') }}
+    {{ encore_entry_script_tags('entry1') }}
+{% do encore_enable_file_tracking() %}
+```
+
+With this, *all* JS and CSS files for `entry1` will be rendered and
+this won't affect any other Twig templates rendered in the request.
+
+## Resetting the Entrypoint
+
+If using `encore_disable_file_tracking()` won't work for you for some
+reason, you can also "reset" EncoreBundle's internal cache so that the
+bundle re-renders CSS or JS files that it previously rendered. For
+example, in a controller:
 
 ```php
 // src/Controller/SomeController.php

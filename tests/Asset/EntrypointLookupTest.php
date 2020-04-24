@@ -96,7 +96,7 @@ EOF;
         $this->assertEquals(
             ['file1.js', 'file3.js'],
             $this->entrypointLookup->getJavaScriptFiles('other_entry'),
-            'file1.js is returned even though it was also returned above',
+            'file1.js is returned even though it was also returned above'
         );
 
         $this->assertEquals(

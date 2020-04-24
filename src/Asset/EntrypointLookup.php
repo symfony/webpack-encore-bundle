@@ -84,6 +84,11 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
         $this->trackReturnedFiles = $shouldTrackReturnedFiles;
     }
 
+    public function isReturnedFileTrackingEnabled(): bool
+    {
+        return $this->trackReturnedFiles;
+    }
+
     private function getEntryFiles(string $entryName, string $key): array
     {
         $this->validateEntryName($entryName);
