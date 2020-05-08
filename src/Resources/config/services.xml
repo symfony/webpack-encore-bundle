@@ -28,6 +28,7 @@
                     <argument type="collection">
                         <argument key="webpack_encore.entrypoint_lookup_collection" type="service" id="webpack_encore.entrypoint_lookup_collection" />
                         <argument key="webpack_encore.tag_renderer" type="service" id="webpack_encore.tag_renderer" />
+                        <argument key="webpack_encore.build_file_locator" type="service" id="webpack_encore.build_file_locator" />
                     </argument>
                 </service>
             </argument>
@@ -59,6 +60,10 @@
         <service id="webpack_encore.preload_assets_event_listener" class="Symfony\WebpackEncoreBundle\EventListener\PreLoadAssetsEventListener">
             <tag name="kernel.event_subscriber" />
             <argument type="service" id="webpack_encore.tag_renderer" />
+        </service>
+
+        <service id="webpack_encore.build_file_locator" class="Symfony\WebpackEncoreBundle\Asset\BuildFileLocator">
+            <argument /> <!-- build paths -->
         </service>
     </services>
 </container>

@@ -1,0 +1,12 @@
+{# should not affect encore_entry_css_source() below  #}
+{{ encore_entry_link_tags('my_entry') }}
+{{ encore_entry_script_tags('my_entry') }}
+
+{% apply inline_css(encore_entry_css_source('my_entry')) %}
+<h1>Hello</h1>
+<h2>World!</h2>
+{% endapply %}
+
+<script>
+    {{ encore_entry_js_source('my_entry')|raw }}
+</script>

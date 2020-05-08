@@ -29,6 +29,7 @@ use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
+use Twig\Extra\TwigExtraBundle\TwigExtraBundle;
 
 class IntegrationTest extends TestCase
 {
@@ -66,6 +67,49 @@ class IntegrationTest extends TestCase
         $this->assertStringContainsString(
             '<script src="/build/other4.js"></script>',
             $html2
+        );
+    }
+
+    public function testTwigIntegrationWithTrackingDisabled()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $container = $kernel->getContainer();
+
+        $html = $container->get('twig')->render('@integration_test/template_disable_tracking.twig');
+
+        $this->assertStringContainsStringCount(
+            '/build/file1.js',
+            $html,
+            // 1 time for my_entry, again for other_entry
+            2
+        );
+    }
+
+    public function testTwigIntegrationWithSourceFiles()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $container = $kernel->getContainer();
+
+        $html = $container->get('twig')->render('@integration_test/inline_css_template.twig');
+
+        $this->assertStringContainsString(
+            '<h1 style="font-size: 20px;">Hello</h1>',
+            $html
+        );
+        $this->assertStringContainsString(
+            '<h2 style="color: purple;">World!</h2>',
+            $html
+        );
+
+        $this->assertStringContainsString(
+            "alert('Hello file1 JavaScript!')",
+            $html
+        );
+        $this->assertStringContainsString(
+            "alert('Hello file2 JavaScript!')",
+            $html
         );
     }
 
@@ -176,6 +220,23 @@ class IntegrationTest extends TestCase
         // Testing that it doesn't throw an exception is enough
         $this->assertTrue(true);
     }
+
+    private function assertStringContainsStringCount(string $needle, $haystack, int $expectedCount)
+    {
+        $actualCount = substr_count($haystack, $needle);
+
+        $this->assertSame(
+            $expectedCount,
+            $actualCount,
+            sprintf(
+                'Expected to find string "%s" in haystack "%s" "%d" times but only found it "%d" times',
+                $needle,
+                $haystack,
+                $expectedCount,
+                $actualCount
+            )
+        );
+    }
 }
 
 abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
@@ -201,6 +262,7 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
             new FrameworkBundle(),
             new TwigBundle(),
             new WebpackEncoreBundle(),
+            new TwigExtraBundle(),
         ];
     }
 
@@ -208,6 +270,9 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
     {
         $container->loadFromExtension('framework', [
             'secret' => 'foo',
+            'router' => [
+                'utf8' => true,
+            ],
             'assets' => [
                 'enabled' => $this->enableAssets,
             ],
@@ -264,9 +329,9 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
     }
 }
 
-if (method_exists(AbstractWebpackEncoreIntegrationTestKernel::class, 'configureRouting')) {
+if (Kernel::VERSION_ID >= 50100) {
     class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel {
-        protected function configureRouting(RoutingConfigurator $routes): void
+        protected function configureRoutes(RoutingConfigurator $routes): void
         {
             $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');
         }

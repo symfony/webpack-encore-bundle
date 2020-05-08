@@ -35,10 +35,12 @@ final class WebpackEncoreExtension extends Extension
 
         $factories = [];
         $cacheKeys = [];
+        $buildPaths = [];
 
         if (false !== $config['output_path']) {
             $factories['_default'] = $this->entrypointFactory($container, '_default', $config['output_path'], $config['cache'], $config['strict_mode']);
             $cacheKeys['_default'] = $config['output_path'].'/'.self::ENTRYPOINTS_FILE_NAME;
+            $buildPaths['_default'] = $config['output_path'];
 
             $container->getDefinition('webpack_encore.entrypoint_lookup_collection')
                 ->setArgument(1, '_default');
@@ -47,6 +49,7 @@ final class WebpackEncoreExtension extends Extension
         foreach ($config['builds'] as $name => $path) {
             $factories[$name] = $this->entrypointFactory($container, $name, $path, $config['cache'], $config['strict_mode']);
             $cacheKeys[rawurlencode($name)] = $path.'/'.self::ENTRYPOINTS_FILE_NAME;
+            $buildPaths[$name] = $path;
         }
 
         $container->getDefinition('webpack_encore.exception_listener')
@@ -60,6 +63,9 @@ final class WebpackEncoreExtension extends Extension
         if (false !== $config['output_path']) {
             $container->setAlias(EntrypointLookupInterface::class, new Alias($this->getEntrypointServiceId('_default')));
         }
+
+        $container->getDefinition('webpack_encore.build_file_locator')
+            ->replaceArgument(0, $buildPaths);
 
         $defaultAttributes = [];
 

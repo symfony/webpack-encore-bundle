@@ -33,6 +33,8 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
 
     private $strictMode;
 
+    private $trackReturnedFiles = true;
+
     public function __construct(string $entrypointJsonPath, CacheItemPoolInterface $cache = null, string $cacheKey = null, bool $strictMode = true)
     {
         $this->entrypointJsonPath = $entrypointJsonPath;
@@ -70,6 +72,23 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
         $this->returnedFiles = [];
     }
 
+    /**
+     * Can be used to disable file tracking.
+     *
+     * When file tracking is disabled, *all* CSS and JS files will be
+     * returned from getJavaScriptFiles() and getCssFiles() including
+     * those that were previously returned.
+     */
+    public function enableReturnedFileTracking(bool $shouldTrackReturnedFiles)
+    {
+        $this->trackReturnedFiles = $shouldTrackReturnedFiles;
+    }
+
+    public function isReturnedFileTrackingEnabled(): bool
+    {
+        return $this->trackReturnedFiles;
+    }
+
     private function getEntryFiles(string $entryName, string $key): array
     {
         $this->validateEntryName($entryName);
@@ -81,8 +100,14 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
             return [];
         }
 
-        // make sure to not return the same file multiple times
         $entryFiles = $entryData[$key];
+
+        // if tracking is disabled, return everything & do not mutate returnedFiles list
+        if (!$this->trackReturnedFiles) {
+            return $entryFiles;
+        }
+
+        // make sure to not return the same file multiple times
         $newFiles = array_values(array_diff($entryFiles, $this->returnedFiles));
         $this->returnedFiles = array_merge($this->returnedFiles, $newFiles);
 

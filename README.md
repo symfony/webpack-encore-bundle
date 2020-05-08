@@ -101,46 +101,27 @@ and `build/entry1.js`, then `encore_entry_script_tags()` is equivalent to:
 <script src="{{ asset('build/entry1.js') }}"></script>
 ```
 
-If you want more control, you can use the `encore_entry_js_files()` and
-`encore_entry_css_files()` methods to get the list of files needed, then
-loop and create the `script` and `link` tags manually.
+## Twig Function Reference
 
-## Rendering Multiple Times in a Request (e.g. to Generate a PDF)
+* `encore_entry_script_tags('entryName')` - renders all `<script>` tags for
+  the entry.
+* `encore_entry_link_tags('entryName')` - renders all `<link` tags for the
+  entry.
+* `encore_entry_js_files('entryName')` - returns an array of all JavaScript
+  files needed for the entry.
+* `encore_entry_css_files('entryName')` - returns an array of all CSS
+  files needed for the entry.
+* `encore_entry_js_source('entryName')` - returns the full source from all
+  the JavaScript files needed for this entry.
+* `encore_entry_css_source('entryName')` - returns the full source from all
+  the CSS files needed for this entry.
+* `encore_disable_file_tracking()` - tells Twig to stop "file tracking" and
+  render *all* CSS/JS files, even if they were previously rendered.
+* `encore_enable_file_tracking()` - tells Twig to re-enable "file tracking" and
+  render *only* CSS/JS files tht were not previously rendered.
 
-When you render your script or link tags, the bundle is smart enough
-not to repeat the same JavaScript or CSS file within the same request.
-This prevents you from having duplicate `<link>` or `<script>` tags
-if you render multiple entries that both rely on the same file.
-
-In some cases, however, you may want to render the script & link
-tags for the same entry multiple times in a request. For example,
-if you render multiple Twig templates to create multiple PDF files
-during a single request.
-
-In that case, before each render, you'll need to "reset" the internal
-cache so that the bundle re-renders CSS or JS files that it previously
-rendered. For example, in a controller:
-
-```php
-// src/Controller/SomeController.php
-
-use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
-
-class SomeController
-{
-    public function index(EntrypointLookupInterface $entrypointLookup)
-    {
-        $entrypointLookup->reset();
-        // render a template
-
-        $entrypointLookup->reset();
-        // render another template
-
-        // ...
-    }
-}
-```
-
-If you have multiple builds, you can also autowire
-`Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface`
-and use it to get the `EntrypointLookupInterface` object for any build.
+You can also manually "reset" file tracking in PHP by autowiring
+the `Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface` service
+and calling `$entrypointLookup->reset()`. If you're using multiple builds,
+you can autowire `Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface`
+and then ask for your the correct `EntrypointLookupInterface`.
