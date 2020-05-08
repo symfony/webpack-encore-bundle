@@ -101,92 +101,27 @@ and `build/entry1.js`, then `encore_entry_script_tags()` is equivalent to:
 <script src="{{ asset('build/entry1.js') }}"></script>
 ```
 
-If you want more control, you can use the `encore_entry_js_files()` and
-`encore_entry_css_files()` methods to get the list of files needed, then
-loop and create the `script` and `link` tags manually.
+## Twig Function Reference
 
-## Rendering Multiple Templates (e.g. Emails or PDFs)
+* `encore_entry_script_tags('entryName')` - renders all `<script>` tags for
+  the entry.
+* `encore_entry_link_tags('entryName')` - renders all `<link` tags for the
+  entry.
+* `encore_entry_js_files('entryName')` - returns an array of all JavaScript
+  files needed for the entry.
+* `encore_entry_css_files('entryName')` - returns an array of all CSS
+  files needed for the entry.
+* `encore_entry_js_source('entryName')` - returns the full source from all
+  the JavaScript files needed for this entry.
+* `encore_entry_css_source('entryName')` - returns the full source from all
+  the CSS files needed for this entry.
+* `encore_disable_file_tracking()` - tells Twig to stop "file tracking" and
+  render *all* CSS/JS files, even if they were previously rendered.
+* `encore_enable_file_tracking()` - tells Twig to re-enable "file tracking" and
+  render *only* CSS/JS files tht were not previously rendered.
 
-When you render your script or link tags, the bundle is smart enough
-not to repeat the same JavaScript or CSS file within the same request.
-This prevents you from having duplicate `<link>` or `<script>` tags
-if you render multiple entries that rely on the same file.
-
-But if you're purposely rendering multiple templates in the same
-request - e.g. rendering a template for a PDF or to send an email -
-then this can cause problems: the later templates won't include any
-`<link>` or `<script>` tags that were rendered in an earlier template.
-
-The easiest solution is to render the raw CSS and JavaScript using
-a special function that *always* returns the full source, even for files
-that were already rendered.
-
-This works especially well in emails thanks to the
-[inline_css](https://github.com/twigphp/cssinliner-extra) filter:
-
-```twig
-{% apply inline_css(encore_entry_css_source('my_entry')) %}
-    <div>
-        Hi! The CSS from my_entry will be converted into
-        inline styles on any HTML elements inside.
-    </div>
-{% endapply %}
-```
-
-Or you can just render the source directly.
-
-```twig
-<style>
-    {{ encore_entry_css_source('my_entry')|raw }}
-</style>
-
-<script>
-    {{ encore_entry_js_source('my_entry')|raw }}
-</script>
-```
-
-If you can't use these `encore_entry_*_source` functions, you can instead
-manually disable and enable "file tracking":
-
-```twig
-{# some template that renders a PDF or an email #}
-
-{% do encore_disable_file_tracking() %}
-    {{ encore_entry_link_tags('entry1') }}
-    {{ encore_entry_script_tags('entry1') }}
-{% do encore_enable_file_tracking() %}
-```
-
-With this, *all* JS and CSS files for `entry1` will be rendered and
-this won't affect any other Twig templates rendered in the request.
-
-## Resetting the Entrypoint
-
-If using `encore_disable_file_tracking()` won't work for you for some
-reason, you can also "reset" EncoreBundle's internal cache so that the
-bundle re-renders CSS or JS files that it previously rendered. For
-example, in a controller:
-
-```php
-// src/Controller/SomeController.php
-
-use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
-
-class SomeController
-{
-    public function index(EntrypointLookupInterface $entrypointLookup)
-    {
-        $entrypointLookup->reset();
-        // render a template
-
-        $entrypointLookup->reset();
-        // render another template
-
-        // ...
-    }
-}
-```
-
-If you have multiple builds, you can also autowire
-`Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface`
-and use it to get the `EntrypointLookupInterface` object for any build.
+You can also manually "reset" file tracking in PHP by autowiring
+the `Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface` service
+and calling `$entrypointLookup->reset()`. If you're using multiple builds,
+you can autowire `Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface`
+and then ask for your the correct `EntrypointLookupInterface`.
