@@ -36,9 +36,9 @@ class IntegrationTest extends TestCase
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
-        $container = $kernel->getContainer();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
 
-        $html1 = $container->get('twig')->render('@integration_test/template.twig');
+        $html1 = $twig->render('@integration_test/template.twig');
         $this->assertStringContainsString(
             '<script src="/build/file1.js" integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc"></script>',
             $html1
@@ -58,7 +58,7 @@ class IntegrationTest extends TestCase
             $html1
         );
 
-        $html2 = $container->get('twig')->render('@integration_test/manual_template.twig');
+        $html2 = $twig->render('@integration_test/manual_template.twig');
         $this->assertStringContainsString(
             '<script src="/build/file3.js"></script>',
             $html2
@@ -73,10 +73,10 @@ class IntegrationTest extends TestCase
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
-        $container = $kernel->getContainer();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
 
-        $html1 = $container->get('twig')->render('@integration_test/template.twig');
-        $html2 = $container->get('twig')->render('@integration_test/manual_template.twig');
+        $html1 = $twig->render('@integration_test/template.twig');
+        $html2 = $twig->render('@integration_test/manual_template.twig');
         $this->assertStringContainsString(
             '<script src="/build/file3.js"></script>',
             $html2
@@ -102,7 +102,7 @@ class IntegrationTest extends TestCase
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
-        $container = $kernel->getContainer();
+        $container = $this->getContainerFromBootedKernel($kernel);
 
         $cacheWarmer = $container->get(WebpackEncoreCacheWarmerTester::class);
 
@@ -124,8 +124,8 @@ class IntegrationTest extends TestCase
         $kernel->outputPath = 'missing_build';
         $kernel->builds = ['different_build' => 'missing_build'];
         $kernel->boot();
-        $container = $kernel->getContainer();
-        $container->get('twig')->render('@integration_test/template.twig');
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+        $twig->render('@integration_test/template.twig');
     }
 
     public function testDisabledStrictMode_ignoresMissingBuild()
@@ -135,8 +135,8 @@ class IntegrationTest extends TestCase
         $kernel->strictMode = false;
         $kernel->builds = ['different_build' => 'missing_build'];
         $kernel->boot();
-        $container = $kernel->getContainer();
-        $html = $container->get('twig')->render('@integration_test/template.twig');
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+        $html = $twig->render('@integration_test/template.twig');
         self::assertSame('', trim($html));
     }
 
@@ -144,7 +144,7 @@ class IntegrationTest extends TestCase
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
-        $container = $kernel->getContainer();
+        $container = $this->getContainerFromBootedKernel($kernel);
         $this->assertInstanceOf(WebpackEncoreAutowireTestService::class, $container->get(WebpackEncoreAutowireTestService::class));
     }
 
@@ -152,7 +152,7 @@ class IntegrationTest extends TestCase
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
-        $container = $kernel->getContainer();
+        $container = $this->getContainerFromBootedKernel($kernel);
 
         /** @var TagRenderer $tagRenderer */
         $tagRenderer = $container->get('public.webpack_encore.tag_renderer');
@@ -168,13 +168,33 @@ class IntegrationTest extends TestCase
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
-        $container = $kernel->getContainer();
+        $container = $this->getContainerFromBootedKernel($kernel);
 
         $container->get('public.webpack_encore.entrypoint_lookup_collection')
             ->getEntrypointLookup();
 
         // Testing that it doesn't throw an exception is enough
         $this->assertTrue(true);
+    }
+
+    private function getContainerFromBootedKernel(WebpackEncoreIntegrationTestKernel $kernel)
+    {
+        if ($kernel::VERSION_ID >= 40100) {
+            return $kernel->getContainer()->get('test.service_container');
+        }
+
+        return $kernel->getContainer();
+    }
+
+    private function getTwigEnvironmentFromBootedKernel(WebpackEncoreIntegrationTestKernel $kernel)
+    {
+        $container = $this->getContainerFromBootedKernel($kernel);
+
+        if ($container->has(\Twig\Environment::class)) {
+            return $container->get(\Twig\Environment::class);
+        }
+
+        return $container->get('twig');
     }
 }
 
@@ -206,12 +226,19 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
 
     protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)
     {
-        $container->loadFromExtension('framework', [
+        $frameworkConfig = [
             'secret' => 'foo',
             'assets' => [
                 'enabled' => $this->enableAssets,
             ],
-        ]);
+            'test' => true,
+        ];
+        if (AbstractWebpackEncoreIntegrationTestKernel::VERSION_ID >= 50100) {
+            $frameworkConfig['router'] = [
+                'utf8' => true,
+            ];
+        }
+        $container->loadFromExtension('framework', $frameworkConfig);
 
         $container->loadFromExtension('twig', [
             'paths' => [
@@ -238,10 +265,10 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
             ->setPublic(true);
 
         $container->setAlias(new Alias('public.webpack_encore.tag_renderer', true), 'webpack_encore.tag_renderer');
-        $container->getAlias('public.webpack_encore.tag_renderer')->setPrivate(false);
+        $container->getAlias('public.webpack_encore.tag_renderer')->setPublic(true);
 
         $container->setAlias(new Alias('public.webpack_encore.entrypoint_lookup_collection', true), 'webpack_encore.entrypoint_lookup_collection');
-        $container->getAlias('public.webpack_encore.entrypoint_lookup_collection')->setPrivate(false);
+        $container->getAlias('public.webpack_encore.entrypoint_lookup_collection')->setPublic(true);
 
         // avoid logging request logs
         $container->register('logger', Logger::class)
@@ -264,11 +291,11 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
     }
 }
 
-if (method_exists(AbstractWebpackEncoreIntegrationTestKernel::class, 'configureRouting')) {
+if (AbstractWebpackEncoreIntegrationTestKernel::VERSION_ID >= 50100) {
     class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel {
         protected function configureRouting(RoutingConfigurator $routes): void
         {
-            $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');
+            $routes->add('/foo', 'kernel::renderFoo');
         }
     }
 } else {

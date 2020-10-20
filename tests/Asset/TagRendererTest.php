@@ -13,8 +13,8 @@ use PHPUnit\Framework\TestCase;
 use Symfony\Component\Asset\Packages;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
-use Symfony\WebpackEncoreBundle\Asset\IntegrityDataProviderInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
+use Symfony\WebpackEncoreBundle\Tests\TestEntrypointLookupIntegrityDataProviderInterface;
 
 class TagRendererTest extends TestCase
 {
@@ -138,10 +138,7 @@ class TagRendererTest extends TestCase
 
     public function testRenderScriptTagsWithHashes()
     {
-        $entrypointLookup = $this->createMock([
-            EntrypointLookupInterface::class,
-            IntegrityDataProviderInterface::class,
-        ]);
+        $entrypointLookup = $this->createMock(TestEntrypointLookupIntegrityDataProviderInterface::class);
         $entrypointLookup->expects($this->once())
             ->method('getJavaScriptFiles')
             ->willReturn(['/build/file1.js', '/build/file2.js']);
