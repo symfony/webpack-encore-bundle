@@ -1,0 +1,45 @@
+---------------------------------------------------------------------------
+
+by jmsche at 2020-10-20T08:34:44Z
+
+So, the tests pass, but Travis fails because of this deprecation:
+
+> Since symfony/twig-bundle 5.2: Accessing the "twig" service directly from the container is deprecated, use dependency injection instead.
+
+However I can't find a way to get Twig Environment properly from the container, any idea about this?
+
+---------------------------------------------------------------------------
+
+by Kocal at 2020-10-20T08:37:12Z
+
+You can inject `\Twig\Environment` in your constructor.
+
+---------------------------------------------------------------------------
+
+by maxhelias at 2020-10-20T08:53:07Z
+
+@Kocal Not so easy for testing
+
+@jmsche I'm not sure, but take a look at the class `Symfony\Bundle\FrameworkBundle\Test\KernelTestCase` and the service `test.service_container`. It might take a little work but I think it's a good lead.
+
+---------------------------------------------------------------------------
+
+by Kocal at 2020-10-20T08:54:25Z
+
+@maxhelias yes that's not really easy in fact, I'm already helping @jmsche on Symfony Slack and I think we will use the `test.service_container`.
+
+---------------------------------------------------------------------------
+
+by jmsche at 2020-10-20T10:29:18Z
+
+Finally Travis is green :)
+
+Many thanks to @Kocal who helped me a lot :)
+
+---------------------------------------------------------------------------
+
+by jmsche at 2020-10-27T13:00:34Z
+
+Updated PR by renaming test interface & fixing symfony/flex branch name in Travis config.
+
+Travis is green again! :)
