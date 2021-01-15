@@ -26,9 +26,9 @@ webpack_encore:
     # output_path: false
 
     # Set attributes that will be rendered on all script and link tags
-    # script_attributes:
-    #     defer: true
-    #     referrerpolicy: origin
+    script_attributes:
+        defer: true
+        # referrerpolicy: origin
     # link_attributes:
     #     referrerpolicy: origin
     
