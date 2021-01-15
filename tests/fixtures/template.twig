@@ -1,4 +1,6 @@
-{{ encore_entry_script_tags('my_entry') }}
+{{ encore_entry_script_tags('my_entry', attributes={
+    defer: true
+}) }}
 {{ encore_entry_link_tags('my_entry') }}
 {{ encore_entry_script_tags('third_entry', null, 'different_build') }}
 {{ encore_entry_link_tags('third_entry', null, 'different_build') }}

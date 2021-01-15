@@ -11,7 +11,9 @@ namespace Symfony\WebpackEncoreBundle\Asset;
 
 use Symfony\Component\Asset\Packages;
 use Symfony\Component\DependencyInjection\ServiceLocator;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\ResetInterface;
+use Symfony\WebpackEncoreBundle\Event\RenderAssetTagEvent;
 
 /**
  * @final
@@ -19,17 +21,21 @@ use Symfony\Contracts\Service\ResetInterface;
 class TagRenderer implements ResetInterface
 {
     private $entrypointLookupCollection;
-
     private $packages;
-
     private $defaultAttributes;
+    private $defaultScriptAttributes;
+    private $defaultLinkAttributes;
+    private $eventDispatcher;
 
     private $renderedFiles = [];
 
     public function __construct(
         $entrypointLookupCollection,
         Packages $packages,
-        array $defaultAttributes = []
+        array $defaultAttributes = [],
+        array $defaultScriptAttributes = [],
+        array $defaultLinkAttributes = [],
+        EventDispatcherInterface $eventDispatcher = null
     ) {
         if ($entrypointLookupCollection instanceof EntrypointLookupInterface) {
             @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), E_USER_DEPRECATED);
@@ -47,23 +53,38 @@ class TagRenderer implements ResetInterface
 
         $this->packages = $packages;
         $this->defaultAttributes = $defaultAttributes;
+        $this->defaultScriptAttributes = $defaultScriptAttributes;
+        $this->defaultLinkAttributes = $defaultLinkAttributes;
+        $this->eventDispatcher = $eventDispatcher;
 
         $this->reset();
     }
 
-    public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
+    public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = null, array $extraAttributes = []): string
     {
+        $entrypointName = $entrypointName ?: '_default';
         $scriptTags = [];
         $entryPointLookup = $this->getEntrypointLookup($entrypointName);
         $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
 
         foreach ($entryPointLookup->getJavaScriptFiles($entryName) as $filename) {
-            $attributes = $this->defaultAttributes;
+            $attributes = [];
             $attributes['src'] = $this->getAssetPath($filename, $packageName);
+            $attributes = array_merge($attributes, $this->defaultAttributes, $this->defaultScriptAttributes, $extraAttributes);
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
             }
+
+            $event = new RenderAssetTagEvent(
+                RenderAssetTagEvent::TYPE_SCRIPT,
+                $attributes['src'],
+                $attributes
+            );
+            if (null !== $this->eventDispatcher) {
+                $event = $this->eventDispatcher->dispatch($event);
+            }
+            $attributes = $event->getAttributes();
 
             $scriptTags[] = sprintf(
                 '<script %s></script>',
@@ -76,20 +97,32 @@ class TagRenderer implements ResetInterface
         return implode('', $scriptTags);
     }
 
-    public function renderWebpackLinkTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
+    public function renderWebpackLinkTags(string $entryName, string $packageName = null, string $entrypointName = null, array $extraAttributes = []): string
     {
+        $entrypointName = $entrypointName ?: '_default';
         $scriptTags = [];
         $entryPointLookup = $this->getEntrypointLookup($entrypointName);
         $integrityHashes = ($entryPointLookup instanceof IntegrityDataProviderInterface) ? $entryPointLookup->getIntegrityData() : [];
 
         foreach ($entryPointLookup->getCssFiles($entryName) as $filename) {
-            $attributes = $this->defaultAttributes;
+            $attributes = [];
             $attributes['rel'] = 'stylesheet';
             $attributes['href'] = $this->getAssetPath($filename, $packageName);
+            $attributes = array_merge($attributes, $this->defaultAttributes, $this->defaultLinkAttributes, $extraAttributes);
 
             if (isset($integrityHashes[$filename])) {
                 $attributes['integrity'] = $integrityHashes[$filename];
             }
+
+            $event = new RenderAssetTagEvent(
+                RenderAssetTagEvent::TYPE_LINK,
+                $attributes['href'],
+                $attributes
+            );
+            if (null !== $this->eventDispatcher) {
+                $this->eventDispatcher->dispatch($event);
+            }
+            $attributes = $event->getAttributes();
 
             $scriptTags[] = sprintf(
                 '<link %s>',
@@ -146,6 +179,10 @@ class TagRenderer implements ResetInterface
     {
         return implode(' ', array_map(
             function ($key, $value) {
+                // allows for things like defer: true to only render "defer"
+                if ($value === true) {
+                    return $key;
+                }
                 return sprintf('%s="%s"', $key, htmlentities($value));
             },
             array_keys($attributesMap),

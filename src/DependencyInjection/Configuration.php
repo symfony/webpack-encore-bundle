@@ -55,7 +55,7 @@ final class Configuration implements ConfigurationInterface
                     ->useAttributeAsKey('name')
                     ->normalizeKeys(false)
                     ->scalarPrototype()
-                    ->validate()
+                        ->validate()
                         ->always(function ($values) {
                             if (isset($values['_default'])) {
                                 throw new InvalidDefinitionException("Key '_default' can't be used as build name.");
@@ -63,7 +63,22 @@ final class Configuration implements ConfigurationInterface
 
                             return $values;
                         })
+                        ->end()
                     ->end()
+                ->end()
+                ->arrayNode('script_attributes')
+                    ->info('Key/value pair of attributes to render on all script tags')
+                    ->example('{ defer: true, referrerpolicy: "origin" }')
+                    ->useAttributeAsKey('name')
+                    ->normalizeKeys(false)
+                    ->scalarPrototype()->end()
+                ->end()
+                ->arrayNode('link_attributes')
+                    ->info('Key/value pair of attributes to render on all CSS link tags')
+                    ->example('{ referrerpolicy: "origin" }')
+                    ->useAttributeAsKey('name')
+                    ->normalizeKeys(false)
+                    ->scalarPrototype()->end()
                 ->end()
             ->end()
         ;

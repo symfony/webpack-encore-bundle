@@ -35,12 +35,13 @@ class IntegrationTest extends TestCase
     public function testTwigIntegration()
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->scriptAttributes = ['referrerpolicy' => 'origin'];
         $kernel->boot();
         $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
 
         $html1 = $twig->render('@integration_test/template.twig');
         $this->assertStringContainsString(
-            '<script src="/build/file1.js" integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc"></script>',
+            '<script src="/build/file1.js" referrerpolicy="origin" defer integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc"></script>',
             $html1
         );
         $this->assertStringContainsString(
@@ -49,7 +50,7 @@ class IntegrationTest extends TestCase
             $html1
         );
         $this->assertStringContainsString(
-            '<script src="/build/other3.js"></script>',
+            '<script src="/build/other3.js" referrerpolicy="origin"></script>',
             $html1
         );
         $this->assertStringContainsString(
@@ -118,7 +119,7 @@ class IntegrationTest extends TestCase
     public function testEnabledStrictMode_throwsException_ifBuildMissing()
     {
         $this->expectException(\Twig\Error\RuntimeError::class);
-        $this->expectExceptionMessageRegExp('/Could not find the entrypoints file/');
+        $this->expectExceptionMessage('Could not find the entrypoints file from Webpack: the file "missing_build/entrypoints.json" does not exist.');
 
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->outputPath = 'missing_build';
@@ -208,6 +209,7 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
     public $builds = [
         'different_build' => __DIR__.'/fixtures/different_build',
     ];
+    public $scriptAttributes = [];
 
     public function __construct(bool $enableAssets)
     {
@@ -255,6 +257,7 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
             'preload' => true,
             'builds' => $this->builds,
             'strict_mode' => $this->strictMode,
+            'script_attributes' => $this->scriptAttributes,
         ]);
 
         $container->register(WebpackEncoreCacheWarmerTester::class)
