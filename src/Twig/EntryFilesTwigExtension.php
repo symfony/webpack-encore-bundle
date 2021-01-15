@@ -46,16 +46,16 @@ final class EntryFilesTwigExtension extends AbstractExtension
             ->getCssFiles($entryName);
     }
 
-    public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
+    public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default', array $attributes = []): string
     {
         return $this->getTagRenderer()
-            ->renderWebpackScriptTags($entryName, $packageName, $entrypointName);
+            ->renderWebpackScriptTags($entryName, $packageName, $entrypointName, $attributes);
     }
 
-    public function renderWebpackLinkTags(string $entryName, string $packageName = null, string $entrypointName = '_default'): string
+    public function renderWebpackLinkTags(string $entryName, string $packageName = null, string $entrypointName = '_default', array $attributes = []): string
     {
         return $this->getTagRenderer()
-            ->renderWebpackLinkTags($entryName, $packageName, $entrypointName);
+            ->renderWebpackLinkTags($entryName, $packageName, $entrypointName, $attributes);
     }
 
     private function getEntrypointLookup(string $entrypointName): EntrypointLookupInterface

@@ -20,7 +20,7 @@ matrix:
           env: deps=low
         - php: 7.4
           env: SYMFONY_PHPUNIT_VERSION=9.4
-        - php: nightly
+        - php: 8.0
           env: SYMFONY_PHPUNIT_VERSION=9.4
 
 before_install:

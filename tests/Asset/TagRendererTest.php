@@ -11,9 +11,11 @@ namespace Symfony\WebpackEncoreBundle\Tests\Asset;
 
 use PHPUnit\Framework\TestCase;
 use Symfony\Component\Asset\Packages;
+use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
+use Symfony\WebpackEncoreBundle\Event\RenderAssetTagEvent;
 use Symfony\WebpackEncoreBundle\Tests\TestEntrypointLookupIntegrityDataProviderInterface;
 
 class TagRendererTest extends TestCase
@@ -40,15 +42,79 @@ class TagRendererTest extends TestCase
             ->willReturnCallback(function ($path) {
                 return 'http://localhost:8080'.$path;
             });
-        $renderer = new TagRenderer($entrypointCollection, $packages, []);
+        $renderer = new TagRenderer($entrypointCollection, $packages, ['defer' => true]);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertStringContainsString(
-            '<script src="http://localhost:8080/build/file1.js"></script>',
+            '<script src="http://localhost:8080/build/file1.js" defer></script>',
             $output
         );
         $this->assertStringContainsString(
-            '<script src="http://localhost:8080/build/file2.js"></script>',
+            '<script src="http://localhost:8080/build/file2.js" defer></script>',
+            $output
+        );
+    }
+
+    public function testRenderScriptTagsWithExtraAttributes()
+    {
+        $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
+        $entrypointLookup->expects($this->once())
+            ->method('getJavaScriptFiles')
+            ->willReturn(['/build/file1.js']);
+        $entrypointCollection = $this->createMock(EntrypointLookupCollection::class);
+        $entrypointCollection->expects($this->once())
+            ->method('getEntrypointLookup')
+            ->willReturn($entrypointLookup);
+
+        $packages = $this->createMock(Packages::class);
+        $packages->expects($this->exactly(1))
+            ->method('getUrl')
+            ->willReturn('http://localhost:8080/build/file1.js');
+        $renderer = new TagRenderer($entrypointCollection, $packages, [
+            'defer' => true,
+            'nonce' => 'abc123'
+        ], ['referrerpolicy' => 'origin']);
+
+        $output = $renderer->renderWebpackScriptTags('my_entry', null, null, [
+            // override the attribute
+            'nonce' => '12345',
+        ]);
+        $this->assertStringContainsString(
+            '<script src="http://localhost:8080/build/file1.js" defer nonce="12345" referrerpolicy="origin"></script>',
+            $output
+        );
+    }
+
+    public function testRenderScriptTagsDispatchesAnEvent()
+    {
+        $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
+        $entrypointLookup->expects($this->once())
+            ->method('getJavaScriptFiles')
+            ->willReturn(['/build/file1.js']);
+        $entrypointCollection = $this->createMock(EntrypointLookupCollection::class);
+        $entrypointCollection->expects($this->once())
+            ->method('getEntrypointLookup')
+            ->willReturn($entrypointLookup);
+
+        $packages = $this->createMock(Packages::class);
+        $packages->expects($this->exactly(1))
+            ->method('getUrl')
+            ->willReturn('http://localhost:8080/build/file1.js');
+
+        $event = new RenderAssetTagEvent(RenderAssetTagEvent::TYPE_SCRIPT, 'http://foo', [
+            'src' => 'http://localhost:8080/build/file1.js',
+            'nonce' => 'some_nonce_here',
+        ]);
+        $dispatcher = $this->createMock(EventDispatcherInterface::class);
+        $dispatcher->expects($this->once())
+            ->method('dispatch')
+            ->willReturn($event);
+
+        $renderer = new TagRenderer($entrypointCollection, $packages, [], [], [], $dispatcher);
+
+        $output = $renderer->renderWebpackScriptTags('my_entry');
+        $this->assertStringContainsString(
+            '<script src="http://localhost:8080/build/file1.js" nonce="some_nonce_here"></script>',
             $output
         );
     }
@@ -75,7 +141,7 @@ class TagRendererTest extends TestCase
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertStringContainsString(
-            '<script crossorigin="anonymous" src="http://localhost:8080/build/file&lt;&quot;bad_chars.js"></script>',
+            '<script src="http://localhost:8080/build/file&lt;&quot;bad_chars.js" crossorigin="anonymous"></script>',
             $output
         );
     }
@@ -121,17 +187,17 @@ class TagRendererTest extends TestCase
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertStringContainsString(
-            '<script crossorigin="anonymous" src="http://localhost:8080/build/file1.js"></script>',
+            '<script src="http://localhost:8080/build/file1.js" crossorigin="anonymous"></script>',
             $output
         );
         $output = $renderer->renderWebpackScriptTags('my_entry', null, 'second');
         $this->assertStringContainsString(
-            '<script crossorigin="anonymous" src="http://localhost:8080/build/file2.js"></script>',
+            '<script src="http://localhost:8080/build/file2.js" crossorigin="anonymous"></script>',
             $output
         );
         $output = $renderer->renderWebpackScriptTags('my_entry', 'specific_package', 'third');
         $this->assertStringContainsString(
-            '<script crossorigin="anonymous" src="http://localhost:8080/build/file3.js"></script>',
+            '<script src="http://localhost:8080/build/file3.js" crossorigin="anonymous"></script>',
             $output
         );
     }
@@ -168,11 +234,11 @@ class TagRendererTest extends TestCase
 
         $output = $renderer->renderWebpackScriptTags('my_entry', 'custom_package');
         $this->assertStringContainsString(
-            '<script crossorigin="anonymous" src="http://localhost:8080/build/file1.js" integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc"></script>',
+            '<script src="http://localhost:8080/build/file1.js" crossorigin="anonymous" integrity="sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc"></script>',
             $output
         );
         $this->assertStringContainsString(
-            '<script crossorigin="anonymous" src="http://localhost:8080/build/file2.js" integrity="sha384-ymG7OyjISWrOpH9jsGvajKMDEOP/mKJq8bHC0XdjQA6P8sg2nu+2RLQxcNNwE/3J"></script>',
+            '<script src="http://localhost:8080/build/file2.js" crossorigin="anonymous" integrity="sha384-ymG7OyjISWrOpH9jsGvajKMDEOP/mKJq8bHC0XdjQA6P8sg2nu+2RLQxcNNwE/3J"></script>',
             $output
         );
     }

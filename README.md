@@ -24,6 +24,13 @@ webpack_encore:
     output_path: '%kernel.project_dir%/public/build'
     # If multiple builds are defined (as shown below), you can disable the default build:
     # output_path: false
+
+    # Set attributes that will be rendered on all script and link tags
+    # script_attributes:
+    #     defer: true
+    #     referrerpolicy: origin
+    # link_attributes:
+    #     referrerpolicy: origin
     
     # if using Encore.enableIntegrityHashes() and need the crossorigin attribute (default: false, or use 'anonymous' or 'use-credentials')
     # crossorigin: 'anonymous'
@@ -84,6 +91,13 @@ For example, to render all of the `script` and `link` tags for a specific
     {{ parent() }}
 
     {{ encore_entry_script_tags('entry1') }}
+
+    {# or render a custom attribute #}
+    {#
+    {{ encore_entry_script_tags('entry1', attributes={
+        defer: true
+    }) }}
+    #}
 {% endblock %}
 
 {% block stylesheets %}
@@ -144,3 +158,44 @@ class SomeController
 If you have multiple builds, you can also autowire
 `Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface`
 and use it to get the `EntrypointLookupInterface` object for any build.
+
+## Custom Attributes on script and link Tags
+
+Custom attributes can be added to rendered `script` or `link` in 3
+different ways:
+
+1. Via global config (`script_attributes` and `link_attributes`) - see the
+   config example above.
+
+1. When rendering in Twig - see the `attributes` option in the docs above.
+
+1. By listening to the `Symfony\WebpackEncoreBundle\Event\RenderAssetTagEvent`
+   event. For example:
+
+```php
+<?php
+
+namespace App\EventSubscriber;
+
+use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\WebpackEncoreBundle\Event\RenderAssetTagEvent;
+
+class ScriptNonceSubscriber implements EventSubscriberInterface
+{
+    public static function getSubscribedEvents()
+    {
+        return [
+            RenderAssetTagEvent::class => 'onRenderAssetTag'
+        ];
+    }
+
+    public function onRenderAssetTag(RenderAssetTagEvent $event)
+    {
+        if ($event->isScriptTag()) {
+            $event->setAttribute('nonce', 'lookup nonce');
+        }
+    }
+}
+```
+
+Ok, have fun!
