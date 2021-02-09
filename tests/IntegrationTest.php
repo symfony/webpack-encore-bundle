@@ -28,6 +28,7 @@ use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollectionInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer;
+use Symfony\WebpackEncoreBundle\Twig\StimulusTwigExtension;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
 
 class IntegrationTest extends TestCase
@@ -176,6 +177,84 @@ class IntegrationTest extends TestCase
 
         // Testing that it doesn't throw an exception is enough
         $this->assertTrue(true);
+    }
+
+    public function provideRenderStimulusController()
+    {
+        yield 'empty' => [
+            'data' => [],
+            'expected' => '',
+        ];
+
+        yield 'single-controller-no-data' => [
+            'data' => [
+                'my-controller' => [],
+            ],
+            'expected' => 'data-controller="my-controller"',
+        ];
+
+        yield 'single-controller-scalar-data' => [
+            'data' => [
+                'my-controller' => [
+                    'myValue' => 'scalar-value',
+                ],
+            ],
+            'expected' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
+        ];
+
+        yield 'single-controller-typed-data' => [
+            'data' => [
+                'my-controller' => [
+                    'boolean' => true,
+                    'number' => 4,
+                    'string' => 'str',
+                ],
+            ],
+            'expected' => 'data-controller="my-controller" data-my-controller-boolean-value="1" data-my-controller-number-value="4" data-my-controller-string-value="str"',
+        ];
+
+        yield 'single-controller-nested-data' => [
+            'data' => [
+                'my-controller' => [
+                    'myValue' => ['nested' => 'array'],
+                ],
+            ],
+            'expected' => 'data-controller="my-controller" data-my-controller-my-value-value="&#x7B;&quot;nested&quot;&#x3A;&quot;array&quot;&#x7D;"',
+        ];
+
+        yield 'multiple-controllers-scalar-data' => [
+            'data' => [
+                'my-controller' => [
+                    'myValue' => 'scalar-value',
+                ],
+                'another-controller' => [
+                    'anotherValue' => 'scalar-value 2',
+                ],
+            ],
+            'expected' => 'data-controller="my-controller another-controller" data-my-controller-my-value-value="scalar-value" data-another-controller-another-value-value="scalar-value&#x20;2"',
+        ];
+
+        yield 'normalize-names' => [
+            'data' => [
+                '@symfony/ux-dropzone/dropzone' => [
+                    'my"Key"' => true,
+                ],
+            ],
+            'expected' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="1"',
+        ];
+    }
+
+    /**
+     * @dataProvider provideRenderStimulusController
+     */
+    public function testRenderStimulusController(array $data, string $expected)
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+
+        $extension = new StimulusTwigExtension();
+        $this->assertSame($expected, $extension->renderStimulusController($twig, $data));
     }
 
     private function getContainerFromBootedKernel(WebpackEncoreIntegrationTestKernel $kernel)
