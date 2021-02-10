@@ -207,7 +207,7 @@ See [stimulus-bridge](https://github.com/symfony/stimulus-bridge) for more detai
 For example:
 
 ```twig
-<div {{ stimulus_controller({ 'chart': { 'name': 'Likes', 'data': [1, 2, 3, 4] } }) }}>
+<div {{ stimulus_controller('chart', { 'name': 'Likes', 'data': [1, 2, 3, 4] }) }}>
     Hello
 </div>
 
@@ -223,6 +223,18 @@ For example:
 
 Any non-scalar values (like `data: [1, 2, 3, 4]`) are JSON-encoded. And all
 values are properly escaped (the string `&#x5B;` is an escaped
-`[` character, so the attribute is really `[1,2,3,4]`). 
+`[` character, so the attribute is really `[1,2,3,4]`).
+
+If you have multiple controllers on the same element, pass them all as an
+associative array in the first argument:
+
+```twig
+<div {{ stimulus_controller({
+    'chart': { 'name': 'Likes' },
+    'other-controller': { },
+) }}>
+    Hello
+</div>
+```
 
 Ok, have fun!
