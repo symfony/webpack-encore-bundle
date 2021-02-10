@@ -45,10 +45,10 @@ class TagRenderer implements ResetInterface
                     return $entrypointLookupCollection;
                 }])
             );
-        } elseif ($entrypointLookupCollection instanceof EntrypointLookupCollection) {
+        } elseif ($entrypointLookupCollection instanceof EntrypointLookupCollectionInterface) {
             $this->entrypointLookupCollection = $entrypointLookupCollection;
         } else {
-            throw new \TypeError('The "$entrypointLookupCollection" argument must be an instance of EntrypointLookupCollection.');
+            throw new \TypeError('The "$entrypointLookupCollection" argument must be an instance of EntrypointLookupCollectionInterface.');
         }
 
         $this->packages = $packages;
