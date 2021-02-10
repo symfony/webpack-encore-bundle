@@ -1,0 +1,26 @@
+---------------------------------------------------------------------------
+
+by nicolas-grekas at 2021-02-10T21:25:27Z
+
+If the goal is to make it easy for no-data controllers, shouldn't we remove the second argument and keep only one, string|array?
+The polymorphism is not super nice (see the name of arguments...)
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2021-02-10T21:30:30Z
+
+> I'd the goal is to make it easy for no-data controllers, shouldn't we remove the second argument and keep only one, string|array?
+
+Yes, that's the worst part, but why make 99% of the use-cases need an extra wrapping `{}`. The number of characters is not much different, but it's already hard to track all the `}` chars:
+
+```
+<div {{ stimulus_controller({ 'chart':  { 'name': 'Likes', 'data': [1, 2, 3, 4] } }) }}>
+
+vs
+
+<div {{ stimulus_controller('chart', { 'name': 'Likes', 'data': [1, 2, 3, 4] }) }}>
+```
+
+> The polymorphism is not super nice (see the name of arguments...)
+
+VERY true. However, it's hidden (it's our burden) - and I don't see risk in doing this.
