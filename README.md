@@ -198,4 +198,31 @@ class ScriptNonceSubscriber implements EventSubscriberInterface
 }
 ```
 
+## Stimulus / Symfony UX Helper: stimulus_controller
+
+This bundle also ships with a special `stimulus_controller()` Twig function
+that can be used to render [Stimulus Controllers & Values](https://stimulus.hotwire.dev/reference/values).
+See [stimulus-bridge](https://github.com/symfony/stimulus-bridge) for more details.
+
+For example:
+
+```twig
+<div {{ stimulus_controller({ 'chart': { 'name': 'Likes', 'data': [1, 2, 3, 4] } }) }}>
+    Hello
+</div>
+
+<!- would render -->
+<div
+   data-controller="chart"
+   data-chart-name-value="Likes"
+   data-chart-name-data="&#x5B;1,2,3,4&#x5D;"
+>
+   Hello
+</div>
+```
+
+Any non-scalar values (like `data: [1, 2, 3, 4]`) are JSON-encoded. And all
+values are properly escaped (the string `&#x5B;` is an escaped
+`[` character, so the attribute is really `[1,2,3,4]`). 
+
 Ok, have fun!
