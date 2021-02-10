@@ -22,10 +22,29 @@ final class StimulusTwigExtension extends AbstractExtension
         ];
     }
 
-    public function renderStimulusController(Environment $env, array $data): string
+    /**
+     * @param string|array $dataOrControllerName This can either be a map of controller names
+     *                                           as keys set to their "values". Or this
+     *                                           can be a string controller name and data
+     *                                           is passed as the 2nd argument.
+     * @param array $controllerValues Array of data if a string is passed to the first argument.
+     * @return string
+     * @throws \Twig\Error\RuntimeError
+     */
+    public function renderStimulusController(Environment $env, $dataOrControllerName, array $controllerValues = []): string
     {
-        if (!$data) {
-            return '';
+        if (is_string($dataOrControllerName)) {
+            $data = [$dataOrControllerName => $controllerValues];
+        } else {
+            if ($controllerValues) {
+                throw new \InvalidArgumentException('You cannot pass an array to the first and second argument of stimulus_controller(): check the documentation.');
+            }
+
+            $data = $dataOrControllerName;
+
+            if (!$data) {
+                return '';
+            }
         }
 
         $controllers = [];

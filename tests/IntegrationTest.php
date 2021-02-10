@@ -182,48 +182,53 @@ class IntegrationTest extends TestCase
     public function provideRenderStimulusController()
     {
         yield 'empty' => [
-            'data' => [],
+            'dataOrControllerName' => [],
+            'controllerValues' => [],
             'expected' => '',
         ];
 
         yield 'single-controller-no-data' => [
-            'data' => [
+            'dataOrControllerName' => [
                 'my-controller' => [],
             ],
+            'controllerValues' => [],
             'expected' => 'data-controller="my-controller"',
         ];
 
         yield 'single-controller-scalar-data' => [
-            'data' => [
+            'dataOrControllerName' => [
                 'my-controller' => [
                     'myValue' => 'scalar-value',
                 ],
             ],
+            'controllerValues' => [],
             'expected' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
         ];
 
         yield 'single-controller-typed-data' => [
-            'data' => [
+            'dataOrControllerName' => [
                 'my-controller' => [
                     'boolean' => true,
                     'number' => 4,
                     'string' => 'str',
                 ],
             ],
+            'controllerValues' => [],
             'expected' => 'data-controller="my-controller" data-my-controller-boolean-value="1" data-my-controller-number-value="4" data-my-controller-string-value="str"',
         ];
 
         yield 'single-controller-nested-data' => [
-            'data' => [
+            'dataOrControllerName' => [
                 'my-controller' => [
                     'myValue' => ['nested' => 'array'],
                 ],
             ],
+            'controllerValues' => [],
             'expected' => 'data-controller="my-controller" data-my-controller-my-value-value="&#x7B;&quot;nested&quot;&#x3A;&quot;array&quot;&#x7D;"',
         ];
 
         yield 'multiple-controllers-scalar-data' => [
-            'data' => [
+            'dataOrControllerName' => [
                 'my-controller' => [
                     'myValue' => 'scalar-value',
                 ],
@@ -231,30 +236,44 @@ class IntegrationTest extends TestCase
                     'anotherValue' => 'scalar-value 2',
                 ],
             ],
+            'controllerValues' => [],
             'expected' => 'data-controller="my-controller another-controller" data-my-controller-my-value-value="scalar-value" data-another-controller-another-value-value="scalar-value&#x20;2"',
         ];
 
         yield 'normalize-names' => [
-            'data' => [
+            'dataOrControllerName' => [
                 '@symfony/ux-dropzone/dropzone' => [
                     'my"Key"' => true,
                 ],
             ],
+            'controllerValues' => [],
             'expected' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="1"',
+        ];
+
+        yield 'short-single-controller-no-data' => [
+            'dataOrControllerName' => 'my-controller',
+            'controllerValues' => [],
+            'expected' => 'data-controller="my-controller"',
+        ];
+
+        yield 'short-single-controller-with-data' => [
+            'dataOrControllerName' => 'my-controller',
+            'controllerValues' => ['myValue' => 'scalar-value'],
+            'expected' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
         ];
     }
 
     /**
      * @dataProvider provideRenderStimulusController
      */
-    public function testRenderStimulusController(array $data, string $expected)
+    public function testRenderStimulusController($dataOrControllerName, array $controllerValues, string $expected)
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
         $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
 
         $extension = new StimulusTwigExtension();
-        $this->assertSame($expected, $extension->renderStimulusController($twig, $data));
+        $this->assertSame($expected, $extension->renderStimulusController($twig, $dataOrControllerName, $controllerValues));
     }
 
     private function getContainerFromBootedKernel(WebpackEncoreIntegrationTestKernel $kernel)
