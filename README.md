@@ -211,7 +211,7 @@ For example:
     Hello
 </div>
 
-<!- would render -->
+<!-- would render -->
 <div
    data-controller="chart"
    data-chart-name-value="Likes"
