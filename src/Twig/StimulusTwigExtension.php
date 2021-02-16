@@ -18,7 +18,7 @@ final class StimulusTwigExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
-            new TwigFunction('stimulus_controller', [$this, 'renderStimulusController'], ['needs_environment' => true, 'is_safe' => ['all']]),
+            new TwigFunction('stimulus_controller', [$this, 'renderStimulusController'], ['needs_environment' => true, 'is_safe' => ['html_attr']]),
         ];
     }
 
