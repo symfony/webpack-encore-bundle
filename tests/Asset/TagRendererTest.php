@@ -85,6 +85,35 @@ class TagRendererTest extends TestCase
         );
     }
 
+    public function testRenderScriptTagsWithFalseyAttributes()
+    {
+        $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
+        $entrypointLookup->expects($this->once())
+            ->method('getJavaScriptFiles')
+            ->willReturn(['/build/file1.js']);
+        $entrypointCollection = $this->createMock(EntrypointLookupCollection::class);
+        $entrypointCollection->expects($this->once())
+            ->method('getEntrypointLookup')
+            ->willReturn($entrypointLookup);
+
+        $packages = $this->createMock(Packages::class);
+        $packages->expects($this->once())
+            ->method('getUrl')
+            ->willReturnCallback(function ($path) {
+                return 'http://localhost:8080' . $path;
+            });
+        $renderer = new TagRenderer($entrypointCollection, $packages, [
+            'defer' => false, // false disables the attribute
+            'async' => null, // null allows the attribute
+        ]);
+
+        $output = $renderer->renderWebpackScriptTags('my_entry');
+        $this->assertStringContainsString(
+            '<script src="http://localhost:8080/build/file1.js" async></script>',
+            $output
+        );
+    }
+
     public function testRenderScriptTagsDispatchesAnEvent()
     {
         $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
