@@ -21,6 +21,7 @@ file:
 # config/packages/webpack_encore.yaml
 webpack_encore:
     # The path where Encore is building the assets - i.e. Encore.setOutputPath()
+    # if you customize this, you will also need to change framework.assets.json_manifest_path (it usually lives in assets.yaml)
     output_path: '%kernel.project_dir%/public/build'
     # If multiple builds are defined (as shown below), you can disable the default build:
     # output_path: false
