@@ -20,6 +20,7 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 use Symfony\Component\HttpKernel\Kernel;
 use Symfony\Component\HttpKernel\Log\Logger;
 use Symfony\Component\Routing\Loader\Configurator\RoutingConfigurator;
@@ -30,6 +31,7 @@ use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer;
 use Symfony\WebpackEncoreBundle\Twig\StimulusTwigExtension;
 use Symfony\WebpackEncoreBundle\WebpackEncoreBundle;
+use Twig\Environment;
 
 class IntegrationTest extends TestCase
 {
@@ -98,6 +100,27 @@ class IntegrationTest extends TestCase
             '<link rel="stylesheet" href="/build/styles4.css">',
             $html2
         );
+    }
+
+    public function testEntriesExistsWhenDoingSubRequestIntegration()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+
+        $request = Request::create('/render-sub-requests');
+        $request->attributes->set('template', '@integration_test/template.twig');
+        $response = $kernel->handle($request);
+
+        $html = $response->getContent();
+
+        $containsCount0 = substr_count($html, '<script src="/build/file1.js"');
+        $this->assertSame(2, $containsCount0);
+
+        $containsCount1 = substr_count($html, '<link rel="stylesheet" href="/build/styles3.css"');
+        $this->assertSame(2, $containsCount1);
+
+        $containsCount2 = substr_count($html, '<link rel="stylesheet" href="/build/styles4.css"');
+        $this->assertSame(2, $containsCount2);
     }
 
     public function testCacheWarmer()
@@ -390,23 +413,42 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
     {
         return new Response('I am a page!');
     }
+
+    public function renderSubRequests(Request $request, HttpKernelInterface $httpKernel)
+    {
+        $subRequest = Request::create('/render');
+        $subRequest->attributes->set('template', $request->attributes->get('template'));
+
+        $response0 = $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+        $response1 = $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
+
+        return new Response($response0->getContent() . $response1->getContent());
+    }
+
+    public function renderTwig(Environment $twig, Request $request)
+    {
+        return new Response($twig->render($request->attributes->get('template')));
+    }
 }
 
-if (AbstractWebpackEncoreIntegrationTestKernel::VERSION_ID >= 50100) {
-    class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel {
-        protected function configureRouting(RoutingConfigurator $routes): void
-        {
-            $routes->add('/foo', 'kernel::renderFoo');
-        }
+
+class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel
+{
+    protected function configureRouting(RoutingConfigurator $routes): void
+    {
+        $routes->add('/foo', 'kernel::renderFoo');
+        $routes->add('/render', 'kernel::renderTwig');
+        $routes->add('/render-sub-requests', 'kernel::renderSubRequests');
     }
-} else {
-    class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel {
-        protected function configureRoutes(RouteCollectionBuilder $routes)
-        {
-            $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');
-        }
+
+    protected function configureRoutes(RouteCollectionBuilder $routes)
+    {
+        $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');
+        $routes->add('/render', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderTwig');
+        $routes->add('/render-sub-requests', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderSubRequests');
     }
 }
+
 
 class WebpackEncoreCacheWarmerTester
 {
