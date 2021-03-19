@@ -66,5 +66,10 @@
             <tag name="kernel.event_subscriber" />
             <argument type="service" id="webpack_encore.tag_renderer" />
         </service>
+
+        <service id="Symfony\WebpackEncoreBundle\EventListener\ResetAssetsEventListener">
+            <tag name="kernel.event_subscriber" />
+            <argument type="service" id="webpack_encore.entrypoint_lookup_collection" />
+        </service>
     </services>
 </container>
