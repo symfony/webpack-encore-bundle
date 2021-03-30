@@ -216,7 +216,7 @@ For example:
 <div
    data-controller="chart"
    data-chart-name-value="Likes"
-   data-chart-name-data="&#x5B;1,2,3,4&#x5D;"
+   data-chart-data-value="&#x5B;1,2,3,4&#x5D;"
 >
    Hello
 </div>
