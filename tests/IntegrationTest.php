@@ -214,7 +214,7 @@ class IntegrationTest extends TestCase
                 ],
             ],
             'controllerValues' => [],
-            'expected' => 'data-controller="my-controller" data-my-controller-boolean-value="1" data-my-controller-number-value="4" data-my-controller-string-value="str"',
+            'expected' => 'data-controller="my-controller" data-my-controller-boolean-value="true" data-my-controller-number-value="4" data-my-controller-string-value="str"',
         ];
 
         yield 'single-controller-nested-data' => [
@@ -247,7 +247,7 @@ class IntegrationTest extends TestCase
                 ],
             ],
             'controllerValues' => [],
-            'expected' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="1"',
+            'expected' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="true"',
         ];
 
         yield 'short-single-controller-no-data' => [
@@ -260,6 +260,18 @@ class IntegrationTest extends TestCase
             'dataOrControllerName' => 'my-controller',
             'controllerValues' => ['myValue' => 'scalar-value'],
             'expected' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
+        ];
+
+        yield 'false-attribute-value-renders-false' => [
+            'dataOrControllerName' => 'false-controller',
+            'controllerValues' => ['isEnabled' => false],
+            'expected' => 'data-controller="false-controller" data-false-controller-is-enabled-value="false"',
+        ];
+
+        yield 'true-attribute-value-renders-true' => [
+            'dataOrControllerName' => 'true-controller',
+            'controllerValues' => ['isEnabled' => true],
+            'expected' => 'data-controller="true-controller" data-true-controller-is-enabled-value="true"',
         ];
     }
 
