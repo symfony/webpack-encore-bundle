@@ -31,6 +31,7 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
 
     public function onKernelResponse(ResponseEvent $event): void
     {
+        // Handle deprecated `KernelEvent::isMasterRequest() - Can be removed when Symfony < 5.3 support is dropped.
         $mainRequestMethod = method_exists($event, 'isMainRequest') ? 'isMainRequest' : 'isMasterRequest';
 
         if (!$event->$mainRequestMethod()) {
