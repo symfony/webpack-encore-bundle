@@ -16,7 +16,7 @@ use Symfony\Component\Config\Definition\Exception\InvalidDefinitionException;
 
 final class Configuration implements ConfigurationInterface
 {
-    public function getConfigTreeBuilder()
+    public function getConfigTreeBuilder(): TreeBuilder
     {
         $treeBuilder = new TreeBuilder('webpack_encore');
         /** @var ArrayNodeDefinition $rootNode */

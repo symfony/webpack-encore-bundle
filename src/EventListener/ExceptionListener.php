@@ -23,7 +23,7 @@ class ExceptionListener
         $this->buildNames = $buildNames;
     }
 
-    public function onKernelException()
+    public function onKernelException(): void
     {
         foreach ($this->buildNames as $buildName) {
             $this->entrypointLookupCollection->getEntrypointLookup($buildName)->reset();

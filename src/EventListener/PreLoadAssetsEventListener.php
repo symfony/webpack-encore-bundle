@@ -29,12 +29,12 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
         $this->tagRenderer = $tagRenderer;
     }
 
-    /**
-     * @param ResponseEvent $event
-     */
-    public function onKernelResponse($event)
+    public function onKernelResponse(ResponseEvent $event): void
     {
-        if (!$event->isMasterRequest()) {
+        // Handle deprecated `KernelEvent::isMasterRequest() - Can be removed when Symfony < 5.3 support is dropped.
+        $mainRequestMethod = method_exists($event, 'isMainRequest') ? 'isMainRequest' : 'isMasterRequest';
+
+        if (!$event->$mainRequestMethod()) {
             return;
         }
 
@@ -76,7 +76,7 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
         $request->attributes->set('_links', $linkProvider);
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
             // must run before AddLinkHeaderListener
