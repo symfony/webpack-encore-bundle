@@ -59,6 +59,10 @@ final class StimulusTwigExtension extends AbstractExtension
                     $value = json_encode($value);
                 }
 
+                if (is_bool($value)) {
+                    $value = $value ? 'true' : 'false';
+                }
+
                 $key = twig_escape_filter($env, $this->normalizeKeyName($key), 'html_attr');
                 $value = twig_escape_filter($env, $value, 'html_attr');
 
