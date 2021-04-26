@@ -1,0 +1,19 @@
+---------------------------------------------------------------------------
+
+by jrushlow at 2021-04-23T18:24:17Z
+
+related tests pass - failures related to deprecation that is fixed in #122
+
+---------------------------------------------------------------------------
+
+by hvt at 2021-04-26T11:12:10Z
+
+Just hit this in my project, and wanted to let you know this PR fixed it for me :].
+
+---------------------------------------------------------------------------
+
+by jrushlow at 2021-04-26T12:26:11Z
+
+> Just hit this in my project, and wanted to let you know this PR fixed it for me :].
+
+Awesome! That's good to hear - we should be able to get this pushed out pretty quickly.
