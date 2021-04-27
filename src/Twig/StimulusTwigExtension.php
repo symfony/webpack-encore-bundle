@@ -19,6 +19,8 @@ final class StimulusTwigExtension extends AbstractExtension
     {
         return [
             new TwigFunction('stimulus_controller', [$this, 'renderStimulusController'], ['needs_environment' => true, 'is_safe' => ['html_attr']]),
+            new TwigFunction('stimulus_action', [$this, 'renderStimulusAction'], ['needs_environment' => true, 'is_safe' => ['html_attr']]),
+            new TwigFunction('stimulus_target', [$this, 'renderStimulusTarget'], ['needs_environment' => true, 'is_safe' => ['html_attr']]),
         ];
     }
 
@@ -27,7 +29,7 @@ final class StimulusTwigExtension extends AbstractExtension
      *                                           as keys set to their "values". Or this
      *                                           can be a string controller name and data
      *                                           is passed as the 2nd argument.
-     * @param array $controllerValues Array of data if a string is passed to the first argument.
+     * @param array $controllerValues Array of data if a string is passed to the 1st argument.
      * @return string
      * @throws \Twig\Error\RuntimeError
      */
@@ -71,6 +73,103 @@ final class StimulusTwigExtension extends AbstractExtension
         }
 
         return rtrim('data-controller="'.implode(' ', $controllers).'" '.implode(' ', $values));
+    }
+
+    /**
+     * @param string|array $dataOrControllerName This can either be a map of controller names
+     *                                           as keys set to their "actions" and "events".
+     *                                           Or this can be a string controller name and
+     *                                           action and event are passed as the 2nd and 3rd arguments.
+     * @param string|null  $actionName The action to trigger if a string is passed to the 1st argument. Optional.
+     * @param string|null  $eventName  The event to listen to trigger if a string is passed to the 1st argument. Optional.
+     *
+     * @return string
+     * @throws \Twig\Error\RuntimeError
+     */
+    public function renderStimulusAction(Environment $env, $dataOrControllerName, string $actionName = null, string $eventName = null): string
+    {
+        if (is_string($dataOrControllerName)) {
+            $data = [$dataOrControllerName => $eventName === null ? [[$actionName]] : [[$eventName => $actionName]]];
+        } else {
+            if ($actionName || $eventName) {
+                throw new \InvalidArgumentException('You cannot pass a string to the second or third argument while passing an array to the first argument of stimulus_action(): check the documentation.');
+            }
+
+            $data = $dataOrControllerName;
+
+            if (!$data) {
+                return '';
+            }
+        }
+
+        $actions = [];
+
+        foreach ($data as $controllerName => $controllerActions) {
+            $controllerName = twig_escape_filter($env, $this->normalizeControllerName($controllerName), 'html_attr');
+
+            if (is_string($controllerActions)) {
+                $controllerActions = [[$controllerActions]];
+            }
+
+            foreach ($controllerActions as $possibleEventName => $controllerAction) {
+                if (is_string($possibleEventName) && is_string($controllerAction)) {
+                    $controllerAction = [$possibleEventName => $controllerAction];
+                } else if (is_string($controllerAction)) {
+                    $controllerAction = [$controllerAction];
+                }
+
+                foreach ($controllerAction as $eventName => $actionName) {
+                    $action = $controllerName.'#'.twig_escape_filter($env, $actionName, 'html_attr');
+
+                    if (is_string($eventName)) {
+                        $action = $eventName.'->'.$action;
+                    }
+
+                    $actions[] = $action;
+                }
+            }
+        }
+
+        return 'data-action="'.implode(' ', $actions).'"';
+    }
+
+    /**
+     * @param string|array $dataOrControllerName This can either be a map of controller names
+     *                                           as keys set to their "targets". Or this can
+     *                                           be a string controller name and targets are
+     *                                           passed as the 2nd argument.
+     * @param string|null $targetNames The space-separated list of target names if a string is passed to the 1st argument. Optional.
+     *
+     * @return string
+     * @throws \Twig\Error\RuntimeError
+     */
+    public function renderStimulusTarget(Environment $env, $dataOrControllerName, string $targetNames = null): string
+    {
+        if (is_string($dataOrControllerName)) {
+            $data = [$dataOrControllerName => $targetNames];
+        } else {
+            if ($targetNames) {
+                throw new \InvalidArgumentException('You cannot pass a string to the second argument while passing an array to the first argument of stimulus_target(): check the documentation.');
+            }
+
+            $data = $dataOrControllerName;
+
+            if (!$data) {
+                return '';
+            }
+        }
+
+        $targets = [];
+
+        foreach ($data as $controllerName => $targetNames) {
+            $controllerName = twig_escape_filter($env, $this->normalizeControllerName($controllerName), 'html_attr');
+
+            $targets['data-'.$controllerName.'-target'] = twig_escape_filter($env, $targetNames, 'html_attr');
+        }
+
+        return implode(' ', array_map(function(string $attribute, string $value) {
+            return $attribute.'="'.$value.'"';
+        }, array_keys($targets), $targets));
     }
 
     /**
