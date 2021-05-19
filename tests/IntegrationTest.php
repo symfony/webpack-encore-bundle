@@ -288,6 +288,122 @@ class IntegrationTest extends TestCase
         $this->assertSame($expected, $extension->renderStimulusController($twig, $dataOrControllerName, $controllerValues));
     }
 
+    public function provideRenderStimulusAction()
+    {
+        yield 'with default event' => [
+            'dataOrControllerName' => 'my-controller',
+            'actionName' => 'onClick',
+            'eventName' => null,
+            'expected' => 'data-action="my-controller#onClick"',
+        ];
+
+        yield 'with custom event' => [
+            'dataOrControllerName' => 'my-controller',
+            'actionName' => 'onClick',
+            'eventName' => 'click',
+            'expected' => 'data-action="click->my-controller#onClick"',
+        ];
+
+        yield 'multiple actions, with default event' => [
+            'dataOrControllerName' => [
+                'my-controller' => 'onClick',
+                'my-second-controller' => ['onClick', 'onSomethingElse'],
+                'foo/bar-controller' => 'onClick'
+            ],
+            'actionName' => null,
+            'eventName' => null,
+            'expected' => 'data-action="my-controller#onClick my-second-controller#onClick my-second-controller#onSomethingElse foo--bar-controller#onClick"',
+        ];
+
+        yield 'multiple actions, with custom event' => [
+            'dataOrControllerName' => [
+                'my-controller' => ['click' => 'onClick'],
+                'my-second-controller' => [['click' => 'onClick'], ['change' => 'onSomethingElse']],
+                'resize-controller' => ['resize@window' => 'onWindowResize'],
+                'foo/bar-controller' => ['click' => 'onClick']
+            ],
+            'actionName' => null,
+            'eventName' => null,
+            'expected' => 'data-action="click->my-controller#onClick click->my-second-controller#onClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick"',
+        ];
+
+        yield 'multiple actions, with default and custom event' => [
+            'dataOrControllerName' => [
+                'my-controller' => ['click' => 'onClick'],
+                'my-second-controller' => ['onClick', ['click' => 'onAnotherClick'], ['change' => 'onSomethingElse']],
+                'resize-controller' => ['resize@window' => 'onWindowResize'],
+                'foo/bar-controller' => ['click' => 'onClick']
+            ],
+            'actionName' => null,
+            'eventName' => null,
+            'expected' => 'data-action="click->my-controller#onClick my-second-controller#onClick click->my-second-controller#onAnotherClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick"',
+        ];
+
+        yield 'normalize-name, with default event' => [
+            'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
+            'actionName' => 'onClick',
+            'eventName' => null,
+            'expected' => 'data-action="symfony--ux-dropzone--dropzone#onClick"',
+        ];
+
+        yield 'normalize-name, with custom event' => [
+            'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
+            'actionName' => 'onClick',
+            'eventName' => 'click',
+            'expected' => 'data-action="click->symfony--ux-dropzone--dropzone#onClick"',
+        ];
+    }
+
+    /**
+     * @dataProvider provideRenderStimulusAction
+     */
+    public function testRenderStimulusAction($dataOrControllerName, ?string $actionName, ?string $eventName, string $expected)
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+
+        $extension = new StimulusTwigExtension();
+        $this->assertSame($expected, $extension->renderStimulusAction($twig, $dataOrControllerName, $actionName, $eventName));
+    }
+
+    public function provideRenderStimulusTarget()
+    {
+        yield 'simple' => [
+            'dataOrControllerName' => 'my-controller',
+            'targetName' => 'myTarget',
+            'expected' => 'data-my-controller-target="myTarget"',
+        ];
+
+        yield 'normalize-name' => [
+            'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
+            'targetName' => 'myTarget',
+            'expected' => 'data-symfony--ux-dropzone--dropzone-target="myTarget"',
+        ];
+
+        yield 'multiple' => [
+            'dataOrControllerName' => [
+                'my-controller' => 'myTarget',
+                '@symfony/ux-dropzone/dropzone' => 'anotherTarget fooTarget',
+            ],
+            'targetName' => null,
+            'expected' => 'data-my-controller-target="myTarget" data-symfony--ux-dropzone--dropzone-target="anotherTarget&#x20;fooTarget"',
+        ];
+    }
+
+    /**
+     * @dataProvider provideRenderStimulusTarget
+     */
+    public function testRenderStimulusTarget($dataOrControllerName, ?string $targetName, string $expected)
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+
+        $extension = new StimulusTwigExtension();
+        $this->assertSame($expected, $extension->renderStimulusTarget($twig, $dataOrControllerName, $targetName));
+    }
+
     private function getContainerFromBootedKernel(WebpackEncoreIntegrationTestKernel $kernel)
     {
         if ($kernel::VERSION_ID >= 40100) {
