@@ -165,7 +165,7 @@ final class StimulusTwigExtension extends AbstractExtension
             $targets['data-'.$controllerName.'-target'] = twig_escape_filter($env, $targetNames, 'html_attr');
         }
 
-        return implode(' ', array_map(function (string $attribute, string $value) {
+        return implode(' ', array_map(static function (string $attribute, string $value): string {
             return $attribute.'="'.$value.'"';
         }, array_keys($targets), $targets));
     }

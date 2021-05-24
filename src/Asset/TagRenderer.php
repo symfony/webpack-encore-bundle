@@ -178,12 +178,12 @@ class TagRenderer implements ResetInterface
     private function convertArrayToAttributes(array $attributesMap): string
     {
         // remove attributes set specifically to false
-        $attributesMap = array_filter($attributesMap, function ($value) {
+        $attributesMap = array_filter($attributesMap, static function ($value) {
             return false !== $value;
         });
 
         return implode(' ', array_map(
-            function ($key, $value) {
+            static function ($key, $value) {
                 // allows for things like defer: true to only render "defer"
                 if (true === $value || null === $value) {
                     return $key;
