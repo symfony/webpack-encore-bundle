@@ -30,12 +30,12 @@ final class RenderAssetTagEvent
 
     public function isScriptTag(): bool
     {
-        return $this->type === self::TYPE_SCRIPT;
+        return self::TYPE_SCRIPT === $this->type;
     }
 
     public function isLinkTag(): bool
     {
-        return $this->type === self::TYPE_LINK;
+        return self::TYPE_LINK === $this->type;
     }
 
     public function getUrl(): string
@@ -49,7 +49,7 @@ final class RenderAssetTagEvent
     }
 
     /**
-     * @param string $name The attribute name
+     * @param string      $name  The attribute name
      * @param string|bool $value Value can be "true" to have an attribute without a value (e.g. "defer")
      */
     public function setAttribute(string $name, $value): void

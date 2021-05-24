@@ -72,7 +72,7 @@ class TagRendererTest extends TestCase
             ->willReturn('http://localhost:8080/build/file1.js');
         $renderer = new TagRenderer($entrypointCollection, $packages, [
             'defer' => true,
-            'nonce' => 'abc123'
+            'nonce' => 'abc123',
         ], ['referrerpolicy' => 'origin']);
 
         $output = $renderer->renderWebpackScriptTags('my_entry', null, null, [
@@ -100,7 +100,7 @@ class TagRendererTest extends TestCase
         $packages->expects($this->once())
             ->method('getUrl')
             ->willReturnCallback(function ($path) {
-                return 'http://localhost:8080' . $path;
+                return 'http://localhost:8080'.$path;
             });
         $renderer = new TagRenderer($entrypointCollection, $packages, [
             'defer' => false, // false disables the attribute

@@ -38,7 +38,7 @@ class TagRenderer implements ResetInterface
         EventDispatcherInterface $eventDispatcher = null
     ) {
         if ($entrypointLookupCollection instanceof EntrypointLookupInterface) {
-            @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), E_USER_DEPRECATED);
+            @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), \E_USER_DEPRECATED);
 
             $this->entrypointLookupCollection = new EntrypointLookupCollection(
                 new ServiceLocator(['_default' => function () use ($entrypointLookupCollection) {
@@ -178,14 +178,14 @@ class TagRenderer implements ResetInterface
     private function convertArrayToAttributes(array $attributesMap): string
     {
         // remove attributes set specifically to false
-        $attributesMap = array_filter($attributesMap, function($value) {
-            return $value !== false;
+        $attributesMap = array_filter($attributesMap, function ($value) {
+            return false !== $value;
         });
 
         return implode(' ', array_map(
             function ($key, $value) {
                 // allows for things like defer: true to only render "defer"
-                if ($value === true || $value === null) {
+                if (true === $value || null === $value) {
                     return $key;
                 }
 
