@@ -24,7 +24,7 @@ final class EntryFilesTwigExtension extends AbstractExtension
         $this->container = $container;
     }
 
-    public function getFunctions()
+    public function getFunctions(): array
     {
         return [
             new TwigFunction('encore_entry_js_files', [$this, 'getWebpackJsFiles']),
