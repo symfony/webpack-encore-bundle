@@ -117,7 +117,7 @@ class IntegrationTest extends TestCase
         $this->assertSame(['_default', 'different_build'], array_keys($data[0] ?? $data));
     }
 
-    public function testEnabledStrictMode_throwsException_ifBuildMissing()
+    public function testEnabledStrictModeThrowsExceptionIfBuildMissing()
     {
         $this->expectException(\Twig\Error\RuntimeError::class);
         $this->expectExceptionMessage('Could not find the entrypoints file from Webpack: the file "missing_build/entrypoints.json" does not exist.');
@@ -130,7 +130,7 @@ class IntegrationTest extends TestCase
         $twig->render('@integration_test/template.twig');
     }
 
-    public function testDisabledStrictMode_ignoresMissingBuild()
+    public function testDisabledStrictModeIgnoresMissingBuild()
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->outputPath = 'missing_build';
@@ -308,7 +308,7 @@ class IntegrationTest extends TestCase
             'dataOrControllerName' => [
                 'my-controller' => 'onClick',
                 'my-second-controller' => ['onClick', 'onSomethingElse'],
-                'foo/bar-controller' => 'onClick'
+                'foo/bar-controller' => 'onClick',
             ],
             'actionName' => null,
             'eventName' => null,
@@ -320,7 +320,7 @@ class IntegrationTest extends TestCase
                 'my-controller' => ['click' => 'onClick'],
                 'my-second-controller' => [['click' => 'onClick'], ['change' => 'onSomethingElse']],
                 'resize-controller' => ['resize@window' => 'onWindowResize'],
-                'foo/bar-controller' => ['click' => 'onClick']
+                'foo/bar-controller' => ['click' => 'onClick'],
             ],
             'actionName' => null,
             'eventName' => null,
@@ -332,7 +332,7 @@ class IntegrationTest extends TestCase
                 'my-controller' => ['click' => 'onClick'],
                 'my-second-controller' => ['onClick', ['click' => 'onAnotherClick'], ['change' => 'onSomethingElse']],
                 'resize-controller' => ['resize@window' => 'onWindowResize'],
-                'foo/bar-controller' => ['click' => 'onClick']
+                'foo/bar-controller' => ['click' => 'onClick'],
             ],
             'actionName' => null,
             'eventName' => null,
@@ -461,7 +461,7 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
             ],
             'test' => true,
         ];
-        if (AbstractWebpackEncoreIntegrationTestKernel::VERSION_ID >= 50100) {
+        if (self::VERSION_ID >= 50100) {
             $frameworkConfig['router'] = [
                 'utf8' => true,
             ];
@@ -521,14 +521,16 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
 }
 
 if (AbstractWebpackEncoreIntegrationTestKernel::VERSION_ID >= 50100) {
-    class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel {
+    class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel
+    {
         protected function configureRouting(RoutingConfigurator $routes): void
         {
             $routes->add('/foo', 'kernel::renderFoo');
         }
     }
 } else {
-    class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel {
+    class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel
+    {
         protected function configureRoutes(RouteCollectionBuilder $routes)
         {
             $routes->add('/foo', 'kernel:'.(parent::VERSION_ID >= 40100 ? ':' : '').'renderFoo');

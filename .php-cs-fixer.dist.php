@@ -4,17 +4,16 @@ if (!file_exists(__DIR__.'/src')) {
     exit(0);
 }
 
-$finder = PhpCsFixer\Finder::create()
+$finder = (new PhpCsFixer\Finder())
     ->in(__DIR__.'/src')
     ->in(__DIR__.'/tests')
 ;
 
-return PhpCsFixer\Config::create()
+return (new PhpCsFixer\Config())
     ->setRules(array(
         '@Symfony' => true,
         '@Symfony:risky' => true,
         '@PHPUnit75Migration:risky' => true,
-        'array_syntax' => ['syntax' => 'short'],
         'protected_to_private' => false,
         'semicolon_after_instruction' => false,
         'header_comment' => [

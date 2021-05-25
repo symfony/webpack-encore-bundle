@@ -11,10 +11,10 @@ namespace Symfony\WebpackEncoreBundle\EventListener;
 
 use Fig\Link\GenericLinkProvider as FigGenericLinkProvider;
 use Fig\Link\Link as FigLink;
-use Symfony\Component\WebLink\GenericLinkProvider;
-use Symfony\Component\WebLink\Link;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\Event\ResponseEvent;
+use Symfony\Component\WebLink\GenericLinkProvider;
+use Symfony\Component\WebLink\Link;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 
 /**
