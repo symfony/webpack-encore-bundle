@@ -32,7 +32,7 @@ webpack_encore:
         # referrerpolicy: origin
     # link_attributes:
     #     referrerpolicy: origin
-    
+
     # if using Encore.enableIntegrityHashes() and need the crossorigin attribute (default: false, or use 'anonymous' or 'use-credentials')
     # crossorigin: 'anonymous'
 
@@ -41,7 +41,7 @@ webpack_encore:
 
     # Throw an exception if the entrypoints.json file is missing or an entry is missing from the data
     # strict_mode: false
-    
+
     # if you have multiple builds:
     # builds:
         # pass "frontend" as the 3rg arg to the Twig functions
@@ -174,8 +174,6 @@ different ways:
    event. For example:
 
 ```php
-<?php
-
 namespace App\EventSubscriber;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -245,8 +243,9 @@ associative array in the first argument:
 The `stimulus_action()` Twig function can be used to render [Stimulus Actions](https://stimulus.hotwire.dev/reference/actions).
 
 For example:
+
 ```twig
-<div {{ stimulus_action('controller', 'method') }}>Hello</div> 
+<div {{ stimulus_action('controller', 'method') }}>Hello</div>
 <div {{ stimulus_action('controller', 'method', 'click') }}>Hello</div>
 
 <!-- would render -->
@@ -256,9 +255,10 @@ For example:
 
 If you have multiple actions and/or methods on the same element, pass them all as an
 associative array in the first argument:
+
 ```twig
 <div {{ stimulus_action({
- 'controller': 'method', 
+ 'controller': 'method',
  'other-controller': ['method', {'window@resize': 'onWindowResize'}]
 }) }}>
     Hello
@@ -275,8 +275,9 @@ associative array in the first argument:
 The `stimulus_target()` Twig function can be used to render [Stimulus Targets](https://stimulus.hotwire.dev/reference/targets).
 
 For example:
+
 ```twig
-<div {{ stimulus_target('controller', 'a-target') }}>Hello</div> 
+<div {{ stimulus_target('controller', 'a-target') }}>Hello</div>
 <div {{ stimulus_target('controller', 'a-target second-target') }}>Hello</div>
 
 <!-- would render -->
@@ -286,10 +287,11 @@ For example:
 
 If you have multiple targets on the same element, pass them all as an
 associative array in the first argument:
+
 ```twig
 <div {{ stimulus_target({
- 'controller': 'a-target', 
- 'other-controller': 'another-target' 
+ 'controller': 'a-target',
+ 'other-controller': 'another-target'
 }) }}>
     Hello
 </div>
