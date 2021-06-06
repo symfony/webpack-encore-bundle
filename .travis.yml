@@ -17,7 +17,9 @@ matrix:
         - php: 7.1
         - php: 7.2
         - php: 7.3
-          env: deps=low
+          env:
+            - deps=low
+            - SYMFONY_PHPUNIT_VERSION=8.5
         - php: 7.4
           env: SYMFONY_PHPUNIT_VERSION=9.4
         - php: 8.0
