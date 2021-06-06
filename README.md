@@ -199,7 +199,9 @@ class ScriptNonceSubscriber implements EventSubscriberInterface
 }
 ```
 
-## Stimulus / Symfony UX Helper: stimulus_controller
+## Stimulus / Symfony UX Helper
+
+### stimulus_controller
 
 This bundle also ships with a special `stimulus_controller()` Twig function
 that can be used to render [Stimulus Controllers & Values](https://stimulus.hotwire.dev/reference/values).
@@ -234,6 +236,66 @@ associative array in the first argument:
     'chart': { 'name': 'Likes' },
     'other-controller': { },
 ) }}>
+    Hello
+</div>
+```
+
+### stimulus_action
+
+The `stimulus_action()` Twig function can be used to render [Stimulus Actions](https://stimulus.hotwire.dev/reference/actions).
+
+For example:
+```twig
+<div {{ stimulus_action('controller', 'method') }}>Hello</div> 
+<div {{ stimulus_action('controller', 'method', 'click') }}>Hello</div>
+
+<!-- would render -->
+<div data-action="controller#method">Hello</div>
+<div data-action="click->controller#method">Hello</div>
+```
+
+If you have multiple actions and/or methods on the same element, pass them all as an
+associative array in the first argument:
+```twig
+<div {{ stimulus_action({
+ 'controller': 'method', 
+ 'other-controller': ['method', {'window@resize': 'onWindowResize'}]
+}) }}>
+    Hello
+</div>
+
+<!-- would render -->
+<div data-action="controller#method other-controller#method window@resize->other-controller#onWindowResize">
+    Hello
+</div>
+```
+
+### stimulus_target
+
+The `stimulus_target()` Twig function can be used to render [Stimulus Targets](https://stimulus.hotwire.dev/reference/targets).
+
+For example:
+```twig
+<div {{ stimulus_target('controller', 'a-target') }}>Hello</div> 
+<div {{ stimulus_target('controller', 'a-target second-target') }}>Hello</div>
+
+<!-- would render -->
+<div data-controller-target="a-target">Hello</div>
+<div data-controller-target="a-target second-target">Hello</div>
+```
+
+If you have multiple targets on the same element, pass them all as an
+associative array in the first argument:
+```twig
+<div {{ stimulus_target({
+ 'controller': 'a-target', 
+ 'other-controller': 'another-target' 
+}) }}>
+    Hello
+</div>
+
+<!-- would render -->
+<div data-controller-target="a-target" data-other-controller-target="another-target">
     Hello
 </div>
 ```
