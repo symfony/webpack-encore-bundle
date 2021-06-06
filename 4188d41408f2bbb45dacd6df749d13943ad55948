@@ -1,0 +1,44 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2021-02-11T22:01:05Z
+
+Thanks for this @jeremyFreeAgent!
+
+We're getting a test failure with the lowest deps... `expectExceptionMessageMatches` is not defined, which is odd since that happens on PHPUnit `7.5.20`, but that same version of PHP passes in another build on the matrix.
+
+---------------------------------------------------------------------------
+
+by jeremyFreeAgent at 2021-02-12T06:55:23Z
+
+I didn't test it with that version in local. I'll look for it today to see why it is failing!
+
+---------------------------------------------------------------------------
+
+by jeremyFreeAgent at 2021-02-12T08:49:57Z
+
+Work well with 7.3.26 and PHPUnit 7.5.20 in local. Very odd.
+
+---------------------------------------------------------------------------
+
+by jeremyFreeAgent at 2021-02-12T10:04:52Z
+
+I reproduced the anomaly with installing dependencies as it is done in Travis (for 7.3 with low deps).
+Maybe with `symfony/phpunit-bridge (5.x-dev)`.
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2021-02-15T13:58:28Z
+
+Thanks for checking into this further! Could we bump phpunit-bridge to a higher version? I don't see any downside to that, as it's a dev-dependency anyways.
+
+---------------------------------------------------------------------------
+
+by jeremyFreeAgent at 2021-02-15T14:45:01Z
+
+I'm going to try that!
+
+---------------------------------------------------------------------------
+
+by jeremyFreeAgent at 2021-02-19T19:26:31Z
+
+@weaverryan what do you think?
