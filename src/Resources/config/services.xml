@@ -44,7 +44,6 @@
             <tag name="kernel.cache_warmer" />
             <argument /> <!-- build list of entrypoint paths -->
             <argument>%kernel.cache_dir%/webpack_encore.cache.php</argument>
-            <argument type="service" id="cache.webpack_encore" />
         </service>
 
         <service id="webpack_encore.cache" class="Symfony\Component\Cache\Adapter\PhpArrayAdapter">
