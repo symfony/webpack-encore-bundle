@@ -13,7 +13,7 @@ composer require symfony/webpack-encore-bundle
 
 ## Configuration
 
-If you're using Symfony Flex, you're done! The recipe will
+If you're using Symfony Flex, you're done! If not, [enable the bundle](https://symfony.com/doc/current/bundles.html) as normal. The recipe will
 pre-configure everything you need in the `config/packages/webpack_encore.yaml`
 file:
 
