@@ -13,7 +13,7 @@ composer require symfony/webpack-encore-bundle
 
 ## Configuration
 
-If you're using Symfony Flex, you're done! If not, [enable the bundle](https://symfony.com/doc/current/bundles.html) as normal. The recipe will
+If you're using Symfony Flex, you're done! The recipe will
 pre-configure everything you need in the `config/packages/webpack_encore.yaml`
 file:
 
@@ -54,6 +54,9 @@ webpack_encore:
     # Put in config/packages/prod/webpack_encore.yaml
     # cache: true
 ```
+
+If you're not using Flex, [enable the bundle manually](https://symfony.com/doc/current/bundles.html)
+and copy the config file from above into your project.
 
 ## Usage
 
