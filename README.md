@@ -55,6 +55,9 @@ webpack_encore:
     # cache: true
 ```
 
+If you're not using Flex, [enable the bundle manually](https://symfony.com/doc/current/bundles.html)
+and copy the config file from above into your project.
+
 ## Usage
 
 The "Split Chunks" functionality in Webpack Encore is enabled by default
