@@ -1,0 +1,69 @@
+name: CI
+
+on:
+  pull_request: ~
+  push: ~
+
+jobs:
+  phpunit:
+    name: PHPUnit
+    runs-on: ubuntu-latest
+    strategy:
+      max-parallel: 10
+      fail-fast: false
+      matrix:
+        run:
+          - php: '7.4'
+            sf_version: '4.4.*'
+          - php: '8.0'
+            sf_version: '5.3.*'
+          - php: '7.1'
+            sf_version: '*'
+          - php: '7.2'
+            sf_version: '*'
+          - php: '7.3'
+            sf_version: '*'
+          - php: '7.4'
+            sf_version: '*'
+
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@2.7.0
+        with:
+          php-version: ${{ matrix.run.php }}
+          coverage: none
+          tools: flex
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download dependencies
+        env:
+          SYMFONY_REQUIRE: ${{ matrix.run.sf_version }}
+        uses: ramsey/composer-install@v1
+
+      - name: Run tests
+        run: ./vendor/bin/simple-phpunit
+
+  lowest:
+    name: Lowest deps
+    runs-on: ubuntu-latest
+    steps:
+      - name: Set up PHP
+        uses: shivammathur/setup-php@2.7.0
+        with:
+          php-version: 7.3
+          coverage: none
+
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: Download dependencies
+        with:
+          dependency-versions: "lowest"
+        uses: ramsey/composer-install@v1
+
+      - name: Run tests
+        env:
+          SYMFONY_DEPRECATIONS_HELPER: "max[self]=0"
+        run: ./vendor/bin/simple-phpunit

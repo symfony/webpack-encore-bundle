@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<files psalm-version="4.8.1@f73f2299dbc59a3e6c4d66cff4605176e728ee69">
+  <file src="src/CacheWarmer/EntrypointCacheWarmer.php">
+    <TooManyArguments occurrences="1">
+      <code>parent::__construct($phpArrayFile, $fallbackPool)</code>
+    </TooManyArguments>
+  </file>
+  <file src="src/DependencyInjection/Configuration.php">
+    <RedundantCondition occurrences="1">
+      <code>method_exists($treeBuilder, 'getRootNode')</code>
+    </RedundantCondition>
+    <UndefinedMethod occurrences="1">
+      <code>root</code>
+    </UndefinedMethod>
+  </file>
+  <file src="src/EventListener/PreLoadAssetsEventListener.php">
+    <RedundantCondition occurrences="1">
+      <code>method_exists($event, 'isMainRequest')</code>
+    </RedundantCondition>
+    <UndefinedClass occurrences="2">
+      <code>FigGenericLinkProvider</code>
+      <code>FigLink</code>
+    </UndefinedClass>
+    <UndefinedDocblockClass occurrences="6">
+      <code>$linkProvider</code>
+      <code>$linkProvider</code>
+      <code>$linkProvider</code>
+      <code>$this-&gt;createLink('preload', $href)</code>
+      <code>$this-&gt;createLink('preload', $href)</code>
+      <code>Link|FigLink</code>
+    </UndefinedDocblockClass>
+  </file>
+  <file src="src/Twig/StimulusTwigExtension.php">
+    <UndefinedFunction occurrences="7">
+      <code>twig_escape_filter($env, $actionName, 'html_attr')</code>
+      <code>twig_escape_filter($env, $targetNames, 'html_attr')</code>
+      <code>twig_escape_filter($env, $this-&gt;normalizeControllerName($controllerName), 'html_attr')</code>
+      <code>twig_escape_filter($env, $this-&gt;normalizeControllerName($controllerName), 'html_attr')</code>
+      <code>twig_escape_filter($env, $this-&gt;normalizeControllerName($controllerName), 'html_attr')</code>
+      <code>twig_escape_filter($env, $this-&gt;normalizeKeyName($key), 'html_attr')</code>
+      <code>twig_escape_filter($env, $value, 'html_attr')</code>
+    </UndefinedFunction>
+  </file>
+</files>
