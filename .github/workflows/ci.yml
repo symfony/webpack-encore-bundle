@@ -15,16 +15,15 @@ jobs:
         run:
           - php: '7.4'
             sf_version: '4.4.*'
+            phpunit_version: '9.4'
           - php: '8.0'
             sf_version: '5.3.*'
+            phpunit_version: '9.4'
           - php: '7.1'
-            sf_version: '*'
           - php: '7.2'
-            sf_version: '*'
           - php: '7.3'
-            sf_version: '*'
           - php: '7.4'
-            sf_version: '*'
+            phpunit_version: '9.4'
 
     steps:
       - name: Set up PHP
@@ -39,10 +38,12 @@ jobs:
 
       - name: Download dependencies
         env:
-          SYMFONY_REQUIRE: ${{ matrix.run.sf_version }}
+          SYMFONY_REQUIRE: ${{ matrix.run.sf_version || '*' }}
         uses: ramsey/composer-install@v1
 
       - name: Run tests
+        env:
+          SYMFONY_PHPUNIT_VERSION: ${{ matrix.run.phpunit_version || '' }}
         run: ./vendor/bin/simple-phpunit
 
   lowest:
@@ -66,4 +67,5 @@ jobs:
       - name: Run tests
         env:
           SYMFONY_DEPRECATIONS_HELPER: "max[self]=0"
+          SYMFONY_PHPUNIT_VERSION: "8.5"
         run: ./vendor/bin/simple-phpunit
