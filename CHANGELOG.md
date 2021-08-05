@@ -1,6 +1,14 @@
 # Changelog
 
-## [v1.12.0](https://github.com/symfony/maker-bundle/releases/tag/v1.12.0)
+## [v1.12.1](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.12.1)
+
+*August 5th, 2021*
+
+### Bug Fix
+
+- [#126](https://github.com/symfony/webpack-encore-bundle/pull/126) - Remove fallback cache on cache warmer - *@deguif*
+
+## [v1.12.0](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.12.0)
 
 *June 18th, 2021*
 
