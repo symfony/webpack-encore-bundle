@@ -140,4 +140,11 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
 
         return $this->entriesData;
     }
+
+    public function entryExists(string $entryName): bool
+    {
+        $entriesData = $this->getEntriesData();
+
+        return isset($entriesData['entrypoints'][$entryName]);
+    }
 }
