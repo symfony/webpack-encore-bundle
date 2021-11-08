@@ -173,7 +173,7 @@ final class StimulusTwigExtension extends AbstractExtension
     /**
      * Normalize a Stimulus controller name into its HTML equivalent (no special character and / becomes --).
      *
-     * @see https://stimulus.hotwire.dev/reference/controllers
+     * @see https://stimulus.hotwired.dev/reference/controllers
      */
     private function normalizeControllerName(string $str): string
     {
@@ -184,7 +184,7 @@ final class StimulusTwigExtension extends AbstractExtension
      * Normalize a Stimulus Value API key into its HTML equivalent ("kebab case").
      * Backport features from symfony/string.
      *
-     * @see https://stimulus.hotwire.dev/reference/values
+     * @see https://stimulus.hotwired.dev/reference/values
      */
     private function normalizeKeyName(string $str): string
     {

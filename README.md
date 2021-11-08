@@ -205,7 +205,7 @@ class ScriptNonceSubscriber implements EventSubscriberInterface
 ### stimulus_controller
 
 This bundle also ships with a special `stimulus_controller()` Twig function
-that can be used to render [Stimulus Controllers & Values](https://stimulus.hotwire.dev/reference/values).
+that can be used to render [Stimulus Controllers & Values](https://stimulus.hotwired.dev/reference/values).
 See [stimulus-bridge](https://github.com/symfony/stimulus-bridge) for more details.
 
 For example:
@@ -243,7 +243,7 @@ associative array in the first argument:
 
 ### stimulus_action
 
-The `stimulus_action()` Twig function can be used to render [Stimulus Actions](https://stimulus.hotwire.dev/reference/actions).
+The `stimulus_action()` Twig function can be used to render [Stimulus Actions](https://stimulus.hotwired.dev/reference/actions).
 
 For example:
 
@@ -275,7 +275,7 @@ associative array in the first argument:
 
 ### stimulus_target
 
-The `stimulus_target()` Twig function can be used to render [Stimulus Targets](https://stimulus.hotwire.dev/reference/targets).
+The `stimulus_target()` Twig function can be used to render [Stimulus Targets](https://stimulus.hotwired.dev/reference/targets).
 
 For example:
 
