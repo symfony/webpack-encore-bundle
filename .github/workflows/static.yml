@@ -59,7 +59,7 @@ jobs:
         uses: ramsey/composer-install@v1
 
       - name: Psalm
-        run: psalm --no-progress --output-format=github
+        run: psalm --no-progress --php-version=8.0
 
   composer-normalize:
     name: Composer Normalize
