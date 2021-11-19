@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.13.0](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.13.0)
+
+*November 19th, 2021*
+
+### Feature
+
+- [#136](https://github.com/symfony/webpack-encore-bundle/pull/136) - Allow Symfony6 - *@Kocal*, *@weaverryan*
+
+### Bug Fix
+
+- [#126](https://github.com/symfony/webpack-encore-bundle/pull/126) - Remove fallback cache on cache warmer - *@deguif*
+
 ## [v1.12.0](https://github.com/symfony/maker-bundle/releases/tag/v1.12.0)
 
 *June 18th, 2021*
