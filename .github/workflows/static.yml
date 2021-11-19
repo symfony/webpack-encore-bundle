@@ -53,13 +53,13 @@ jobs:
         with:
           php-version: 8.0
           coverage: none
-          tools: vimeo/psalm:4.8.1
+          tools: vimeo/psalm:4.11.2
 
       - name: Download dependencies
         uses: ramsey/composer-install@v1
 
       - name: Psalm
-        run: psalm --no-progress --output-format=github
+        run: psalm --no-progress --php-version=8.0
 
   composer-normalize:
     name: Composer Normalize
