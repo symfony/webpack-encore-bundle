@@ -1,68 +1,53 @@
-name: CI
-
+name: Bundle CI
 on:
-  pull_request: ~
-  push: ~
+  push:
+    branches: ['main']
+  pull_request:
+  schedule:
+    - cron: '0 */12 * * *'
 
 jobs:
-  phpunit:
-    name: PHPUnit
-    runs-on: ubuntu-latest
+  tests:
+    name: "Tests ${{ matrix.php-version }} ${{ matrix.dependency-versions }} deps ${{ matrix.dependency-versions }}"
+    runs-on: ubuntu-18.04
+
     strategy:
-      max-parallel: 10
       fail-fast: false
       matrix:
-        run:
-          - php: '7.4'
-            sf_version: '4.4.*'
-            phpunit_version: '9.4'
-          - php: '8.0'
-            sf_version: '5.3.*'
-            phpunit_version: '9.4'
-          - php: '7.1'
-          - php: '7.2'
-          - php: '7.3'
-          - php: '7.4'
-            phpunit_version: '9.4'
+        # normal, highest, non-dev installs
+        php-version: ['7.2', '7.3', '7.4', '8.0', '8.1']
+        composer-options: ['--prefer-stable']
+        dependency-versions: ['highest']
+        include:
+          # testing lowest PHP version with lowest dependencies
+          - php-version: '7.2.5'
+            dependency-versions: 'lowest'
+            composer-options: '--prefer-lowest'
+
+          # testing dev versions with highest PHP
+          - php-version: '8.0'
+            dependency-versions: 'highest'
+            composer-options: '' # allow dev deps
 
     steps:
-      - name: Set up PHP
-        uses: shivammathur/setup-php@2.7.0
+      - name: "Checkout code"
+        uses: "actions/checkout@v2"
+
+      - name: "Install PHP"
+        uses: "shivammathur/setup-php@v2"
         with:
-          php-version: ${{ matrix.run.php }}
-          coverage: none
-          tools: flex
+            coverage: "none"
+            php-version: "${{ matrix.php-version }}"
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Install Global Dependencies
+        run: |
+          composer global require --no-progress --no-scripts --no-plugins symfony/flex dev-main
 
-      - name: Download dependencies
-        env:
-          SYMFONY_REQUIRE: ${{ matrix.run.sf_version || '*' }}
-        uses: ramsey/composer-install@v1
-
-      - name: Run tests
-        env:
-          SYMFONY_PHPUNIT_VERSION: ${{ matrix.run.phpunit_version || '' }}
-        run: ./vendor/bin/simple-phpunit
-
-  lowest:
-    name: Lowest deps
-    runs-on: ubuntu-latest
-    steps:
-      - name: Set up PHP
-        uses: shivammathur/setup-php@2.7.0
+      - name: "Composer install"
+        uses: "ramsey/composer-install@v1"
         with:
-          php-version: 7.3
-          coverage: none
-
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Download dependencies
-        with:
-          dependency-versions: "lowest"
-        uses: ramsey/composer-install@v1
+            dependency-versions: "${{ matrix.dependency-versions }}"
+            composer-options: "--prefer-dist --no-progress"
 
       - name: Run tests
         env:
