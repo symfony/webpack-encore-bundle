@@ -1,0 +1,117 @@
+---------------------------------------------------------------------------
+
+by jrushlow at 2021-07-19T02:43:28Z
+
+Howdy @Kocal - I do not believe we're ready to open up the bundle's to Symfony 6 yet based on based internal discussions. Symfony 5.4 has not been released yet and Symfony 6 is still far to unstable.
+
+Going to close for now - we can reopen / merge in the future when 5.4 has been released and 6 is a bit more stable.
+cc @weaverryan
+
+---------------------------------------------------------------------------
+
+by Kocal at 2021-07-19T06:39:41Z
+
+Hi!
+
+The [Twig Extra Bundle](https://github.com/twigphp/twig-extra-bundle/commit/6a4494b3c4df73bd170cf1f472ac7930eb9949ae) already supports Symfony 6 since 3 months, that's why I started PRs to allow Symfony 6 on many bundles, the earlier the better (to avoid the frustration people had when upgrading to a new Symfony major version, but no bundles supports it), but I suppose this is an exception.
+
+---------------------------------------------------------------------------
+
+by javiereguiluz at 2021-07-19T07:55:21Z
+
+I agree with @Kocal and please note that Symfony 6.0 will end its development in only 11 weeks (and then it's start an 8-week stabilization phase). See https://symfony.com/releases
+
+@jrushlow but of course you are in charge of managing this bundle and you know better how to handle things, so we don't want to stress you about this 🙏  Thanks!
+
+---------------------------------------------------------------------------
+
+by Kocal at 2021-09-17T11:49:47Z
+
+Re-opened: https://twitter.com/nicolasgrekas/status/1438831963838816262?s=19 😌
+
+---------------------------------------------------------------------------
+
+by jrushlow at 2021-09-17T12:49:19Z
+
+@Kocal can you rebase this? Thanks in advance!
+
+---------------------------------------------------------------------------
+
+by Kocal at 2021-09-17T12:51:42Z
+
+I don't have access to a computer until Monday in the morning, so I can't rebase right now :/
+
+---------------------------------------------------------------------------
+
+by Kocal at 2021-09-20T08:44:43Z
+
+@jrushlow PR rebased.
+
+The Psalm job is failing, unlucky it does not output anything that can help us in the CI. This is what it outputs in local:
+![image](https://user-images.githubusercontent.com/2103975/133976255-03a300f0-8b3b-4aef-a17b-68b60233d1fb.png)
+
+Should I add those errors in the psalm baseline? Thanks
+
+---------------------------------------------------------------------------
+
+by jrushlow at 2021-10-28T09:17:54Z
+
+Thanks @Kocal - yes, adding those to the baseline for now is probably best. The problem ultimately is in Psalm itself as `mixed` is not a class but a PHP type in the referenced instances. Either way that has nothing to do with this PR so we should be able to get this merged and released pretty quick.
+
+---------------------------------------------------------------------------
+
+by Kocal at 2021-10-28T14:32:44Z
+
+@jrushlow the PR has been rebased.
+
+How can I generate Psalm baseline? I've tried to run it with `--update-baseline` but it does not ignore the 3 errors :(
+
+---------------------------------------------------------------------------
+
+by williarin at 2021-11-04T14:12:29Z
+
+https://github.com/symfony/webpack-encore-bundle/blob/5a86aad75424096b47808423f27da87d8bebab8e/.github/workflows/static.yml#L56
+
+Update psalm to latest version 4.11.2 and the test passes.
+
+---------------------------------------------------------------------------
+
+by Kocal at 2021-11-04T21:19:33Z
+
+Updating to psalm 4.11.2 didn't work.
+
+How can I generate the baseline _again_? With PHPStan you can do it very easily with `--generate-baseline` but with Psalm?
+
+Thanks!
+
+---------------------------------------------------------------------------
+
+by GwendolenLynch at 2021-11-06T06:07:58Z
+
+> How can I generate the baseline again? With PHPStan you can do it very easily with --generate-baseline but with Psalm?
+
+`psalm --update-baseline` but that doesn't seem to fix the issue either.
+
+After a quick bit of debugging what I can see is that Psalm's `MethodCallReturnTypeFetcher#fetch` is assuming that the return type of `\Symfony\Component\HttpFoundation\ParameterBag#get` is a class name and therefore matching `int|float|bool|string|void|null|false|true|object|mixed` will result in the error.
+
+Downgrading `symfony/http-foundation` to `5.4-dev` stops this from triggering as the return type is still defined as a PHPDoc, but given the whole point here is to support Symfony 6 :woman_shrugging:
+
+---------------------------------------------------------------------------
+
+by weaverryan at 2021-11-08T01:16:57Z
+
+Hi everyone!
+
+Thanks @Kocal for getting this going and continually updating it - and @GwendolenLynch for jumping in to help. I don't know the exact fix, but the problem is that Psalm is running in "PHP 7.1" mode. Check out this psalm config: https://psalm.dev/docs/running_psalm/configuration/#phpversion
+
+Because this isn't specified, it's apparently falling back to the PHP version in composer.json, which is `>=7.1.3`. So I assume that it is using "php 7.1" mode.
+
+In theory... we should maybe run psalm twice - once with the lowest php version and once with the highest, but that feels overkill. I would be ok with setting the `phpVersion` config to `8.0`, preferably with a `--php-version=8.0` command line flag, so we don't forget that the version is hiding in a config file :).
+
+Cheers!
+
+---------------------------------------------------------------------------
+
+by xabbuh at 2021-11-19T13:52:49Z
+
+Would it make sense to add a new job to the CI that would actually run the tests against Symfony 6?
