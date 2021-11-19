@@ -443,7 +443,7 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
         $this->enableAssets = $enableAssets;
     }
 
-    public function registerBundles()
+    public function registerBundles(): array
     {
         return [
             new FrameworkBundle(),
@@ -504,12 +504,12 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
             ->setArgument(0, LogLevel::EMERGENCY);
     }
 
-    public function getCacheDir()
+    public function getCacheDir(): string
     {
         return sys_get_temp_dir().'/cache'.spl_object_hash($this);
     }
 
-    public function getLogDir()
+    public function getLogDir(): string
     {
         return sys_get_temp_dir().'/logs'.spl_object_hash($this);
     }
