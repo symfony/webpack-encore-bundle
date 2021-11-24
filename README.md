@@ -262,13 +262,13 @@ associative array in the first argument:
 ```twig
 <div {{ stimulus_action({
  'controller': 'method',
- 'other-controller': ['method', {'window@resize': 'onWindowResize'}]
+ 'other-controller': ['method', {'resize@window': 'onWindowResize'}]
 }) }}>
     Hello
 </div>
 
 <!-- would render -->
-<div data-action="controller#method other-controller#method window@resize->other-controller#onWindowResize">
+<div data-action="controller#method other-controller#method resize@window->other-controller#onWindowResize">
     Hello
 </div>
 ```
