@@ -41,7 +41,7 @@ jobs:
 
       - name: Install Global Dependencies
         run: |
-          composer global require --no-progress --no-scripts --no-plugins symfony/flex dev-main
+          composer global require --no-progress --no-scripts --no-plugins symfony/flex @dev
 
       - name: "Composer install"
         uses: "ramsey/composer-install@v1"
