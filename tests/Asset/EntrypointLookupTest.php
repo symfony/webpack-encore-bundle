@@ -155,7 +155,7 @@ EOF;
     public function testExceptionOnMissingEntry()
     {
         $this->expectException(\Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException::class);
-        $this->expectExceptionMessageMatches('/^Could not find the entry "fake_entry" in "[a-zA-Z0-9\/]+". Found: my_entry, other_entry\.$/');
+        $this->expectExceptionMessageMatches('/^Could not find the entry "fake_entry" in "[a-zA-Z0-9\/_]+". Found: my_entry, other_entry\.$/');
 
         $this->entrypointLookup->getCssFiles('fake_entry');
     }

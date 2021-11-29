@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.13.1](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.13.1)
+
+*November 28th, 2021*
+
+### Bug Fix
+
+- [#153](https://github.com/symfony/webpack-encore-bundle/pull/153) - Skipping null values from rendering - *@sadikoff*
+
 ## [v1.13.0](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.13.0)
 
 *November 19th, 2021*

@@ -273,6 +273,12 @@ class IntegrationTest extends TestCase
             'controllerValues' => ['isEnabled' => true],
             'expected' => 'data-controller="true-controller" data-true-controller-is-enabled-value="true"',
         ];
+
+        yield 'null-attribute-value-does-not-render' => [
+            'dataOrControllerName' => 'null-controller',
+            'controllerValues' => ['firstName' => null],
+            'expected' => 'data-controller="null-controller"',
+        ];
     }
 
     /**
