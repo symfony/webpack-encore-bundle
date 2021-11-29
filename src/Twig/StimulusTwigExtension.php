@@ -57,6 +57,10 @@ final class StimulusTwigExtension extends AbstractExtension
             $controllers[] = $controllerName;
 
             foreach ($controllerValues as $key => $value) {
+                if (null === $value) {
+                    continue;
+                }
+
                 if (!is_scalar($value)) {
                     $value = json_encode($value);
                 }
