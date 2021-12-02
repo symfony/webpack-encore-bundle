@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.13.2](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.13.2)
+
+*December 2nd, 2021*
+
+### Bug Fix
+
+- [#155](https://github.com/symfony/webpack-encore-bundle/pull/155) - Increase version constraint of symfony/service-contracts - *@luca-rath*
+
 ## [v1.13.1](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.13.1)
 
 *November 28th, 2021*
