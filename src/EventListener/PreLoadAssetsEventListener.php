@@ -53,21 +53,31 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
         $defaultAttributes = $this->tagRenderer->getDefaultAttributes();
         $crossOrigin = $defaultAttributes['crossorigin'] ?? false;
 
-        foreach ($this->tagRenderer->getRenderedScripts() as $href) {
-            $link = ($this->createLink('preload', $href))->withAttribute('as', 'script');
+        foreach ($this->tagRenderer->getRenderedScripts() as $attributes) {
+            $attributes = array_merge($defaultAttributes, $attributes);
 
-            if (false !== $crossOrigin) {
-                $link = $link->withAttribute('crossorigin', $crossOrigin);
+            $link = ($this->createLink('preload', $attributes["src"]))->withAttribute('as', 'script');
+
+            if (!empty($attributes['crossorigin']) && false !== $attributes['crossorigin']) {
+                $link = $link->withAttribute('crossorigin', $attributes['crossorigin']);
+            }
+            if (!empty($attributes['integrity'])) {
+                $link = $link->withAttribute('integrity', $attributes['integrity']);
             }
 
             $linkProvider = $linkProvider->withLink($link);
         }
 
-        foreach ($this->tagRenderer->getRenderedStyles() as $href) {
-            $link = ($this->createLink('preload', $href))->withAttribute('as', 'style');
+        foreach ($this->tagRenderer->getRenderedStyles() as $attributes) {
+            $attributes = array_merge($defaultAttributes, $attributes);
 
-            if (false !== $crossOrigin) {
-                $link = $link->withAttribute('crossorigin', $crossOrigin);
+            $link = ($this->createLink('preload', $attributes["href"]))->withAttribute('as', 'style');
+
+            if (!empty($attributes['crossorigin']) && false !== $attributes['crossorigin']) {
+                $link = $link->withAttribute('crossorigin', $attributes['crossorigin']);
+            }
+            if (!empty($attributes['integrity'])) {
+                $link = $link->withAttribute('integrity', $attributes['integrity']);
             }
 
             $linkProvider = $linkProvider->withLink($link);

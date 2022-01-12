@@ -91,7 +91,7 @@ class TagRenderer implements ResetInterface
                 $this->convertArrayToAttributes($attributes)
             );
 
-            $this->renderedFiles['scripts'][] = $attributes['src'];
+            $this->renderedFiles['scripts'][] = $attributes;
         }
 
         return implode('', $scriptTags);
@@ -129,7 +129,7 @@ class TagRenderer implements ResetInterface
                 $this->convertArrayToAttributes($attributes)
             );
 
-            $this->renderedFiles['styles'][] = $attributes['href'];
+            $this->renderedFiles['styles'][] = $attributes;
         }
 
         return implode('', $scriptTags);
