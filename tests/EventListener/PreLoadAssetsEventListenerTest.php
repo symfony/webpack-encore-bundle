@@ -30,8 +30,17 @@ class PreLoadAssetsEventListenerTest extends TestCase
     {
         $tagRenderer = $this->createMock(TagRenderer::class);
         $tagRenderer->expects($this->once())->method('getDefaultAttributes')->willReturn(['crossorigin' => 'anonymous']);
-        $tagRenderer->expects($this->once())->method('getRenderedScripts')->willReturn(['/file1.js']);
-        $tagRenderer->expects($this->once())->method('getRenderedStyles')->willReturn(['/css/file1.css']);
+        $tagRenderer->expects($this->once())->method('getRenderedScripts')->willReturn([
+            [
+                'src' => '/file1.js',
+            ],
+        ]);
+        $tagRenderer->expects($this->once())->method('getRenderedStyles')->willReturn([
+            [
+                'rel' => 'stylesheet',
+                'href' => '/css/file1.css',
+            ],
+        ]);
 
         $request = new Request();
         $response = new Response();
@@ -60,7 +69,11 @@ class PreLoadAssetsEventListenerTest extends TestCase
     {
         $tagRenderer = $this->createMock(TagRenderer::class);
         $tagRenderer->expects($this->once())->method('getDefaultAttributes')->willReturn(['crossorigin' => 'anonymous']);
-        $tagRenderer->expects($this->once())->method('getRenderedScripts')->willReturn(['/file1.js']);
+        $tagRenderer->expects($this->once())->method('getRenderedScripts')->willReturn([
+            [
+                'src' => '/file1.js',
+            ],
+        ]);
         $tagRenderer->expects($this->once())->method('getRenderedStyles')->willReturn([]);
 
         $request = new Request();
