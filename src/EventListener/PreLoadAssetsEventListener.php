@@ -56,7 +56,7 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
         foreach ($this->tagRenderer->getRenderedScripts() as $attributes) {
             $attributes = array_merge($defaultAttributes, $attributes);
 
-            $link = ($this->createLink('preload', $attributes["src"]))->withAttribute('as', 'script');
+            $link = ($this->createLink('preload', $attributes['src']))->withAttribute('as', 'script');
 
             if (!empty($attributes['crossorigin']) && false !== $attributes['crossorigin']) {
                 $link = $link->withAttribute('crossorigin', $attributes['crossorigin']);
@@ -71,7 +71,7 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
         foreach ($this->tagRenderer->getRenderedStyles() as $attributes) {
             $attributes = array_merge($defaultAttributes, $attributes);
 
-            $link = ($this->createLink('preload', $attributes["href"]))->withAttribute('as', 'style');
+            $link = ($this->createLink('preload', $attributes['href']))->withAttribute('as', 'style');
 
             if (!empty($attributes['crossorigin']) && false !== $attributes['crossorigin']) {
                 $link = $link->withAttribute('crossorigin', $attributes['crossorigin']);
