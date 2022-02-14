@@ -1,0 +1,39 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2021-10-17T14:07:47Z
+
+Hi!
+
+Can you explain your use-case a bit more? If your entry doesn't have an CSS or JS files, they already won't be rendered. But perhaps you have some situation where an entrypoint may or may not be even defined (?) and you need to be able to have `encore_entry_script_tags('foo')` without generating an error that the entry doesn't exist?
+
+Cheers!
+
+---------------------------------------------------------------------------
+
+by acrobat at 2021-10-17T14:53:57Z
+
+Hi @weaverryan,
+
+Yes indeed the last part is our use case. We are in the progress of replacing a custom build layer (on top of webpack) with symfony encore in [our Kunstmaan CMS](https://github.com/kunstmaan/KunstmaanBundlesCms). If you install the cms your project has 2 "setup's" an "app" entry (or even split in multiple smaller entries) for the frontend of the website and an "admin" entry which users can define (but are not required to) to override css/js of the admin interface.
+
+The switch to symfony encore is almost ready, but we had indeed the issue that the call `encore_entry_script_tags('admin')` for the admin entry (which might not be defined in a user project) throws an exception. https://github.com/symfony/webpack-encore-bundle/blob/5a86aad75424096b47808423f27da87d8bebab8e/src/Asset/EntrypointLookup.php#L95-L102
+
+So that's the reasoning behind this PR, but as you suggested not throwing or catching the exception in `encore_entry_script_tags` and `encore_entry_link_tags` would also fix our case. I don't know which approach you prefer, but I'm able to update the PR if needed!
+
+---------------------------------------------------------------------------
+
+by Exellent1988 at 2021-11-16T10:43:40Z
+
+is there any progress regaring the pull request? I'm also quite interested in this function to check if an tag has files / exists at all.
+
+---------------------------------------------------------------------------
+
+by acrobat at 2021-11-20T10:51:24Z
+
+@weaverryan I think this PR is ready for a final review, let me know if there are any changes needed!
+
+---------------------------------------------------------------------------
+
+by acrobat at 2022-01-06T12:52:50Z
+
+Friendly ping @weaverryan
