@@ -1,5 +1,17 @@
 # Changelog
 
+## [v1.14.0](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.14.0)
+
+*February 14th, 2022*
+
+### Feature
+
+- [#147](https://github.com/symfony/webpack-encore-bundle/pull/147) - Add encore_entry_exists() twig functions to check if entrypoint has files - *@acrobat*
+
+### Bug Fix
+
+- [#115](https://github.com/symfony/webpack-encore-bundle/pull/115) - Reset assets on FINISH_REQUEST - *@Warxcell*
+
 ## [v1.13.2](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.13.2)
 
 *December 2nd, 2021*
