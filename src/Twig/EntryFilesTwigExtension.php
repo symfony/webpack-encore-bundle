@@ -10,6 +10,7 @@
 namespace Symfony\WebpackEncoreBundle\Twig;
 
 use Psr\Container\ContainerInterface;
+use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Twig\Extension\AbstractExtension;
@@ -31,6 +32,7 @@ final class EntryFilesTwigExtension extends AbstractExtension
             new TwigFunction('encore_entry_css_files', [$this, 'getWebpackCssFiles']),
             new TwigFunction('encore_entry_script_tags', [$this, 'renderWebpackScriptTags'], ['is_safe' => ['html']]),
             new TwigFunction('encore_entry_link_tags', [$this, 'renderWebpackLinkTags'], ['is_safe' => ['html']]),
+            new TwigFunction('encore_entry_exists', [$this, 'entryExists']),
         ];
     }
 
@@ -56,6 +58,16 @@ final class EntryFilesTwigExtension extends AbstractExtension
     {
         return $this->getTagRenderer()
             ->renderWebpackLinkTags($entryName, $packageName, $entrypointName, $attributes);
+    }
+
+    public function entryExists(string $entryName, string $entrypointName = '_default'): bool
+    {
+        $entrypointLookup = $this->getEntrypointLookup($entrypointName);
+        if (!$entrypointLookup instanceof EntrypointLookup) {
+            throw new \LogicException(sprintf('Cannot use entryExists() unless the entrypoint lookup is an instance of "%s"', EntrypointLookup::class));
+        }
+
+        return $entrypointLookup->entryExists($entryName);
     }
 
     private function getEntrypointLookup(string $entrypointName): EntrypointLookupInterface
