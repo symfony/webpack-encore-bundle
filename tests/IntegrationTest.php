@@ -531,6 +531,10 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
         // avoid logging request logs
         $container->register('logger', Logger::class)
             ->setArgument(0, LogLevel::EMERGENCY);
+
+        // @legacy for 5.0 and earlier: did not have controller.service_arguments tag
+        $container->getDefinition('kernel')
+            ->addTag('controller.service_arguments');
     }
 
     public function getCacheDir(): string
@@ -556,7 +560,7 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
         $response0 = $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
         $response1 = $httpKernel->handle($subRequest, HttpKernelInterface::SUB_REQUEST);
 
-        return new Response($response0->getContent() . $response1->getContent());
+        return new Response($response0->getContent().$response1->getContent());
     }
 
     public function renderTwig(Environment $twig, Request $request)
@@ -568,11 +572,11 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
 if (AbstractWebpackEncoreIntegrationTestKernel::VERSION_ID >= 50100) {
     class WebpackEncoreIntegrationTestKernel extends AbstractWebpackEncoreIntegrationTestKernel
     {
-        protected function configureRouting(RoutingConfigurator $routes): void
+        protected function configureRoutes(RoutingConfigurator $routes): void
         {
-            $routes->add('/foo', 'kernel::renderFoo');
-            $routes->add('/render', 'kernel::renderTwig');
-            $routes->add('/render-sub-requests', 'kernel::renderSubRequests');
+            $routes->add('foo', '/foo')->controller('kernel::renderFoo');
+            $routes->add('render', '/render')->controller('kernel::renderTwig');
+            $routes->add('render_sub_requests', '/render-sub-requests')->controller('kernel::renderSubRequests');
         }
     }
 } else {
@@ -580,13 +584,12 @@ if (AbstractWebpackEncoreIntegrationTestKernel::VERSION_ID >= 50100) {
     {
         protected function configureRoutes(RouteCollectionBuilder $routes)
         {
-            $routes->add('/foo', 'kernel:::renderFoo');
+            $routes->add('/foo', 'kernel::renderFoo');
             $routes->add('/render', 'kernel::renderTwig');
             $routes->add('/render-sub-requests', 'kernel::renderSubRequests');
         }
     }
 }
-
 
 class WebpackEncoreCacheWarmerTester
 {
