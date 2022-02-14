@@ -1,8 +1,8 @@
 {
     "name": "symfony/webpack-encore-bundle",
-    "type": "symfony-bundle",
     "description": "Integration with your Symfony app & Webpack Encore!",
     "license": "MIT",
+    "type": "symfony-bundle",
     "authors": [
         {
             "name": "Symfony Community",
@@ -23,12 +23,7 @@
         "symfony/twig-bundle": "^4.4 || ^5.0 || ^6.0",
         "symfony/web-link": "^4.4 || ^5.0 || ^6.0"
     },
-    "extra": {
-        "thanks": {
-            "name": "symfony/webpack-encore",
-            "url": "https://github.com/symfony/webpack-encore"
-        }
-    },
+    "minimum-stability": "dev",
     "autoload": {
         "psr-4": {
             "Symfony\\WebpackEncoreBundle\\": "src"
@@ -39,5 +34,10 @@
             "Symfony\\WebpackEncoreBundle\\Tests\\": "tests/"
         }
     },
-    "minimum-stability": "dev"
+    "extra": {
+        "thanks": {
+            "name": "symfony/webpack-encore",
+            "url": "https://github.com/symfony/webpack-encore"
+        }
+    }
 }

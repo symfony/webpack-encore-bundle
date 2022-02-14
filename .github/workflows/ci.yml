@@ -8,7 +8,7 @@ on:
 
 jobs:
   tests:
-    name: "Tests ${{ matrix.php-version }} ${{ matrix.dependency-versions }} deps ${{ matrix.dependency-versions }}"
+    name: "Tests ${{ matrix.php-version }} deps ${{ matrix.dependency-versions }}"
     runs-on: ubuntu-18.04
 
     strategy:
@@ -16,18 +16,15 @@ jobs:
       matrix:
         # normal, highest, non-dev installs
         php-version: ['7.2', '7.3', '7.4', '8.0', '8.1']
-        composer-options: ['--prefer-stable']
         dependency-versions: ['highest']
         include:
           # testing lowest PHP version with lowest dependencies
           - php-version: '7.2.5'
             dependency-versions: 'lowest'
-            composer-options: '--prefer-lowest'
 
           # testing dev versions with highest PHP
           - php-version: '8.0'
             dependency-versions: 'highest'
-            composer-options: '' # allow dev deps
 
     steps:
       - name: "Checkout code"
@@ -44,7 +41,7 @@ jobs:
           composer global require --no-progress --no-scripts --no-plugins symfony/flex @dev
 
       - name: "Composer install"
-        uses: "ramsey/composer-install@v1"
+        uses: "ramsey/composer-install@v2"
         with:
             dependency-versions: "${{ matrix.dependency-versions }}"
             composer-options: "--prefer-dist --no-progress"
