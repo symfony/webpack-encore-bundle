@@ -28,4 +28,6 @@ interface EntrypointLookupInterface extends ResetInterface
      * Resets the state of this service.
      */
     public function reset();
+
+    public function entryExists(string $entryName): bool;
 }

@@ -62,12 +62,8 @@ final class EntryFilesTwigExtension extends AbstractExtension
 
     public function entryExists(string $entryName, string $entrypointName = '_default'): bool
     {
-        $entrypointLookup = $this->getEntrypointLookup($entrypointName);
-        if (!$entrypointLookup instanceof EntrypointLookup) {
-            throw new \LogicException(sprintf('Cannot use entryExists() unless the entrypoint lookup is an instance of "%s"', EntrypointLookup::class));
-        }
-
-        return $entrypointLookup->entryExists($entryName);
+        return $this->getEntrypointLookup($entrypointName)
+            ->entryExists($entryName);
     }
 
     private function getEntrypointLookup(string $entrypointName): EntrypointLookupInterface
