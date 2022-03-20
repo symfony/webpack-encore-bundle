@@ -10,7 +10,6 @@
 namespace Symfony\WebpackEncoreBundle\Twig;
 
 use Psr\Container\ContainerInterface;
-use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Twig\Extension\AbstractExtension;
