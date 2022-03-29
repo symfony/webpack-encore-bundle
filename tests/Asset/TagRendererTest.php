@@ -296,6 +296,9 @@ class TagRendererTest extends TestCase
 
         $renderer->renderWebpackScriptTags('my_entry');
         $renderer->renderWebpackLinkTags('my_entry');
+        $this->assertSame(['http://localhost:8080/build/file1.js', 'http://localhost:8080/build/file2.js'], $renderer->getRenderedScripts());
+        $this->assertSame(['http://localhost:8080/build/file1.css'], $renderer->getRenderedStyles());
+
         $this->assertSame([
             [
                 'src' => 'http://localhost:8080/build/file1.js',
@@ -303,16 +306,19 @@ class TagRendererTest extends TestCase
             [
                 'src' => 'http://localhost:8080/build/file2.js',
             ],
-        ], $renderer->getRenderedScripts());
+        ], $renderer->getRenderedScriptsWithAttributes());
         $this->assertSame([
             [
                 'rel' => 'stylesheet',
                 'href' => 'http://localhost:8080/build/file1.css',
             ],
-        ], $renderer->getRenderedStyles());
+        ], $renderer->getRenderedStylesWithAttributes());
+
 
         $renderer->reset();
         $this->assertEmpty($renderer->getRenderedScripts());
         $this->assertEmpty($renderer->getRenderedStyles());
+        $this->assertEmpty($renderer->getRenderedScriptsWithAttributes());
+        $this->assertEmpty($renderer->getRenderedStylesWithAttributes());
     }
 }
