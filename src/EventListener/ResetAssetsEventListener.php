@@ -14,6 +14,8 @@ namespace Symfony\WebpackEncoreBundle\EventListener;
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
+use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
+use Symfony\Component\HttpKernel\HttpKernelInterface;
 
 class ResetAssetsEventListener implements EventSubscriberInterface
 {
@@ -35,6 +37,10 @@ class ResetAssetsEventListener implements EventSubscriberInterface
 
     public function resetAssets()
     {
+         if ($e->getRequestType() == HttpKernelInterface::SUB_REQUEST) {
+            return;
+        }
+
         foreach ($this->buildNames as $name) {
             $this->entrypointLookupCollection->getEntrypointLookup($name)->reset();
         }
