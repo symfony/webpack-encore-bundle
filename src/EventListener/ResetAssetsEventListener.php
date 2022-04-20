@@ -35,7 +35,7 @@ class ResetAssetsEventListener implements EventSubscriberInterface
         ];
     }
 
-    public function resetAssets()
+    public function resetAssets($e)
     {
          if ($e->getRequestType() == HttpKernelInterface::SUB_REQUEST) {
             return;
