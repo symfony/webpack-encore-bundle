@@ -114,13 +114,13 @@ class IntegrationTest extends TestCase
         $html = $response->getContent();
 
         $containsCount0 = substr_count($html, '<script src="/build/file1.js"');
-        $this->assertSame(2, $containsCount0);
+        $this->assertSame(1, $containsCount0);
 
         $containsCount1 = substr_count($html, '<link rel="stylesheet" href="/build/styles3.css"');
-        $this->assertSame(2, $containsCount1);
+        $this->assertSame(1, $containsCount1);
 
         $containsCount2 = substr_count($html, '<link rel="stylesheet" href="/build/styles4.css"');
-        $this->assertSame(2, $containsCount2);
+        $this->assertSame(1, $containsCount2);
     }
 
     public function testCacheWarmer()
