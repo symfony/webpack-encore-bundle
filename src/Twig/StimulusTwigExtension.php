@@ -61,11 +61,11 @@ final class StimulusTwigExtension extends AbstractExtension
                     continue;
                 }
 
-                if (!is_scalar($value)) {
+                if ($value instanceof \Stringable || (\is_object($value) && \is_callable([$value, '__toString']))) {
+                    $value = (string) $value;
+                } elseif (!\is_scalar($value)) {
                     $value = json_encode($value);
-                }
-
-                if (\is_bool($value)) {
+                } elseif (\is_bool($value)) {
                     $value = $value ? 'true' : 'false';
                 }
 
