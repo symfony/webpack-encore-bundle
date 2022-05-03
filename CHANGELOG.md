@@ -1,5 +1,14 @@
 # Changelog
 
+## [v1.14.1](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.14.1)
+
+*May 3rd, 2022*
+
+### Bug
+
+- [#172](https://github.com/symfony/webpack-encore-bundle/pull/172) - Fixing reset assets trigger on sub-requests - *@TarikAmine*
+- [#171](https://github.com/symfony/webpack-encore-bundle/pull/171) - Do not JSON encode stringable values - *@jderusse*
+
 ## [v1.14.0](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.14.0)
 
 *February 14th, 2022*
