@@ -12,6 +12,7 @@ declare(strict_types=1);
 namespace Symfony\WebpackEncoreBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
+use Symfony\Component\HttpKernel\Event\FinishRequestEvent;
 use Symfony\Component\HttpKernel\KernelEvents;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection;
 
@@ -33,8 +34,14 @@ class ResetAssetsEventListener implements EventSubscriberInterface
         ];
     }
 
-    public function resetAssets()
+    public function resetAssets(FinishRequestEvent $event)
     {
+        // Handle deprecated `KernelEvent::isMasterRequest() - Can be removed when Symfony < 5.3 support is dropped.
+        $mainRequestMethod = method_exists($event, 'isMainRequest') ? 'isMainRequest' : 'isMasterRequest';
+
+        if (!$event->$mainRequestMethod()) {
+            return;
+        }
         foreach ($this->buildNames as $name) {
             $this->entrypointLookupCollection->getEntrypointLookup($name)->reset();
         }
