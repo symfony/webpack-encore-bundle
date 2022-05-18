@@ -10,19 +10,23 @@
 namespace Symfony\WebpackEncoreBundle\Twig;
 
 use Psr\Container\ContainerInterface;
+use Psr\Log\LoggerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-final class EntryFilesTwigExtension extends AbstractExtension
+final class EntryFilesTwigExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private $container;
+    private $logger;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(ContainerInterface $container, LoggerInterface $logger = null)
     {
         $this->container = $container;
+        $this->logger = $logger;
     }
 
     public function getFunctions(): array
@@ -50,14 +54,32 @@ final class EntryFilesTwigExtension extends AbstractExtension
 
     public function renderWebpackScriptTags(string $entryName, string $packageName = null, string $entrypointName = '_default', array $attributes = []): string
     {
-        return $this->getTagRenderer()
-            ->renderWebpackScriptTags($entryName, $packageName, $entrypointName, $attributes);
+        try {
+            return $this->getTagRenderer()
+                ->renderWebpackScriptTags($entryName, $packageName, $entrypointName, $attributes);
+        } catch (\InvalidArgumentException $e) {
+            if (!$this->logger) {
+                throw $e;
+            }
+            $this->logger->warning($e->getMessage().' Did you forget to build the assets with npm or yarn?');
+
+            return '';
+        }
     }
 
     public function renderWebpackLinkTags(string $entryName, string $packageName = null, string $entrypointName = '_default', array $attributes = []): string
     {
-        return $this->getTagRenderer()
-            ->renderWebpackLinkTags($entryName, $packageName, $entrypointName, $attributes);
+        try {
+            return $this->getTagRenderer()
+                ->renderWebpackLinkTags($entryName, $packageName, $entrypointName, $attributes);
+        } catch (\InvalidArgumentException $e) {
+            if (!$this->logger) {
+                throw $e;
+            }
+            $this->logger->warning($e->getMessage().' Did you forget to build the assets with npm or yarn?');
+
+            return '';
+        }
     }
 
     public function entryExists(string $entryName, string $entrypointName = '_default'): bool
@@ -79,5 +101,13 @@ final class EntryFilesTwigExtension extends AbstractExtension
     private function getTagRenderer(): TagRenderer
     {
         return $this->container->get('webpack_encore.tag_renderer');
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return [
+            'webpack_encore.entrypoint_lookup_collection' => EntrypointLookupInterface::class,
+            'webpack_encore.tag_renderer' => TagRenderer::class,
+        ];
     }
 }

@@ -34,6 +34,7 @@
                     </argument>
                 </service>
             </argument>
+            <argument type="service" id="logger" on-invalid="ignore" />
         </service>
 
         <service id="webpack_encore.twig_stimulus_extension" class="Symfony\WebpackEncoreBundle\Twig\StimulusTwigExtension">
