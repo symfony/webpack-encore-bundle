@@ -70,7 +70,6 @@ enable it manually:
     .setOutputPath('public/build/')
     .setPublicPath('/build')
     .setManifestKeyPrefix('build/')
-
     .addEntry('entry1', './assets/some_file.js')
 
 +   .splitEntryChunks()
@@ -236,7 +235,7 @@ associative array in the first argument:
 <div {{ stimulus_controller({
     'chart': { 'name': 'Likes' },
     'other-controller': { },
-) }}>
+}) }}>
     Hello
 </div>
 ```
