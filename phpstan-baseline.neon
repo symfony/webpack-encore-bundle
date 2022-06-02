@@ -57,6 +57,6 @@ parameters:
 
 		-
 			message: "#^Function twig_escape_filter not found\\.$#"
-			count: 7
-			path: src/Twig/StimulusTwigExtension.php
+			count: 1
+			path: src/Dto/AbstractStimulusDto.php
 

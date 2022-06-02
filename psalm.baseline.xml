@@ -30,15 +30,9 @@
       <code>Link|FigLink</code>
     </UndefinedDocblockClass>
   </file>
-  <file src="src/Twig/StimulusTwigExtension.php">
-    <UndefinedFunction occurrences="7">
-      <code>twig_escape_filter($env, $actionName, 'html_attr')</code>
-      <code>twig_escape_filter($env, $targetNames, 'html_attr')</code>
-      <code>twig_escape_filter($env, $this-&gt;normalizeControllerName($controllerName), 'html_attr')</code>
-      <code>twig_escape_filter($env, $this-&gt;normalizeControllerName($controllerName), 'html_attr')</code>
-      <code>twig_escape_filter($env, $this-&gt;normalizeControllerName($controllerName), 'html_attr')</code>
-      <code>twig_escape_filter($env, $this-&gt;normalizeKeyName($key), 'html_attr')</code>
-      <code>twig_escape_filter($env, $value, 'html_attr')</code>
+  <file src="src/Dto/AbstractStimulusDto.php">
+    <UndefinedFunction occurrences="1">
+      <code>twig_escape_filter($this->env, $value, 'html_attr')</code>
     </UndefinedFunction>
   </file>
 </files>

@@ -207,7 +207,8 @@ class IntegrationTest extends TestCase
         yield 'empty' => [
             'dataOrControllerName' => [],
             'controllerValues' => [],
-            'expected' => '',
+            'expectedString' => '',
+            'expectedArray' => [],
         ];
 
         yield 'single-controller-no-data' => [
@@ -215,7 +216,8 @@ class IntegrationTest extends TestCase
                 'my-controller' => [],
             ],
             'controllerValues' => [],
-            'expected' => 'data-controller="my-controller"',
+            'expectedString' => 'data-controller="my-controller"',
+            'expectedArray' => ['data-controller' => 'my-controller'],
         ];
 
         yield 'single-controller-scalar-data' => [
@@ -225,7 +227,8 @@ class IntegrationTest extends TestCase
                 ],
             ],
             'controllerValues' => [],
-            'expected' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
+            'expectedString' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
+            'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-my-value-value' => 'scalar-value'],
         ];
 
         yield 'single-controller-typed-data' => [
@@ -237,7 +240,8 @@ class IntegrationTest extends TestCase
                 ],
             ],
             'controllerValues' => [],
-            'expected' => 'data-controller="my-controller" data-my-controller-boolean-value="true" data-my-controller-number-value="4" data-my-controller-string-value="str"',
+            'expectedString' => 'data-controller="my-controller" data-my-controller-boolean-value="true" data-my-controller-number-value="4" data-my-controller-string-value="str"',
+            'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-boolean-value' => 'true', 'data-my-controller-number-value' => '4', 'data-my-controller-string-value' => 'str'],
         ];
 
         yield 'single-controller-nested-data' => [
@@ -247,7 +251,8 @@ class IntegrationTest extends TestCase
                 ],
             ],
             'controllerValues' => [],
-            'expected' => 'data-controller="my-controller" data-my-controller-my-value-value="&#x7B;&quot;nested&quot;&#x3A;&quot;array&quot;&#x7D;"',
+            'expectedString' => 'data-controller="my-controller" data-my-controller-my-value-value="&#x7B;&quot;nested&quot;&#x3A;&quot;array&quot;&#x7D;"',
+            'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-my-value-value' => '&#x7B;&quot;nested&quot;&#x3A;&quot;array&quot;&#x7D;'],
         ];
 
         yield 'multiple-controllers-scalar-data' => [
@@ -260,7 +265,8 @@ class IntegrationTest extends TestCase
                 ],
             ],
             'controllerValues' => [],
-            'expected' => 'data-controller="my-controller another-controller" data-my-controller-my-value-value="scalar-value" data-another-controller-another-value-value="scalar-value&#x20;2"',
+            'expectedString' => 'data-controller="my-controller another-controller" data-my-controller-my-value-value="scalar-value" data-another-controller-another-value-value="scalar-value&#x20;2"',
+            'expectedArray' => ['data-controller' => 'my-controller another-controller', 'data-my-controller-my-value-value' => 'scalar-value', 'data-another-controller-another-value-value' => 'scalar-value&#x20;2'],
         ];
 
         yield 'normalize-names' => [
@@ -270,51 +276,73 @@ class IntegrationTest extends TestCase
                 ],
             ],
             'controllerValues' => [],
-            'expected' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="true"',
+            'expectedString' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="true"',
+            'expectedArray' => ['data-controller' => 'symfony--ux-dropzone--dropzone', 'data-symfony--ux-dropzone--dropzone-my-key-value' => 'true'],
         ];
 
         yield 'short-single-controller-no-data' => [
             'dataOrControllerName' => 'my-controller',
             'controllerValues' => [],
-            'expected' => 'data-controller="my-controller"',
+            'expectedString' => 'data-controller="my-controller"',
+            'expectedArray' => ['data-controller' => 'my-controller'],
         ];
 
         yield 'short-single-controller-with-data' => [
             'dataOrControllerName' => 'my-controller',
             'controllerValues' => ['myValue' => 'scalar-value'],
-            'expected' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
+            'expectedString' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
+            'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-my-value-value' => 'scalar-value'],
         ];
 
         yield 'false-attribute-value-renders-false' => [
             'dataOrControllerName' => 'false-controller',
             'controllerValues' => ['isEnabled' => false],
-            'expected' => 'data-controller="false-controller" data-false-controller-is-enabled-value="false"',
+            'expectedString' => 'data-controller="false-controller" data-false-controller-is-enabled-value="false"',
+            'expectedArray' => ['data-controller' => 'false-controller', 'data-false-controller-is-enabled-value' => 'false'],
         ];
 
         yield 'true-attribute-value-renders-true' => [
             'dataOrControllerName' => 'true-controller',
             'controllerValues' => ['isEnabled' => true],
-            'expected' => 'data-controller="true-controller" data-true-controller-is-enabled-value="true"',
+            'expectedString' => 'data-controller="true-controller" data-true-controller-is-enabled-value="true"',
+            'expectedArray' => ['data-controller' => 'true-controller', 'data-true-controller-is-enabled-value' => 'true'],
         ];
 
         yield 'null-attribute-value-does-not-render' => [
             'dataOrControllerName' => 'null-controller',
             'controllerValues' => ['firstName' => null],
-            'expected' => 'data-controller="null-controller"',
+            'expectedString' => 'data-controller="null-controller"',
+            'expectedArray' => ['data-controller' => 'null-controller'],
         ];
     }
 
     /**
      * @dataProvider provideRenderStimulusController
      */
-    public function testRenderStimulusController($dataOrControllerName, array $controllerValues, string $expected)
+    public function testRenderStimulusController($dataOrControllerName, array $controllerValues, string $expectedString, array $expectedArray)
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
         $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
 
         $extension = new StimulusTwigExtension();
-        $this->assertSame($expected, $extension->renderStimulusController($twig, $dataOrControllerName, $controllerValues));
+        $dto = $extension->renderStimulusController($twig, $dataOrControllerName, $controllerValues);
+        $this->assertSame($expectedString, (string) $dto);
+        $this->assertSame($expectedArray, $dto->toArray());
+    }
+
+    public function testAppendStimulusController()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+
+        $extension = new StimulusTwigExtension();
+        $dto = $extension->renderStimulusController($twig, 'my-controller', ['myValue' => 'scalar-value']);
+        $this->assertSame(
+            'data-controller="my-controller another-controller" data-my-controller-my-value-value="scalar-value" data-another-controller-another-value-value="scalar-value&#x20;2"',
+            (string) $extension->appendStimulusController($dto, 'another-controller', ['another-value' => 'scalar-value 2'])
+        );
     }
 
     public function provideRenderStimulusAction()
@@ -323,14 +351,27 @@ class IntegrationTest extends TestCase
             'dataOrControllerName' => 'my-controller',
             'actionName' => 'onClick',
             'eventName' => null,
-            'expected' => 'data-action="my-controller#onClick"',
+            'parameters' => [],
+            'expectedString' => 'data-action="my-controller#onClick"',
+            'expectedArray' => ['data-action' => 'my-controller#onClick'],
         ];
 
         yield 'with custom event' => [
             'dataOrControllerName' => 'my-controller',
             'actionName' => 'onClick',
             'eventName' => 'click',
-            'expected' => 'data-action="click->my-controller#onClick"',
+            'parameters' => [],
+            'expectedString' => 'data-action="click->my-controller#onClick"',
+            'expectedArray' => ['data-action' => 'click->my-controller#onClick'],
+        ];
+
+        yield 'with parameters' => [
+            'dataOrControllerName' => 'my-controller',
+            'actionName' => 'onClick',
+            'eventName' => null,
+            'parameters' => ['bool-param' => true, 'int-param' => 4, 'string-param' => 'test'],
+            'expectedString' => 'data-action="my-controller#onClick" data-my-controller-bool-param-param="true" data-my-controller-int-param-param="4" data-my-controller-string-param-param="test"',
+            'expectedArray' => ['data-action' => 'my-controller#onClick', 'data-my-controller-bool-param-param' => 'true', 'data-my-controller-int-param-param' => '4', 'data-my-controller-string-param-param' => 'test'],
         ];
 
         yield 'multiple actions, with default event' => [
@@ -341,7 +382,9 @@ class IntegrationTest extends TestCase
             ],
             'actionName' => null,
             'eventName' => null,
-            'expected' => 'data-action="my-controller#onClick my-second-controller#onClick my-second-controller#onSomethingElse foo--bar-controller#onClick"',
+            'parameters' => [],
+            'expectedString' => 'data-action="my-controller#onClick my-second-controller#onClick my-second-controller#onSomethingElse foo--bar-controller#onClick"',
+            'expectedArray' => ['data-action' => 'my-controller#onClick my-second-controller#onClick my-second-controller#onSomethingElse foo--bar-controller#onClick'],
         ];
 
         yield 'multiple actions, with custom event' => [
@@ -353,7 +396,9 @@ class IntegrationTest extends TestCase
             ],
             'actionName' => null,
             'eventName' => null,
-            'expected' => 'data-action="click->my-controller#onClick click->my-second-controller#onClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick"',
+            'parameters' => [],
+            'expectedString' => 'data-action="click->my-controller#onClick click->my-second-controller#onClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick"',
+            'expectedArray' => ['data-action' => 'click->my-controller#onClick click->my-second-controller#onClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick'],
         ];
 
         yield 'multiple actions, with default and custom event' => [
@@ -365,35 +410,57 @@ class IntegrationTest extends TestCase
             ],
             'actionName' => null,
             'eventName' => null,
-            'expected' => 'data-action="click->my-controller#onClick my-second-controller#onClick click->my-second-controller#onAnotherClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick"',
+            'parameters' => [],
+            'expectedString' => 'data-action="click->my-controller#onClick my-second-controller#onClick click->my-second-controller#onAnotherClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick"',
+            'expectedArray' => ['data-action' => 'click->my-controller#onClick my-second-controller#onClick click->my-second-controller#onAnotherClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick'],
         ];
 
         yield 'normalize-name, with default event' => [
             'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
             'actionName' => 'onClick',
             'eventName' => null,
-            'expected' => 'data-action="symfony--ux-dropzone--dropzone#onClick"',
+            'parameters' => [],
+            'expectedString' => 'data-action="symfony--ux-dropzone--dropzone#onClick"',
+            'expectedArray' => ['data-action' => 'symfony--ux-dropzone--dropzone#onClick'],
         ];
 
         yield 'normalize-name, with custom event' => [
             'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
             'actionName' => 'onClick',
             'eventName' => 'click',
-            'expected' => 'data-action="click->symfony--ux-dropzone--dropzone#onClick"',
+            'parameters' => [],
+            'expectedString' => 'data-action="click->symfony--ux-dropzone--dropzone#onClick"',
+            'expectedArray' => ['data-action' => 'click->symfony--ux-dropzone--dropzone#onClick'],
         ];
     }
 
     /**
      * @dataProvider provideRenderStimulusAction
      */
-    public function testRenderStimulusAction($dataOrControllerName, ?string $actionName, ?string $eventName, string $expected)
+    public function testRenderStimulusAction($dataOrControllerName, ?string $actionName, ?string $eventName, array $parameters, string $expectedString, array $expectedArray)
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
         $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
 
         $extension = new StimulusTwigExtension();
-        $this->assertSame($expected, $extension->renderStimulusAction($twig, $dataOrControllerName, $actionName, $eventName));
+        $dto = $extension->renderStimulusAction($twig, $dataOrControllerName, $actionName, $eventName, $parameters);
+        $this->assertSame($expectedString, (string) $dto);
+        $this->assertSame($expectedArray, $dto->toArray());
+    }
+
+    public function testAppendStimulusAction()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+
+        $extension = new StimulusTwigExtension();
+        $dto = $extension->renderStimulusAction($twig, 'my-controller', 'onClick', 'click');
+        $this->assertSame(
+            'data-action="click->my-controller#onClick change->my-second-controller#onSomethingElse"',
+            (string) $extension->appendStimulusAction($dto, 'my-second-controller', 'onSomethingElse', 'change')
+        );
     }
 
     public function provideRenderStimulusTarget()
@@ -401,13 +468,15 @@ class IntegrationTest extends TestCase
         yield 'simple' => [
             'dataOrControllerName' => 'my-controller',
             'targetName' => 'myTarget',
-            'expected' => 'data-my-controller-target="myTarget"',
+            'expectedString' => 'data-my-controller-target="myTarget"',
+            'expectedArray' => ['data-my-controller-target' => 'myTarget'],
         ];
 
         yield 'normalize-name' => [
             'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
             'targetName' => 'myTarget',
-            'expected' => 'data-symfony--ux-dropzone--dropzone-target="myTarget"',
+            'expectedString' => 'data-symfony--ux-dropzone--dropzone-target="myTarget"',
+            'expectedArray' => ['data-symfony--ux-dropzone--dropzone-target' => 'myTarget'],
         ];
 
         yield 'multiple' => [
@@ -416,21 +485,41 @@ class IntegrationTest extends TestCase
                 '@symfony/ux-dropzone/dropzone' => 'anotherTarget fooTarget',
             ],
             'targetName' => null,
-            'expected' => 'data-my-controller-target="myTarget" data-symfony--ux-dropzone--dropzone-target="anotherTarget&#x20;fooTarget"',
+            'expectedString' => 'data-my-controller-target="myTarget" data-symfony--ux-dropzone--dropzone-target="anotherTarget&#x20;fooTarget"',
+            'expectedArray' => [
+                'data-my-controller-target' => 'myTarget',
+                'data-symfony--ux-dropzone--dropzone-target' => 'anotherTarget&#x20;fooTarget',
+            ],
         ];
     }
 
     /**
      * @dataProvider provideRenderStimulusTarget
      */
-    public function testRenderStimulusTarget($dataOrControllerName, ?string $targetName, string $expected)
+    public function testRenderStimulusTarget($dataOrControllerName, ?string $targetName, string $expectedString, array $expectedArray)
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
         $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
 
         $extension = new StimulusTwigExtension();
-        $this->assertSame($expected, $extension->renderStimulusTarget($twig, $dataOrControllerName, $targetName));
+        $dto = $extension->renderStimulusTarget($twig, $dataOrControllerName, $targetName);
+        $this->assertSame($expectedString, (string) $dto);
+        $this->assertSame($expectedArray, $dto->toArray());
+    }
+
+    public function testAppendStimulusTarget()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+
+        $extension = new StimulusTwigExtension();
+        $dto = $extension->renderStimulusTarget($twig, 'my-controller', 'myTarget');
+        $this->assertSame(
+            'data-my-controller-target="myTarget" data-symfony--ux-dropzone--dropzone-target="anotherTarget&#x20;fooTarget"',
+            (string) $extension->appendStimulusTarget($dto, '@symfony/ux-dropzone/dropzone', 'anotherTarget fooTarget')
+        );
     }
 
     private function getContainerFromBootedKernel(WebpackEncoreIntegrationTestKernel $kernel)
