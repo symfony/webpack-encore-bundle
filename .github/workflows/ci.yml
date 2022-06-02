@@ -48,7 +48,7 @@ jobs:
 
       - name: Run tests
         env:
-          SYMFONY_DEPRECATIONS_HELPER: "max[self]=0"
+          SYMFONY_DEPRECATIONS_HELPER: "max[self]=11"
           SYMFONY_PHPUNIT_VERSION: "8.5"
         run: ./vendor/bin/simple-phpunit
         if: matrix.php-version != '7.1'
