@@ -49,7 +49,7 @@ final class Configuration implements ConfigurationInterface
                 ->end()
                 ->booleanNode('strict_mode')
                     ->info('Throw an exception if the entrypoints.json file is missing or an entry is missing from the data')
-                    ->defaultTrue()
+                    ->defaultFalse()
                 ->end()
                 ->arrayNode('builds')
                     ->useAttributeAsKey('name')
