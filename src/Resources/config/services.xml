@@ -1,13 +1,17 @@
 <?xml version="1.0" ?>
 
 <container xmlns="http://symfony.com/schema/dic/services"
-    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="http://symfony.com/schema/dic/services http://symfony.com/schema/dic/services/services-1.0.xsd">
 
     <services>
         <defaults public="false" />
 
         <service id="webpack_encore.entrypoint_lookup_collection" class="Symfony\WebpackEncoreBundle\Asset\EntrypointLookupCollection">
+            <argument /> <!-- build list of entrypoints locator -->
+        </service>
+
+        <service id="webpack_encore.render_stimulus_controller_events" class="Symfony\WebpackEncoreBundle\Event\RenderStimulusControllerEvents">
             <argument /> <!-- build list of entrypoints locator -->
         </service>
 
@@ -38,6 +42,12 @@
 
         <service id="webpack_encore.twig_stimulus_extension" class="Symfony\WebpackEncoreBundle\Twig\StimulusTwigExtension">
             <tag name="twig.extension" />
+            <argument type="service" id="event_dispatcher" />
+        </service>
+
+        <service id="webpack_encore.stimulus_controller_collector" class="Symfony\WebpackEncoreBundle\DataCollector\StimulusCollector">
+            <tag name="data_collector" template="@Symfony\WebpackEncoreBundle\Resources\collector\ux.html.twig"/>
+            <argument type="service" id="Symfony\WebpackEncoreBundle\EventListener\RenderStimulusControllerListener"/>
         </service>
 
         <service id="webpack_encore.entrypoint_lookup.cache_warmer" class="Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer">
@@ -70,6 +80,10 @@
         <service id="Symfony\WebpackEncoreBundle\EventListener\ResetAssetsEventListener">
             <tag name="kernel.event_subscriber" />
             <argument type="service" id="webpack_encore.entrypoint_lookup_collection" />
+        </service>
+
+        <service id="Symfony\WebpackEncoreBundle\EventListener\RenderStimulusControllerListener">
+            <tag name="kernel.event_listener" event="Symfony\WebpackEncoreBundle\Event\RenderStimulusControllerEvent" method="onRenderController"/>
         </service>
     </services>
 </container>

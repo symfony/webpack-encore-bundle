@@ -9,6 +9,10 @@
 
 namespace Symfony\WebpackEncoreBundle\Twig;
 
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Contracts\EventDispatcher\Event;
+use Symfony\WebpackEncoreBundle\DataCollector\StimulusCollector;
+use Symfony\WebpackEncoreBundle\Event\RenderStimulusControllerEvent;
 use Symfony\WebpackEncoreBundle\Dto\StimulusActionsDto;
 use Symfony\WebpackEncoreBundle\Dto\StimulusControllersDto;
 use Symfony\WebpackEncoreBundle\Dto\StimulusTargetsDto;
@@ -19,6 +23,8 @@ use Twig\TwigFunction;
 
 final class StimulusTwigExtension extends AbstractExtension
 {
+    public function __construct(private EventDispatcherInterface $eventDispatcher){}
+
     public function getFunctions(): array
     {
         return [
@@ -55,6 +61,9 @@ final class StimulusTwigExtension extends AbstractExtension
             $data = $controllerName;
 
             foreach ($data as $controllerName => $controllerValues) {
+                $event = new RenderStimulusControllerEvent(RenderStimulusControllerEvent::TYPE_CONTROLLER, $controllerName, $controllerValues);
+                $this->eventDispatcher->dispatch($event);
+
                 $dto->addController($controllerName, $controllerValues);
             }
 
@@ -94,6 +103,9 @@ final class StimulusTwigExtension extends AbstractExtension
                     }
 
                     foreach ($controllerAction as $eventName => $actionName) {
+                        $event = new Event(RenderStimulusControllerEvent::TYPE_ACTION, $controllerName, $actionName);
+                        $this->eventDispatcher->dispatch($event);
+
                         $dto->addAction($controllerName, $actionName, \is_string($eventName) ? $eventName : null);
                     }
                 }
@@ -141,6 +153,9 @@ final class StimulusTwigExtension extends AbstractExtension
             $data = $controllerName;
 
             foreach ($data as $controllerName => $targetNames) {
+                $event = new RenderStimulusControllerEvent(RenderStimulusControllerEvent::TYPE_TARGET, $controllerName, $targetNames);
+                $this->eventDispatcher->dispatch($event);
+
                 $dto->addTarget($controllerName, $targetNames);
             }
 
