@@ -6,11 +6,6 @@ parameters:
 			path: src/Asset/EntrypointLookup.php
 
 		-
-			message: "#^Method Symfony\\\\Bundle\\\\FrameworkBundle\\\\CacheWarmer\\\\AbstractPhpFileCacheWarmer\\:\\:__construct\\(\\) invoked with 2 parameters, 1 required\\.$#"
-			count: 1
-			path: src/CacheWarmer/EntrypointCacheWarmer.php
-
-		-
 			message: "#^Call to an undefined method Symfony\\\\Component\\\\Config\\\\Definition\\\\Builder\\\\NodeDefinition\\:\\:children\\(\\)\\.$#"
 			count: 1
 			path: src/DependencyInjection/Configuration.php
@@ -46,12 +41,12 @@ parameters:
 			path: src/EventListener/PreLoadAssetsEventListener.php
 
 		-
-			message: "#^PHPDoc tag @var for variable \\$linkProvider contains unknown class Fig\\\\Link\\\\GenericLinkProvider\\.$#"
+			message: "#^Method Symfony\\\\WebpackEncoreBundle\\\\EventListener\\\\PreLoadAssetsEventListener\\:\\:createLink\\(\\) has invalid return type Fig\\\\Link\\\\Link\\.$#"
 			count: 1
 			path: src/EventListener/PreLoadAssetsEventListener.php
 
 		-
-			message: "#^Return typehint of method Symfony\\\\WebpackEncoreBundle\\\\EventListener\\\\PreLoadAssetsEventListener\\:\\:createLink\\(\\) has invalid type Fig\\\\Link\\\\Link\\.$#"
+			message: "#^PHPDoc tag @var for variable \\$linkProvider contains unknown class Fig\\\\Link\\\\GenericLinkProvider\\.$#"
 			count: 1
 			path: src/EventListener/PreLoadAssetsEventListener.php
 

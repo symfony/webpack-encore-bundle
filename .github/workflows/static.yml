@@ -15,13 +15,18 @@ jobs:
         with:
           php-version: 8.0
           coverage: none
-          tools: phpstan:0.12.92, cs2pr
+          tools: cs2pr
 
       - name: Download dependencies
         uses: ramsey/composer-install@v1
 
+      - name: Install PHPStan
+        uses: ramsey/composer-install@v1
+        with:
+          composer-options: "--working-dir=tools/phpstan"
+
       - name: PHPStan
-        run: phpstan analyze --no-progress --error-format=checkstyle | cs2pr
+        run: tools/phpstan/vendor/bin/phpstan analyze --no-progress --error-format=checkstyle | cs2pr
 
   php-cs-fixer:
     name: PHP-CS-Fixer
@@ -36,10 +41,15 @@ jobs:
         with:
           php-version: 8.0
           coverage: none
-          tools: php-cs-fixer:3.0.0, cs2pr
+          tools: cs2pr
+
+      - name: Install php-cs-fixer
+        uses: ramsey/composer-install@v1
+        with:
+          composer-options: "--working-dir=tools/php-cs-fixer"
 
       - name: PHP-CS-Fixer
-        run: php-cs-fixer fix --dry-run --format=checkstyle | cs2pr
+        run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --format=checkstyle | cs2pr
 
   psalm:
     name: Psalm
@@ -58,8 +68,13 @@ jobs:
       - name: Download dependencies
         uses: ramsey/composer-install@v1
 
+      - name: Install psalm
+        uses: ramsey/composer-install@v1
+        with:
+          composer-options: "--working-dir=tools/psalm"
+
       - name: Psalm
-        run: psalm --no-progress --php-version=8.0
+        run: tools/psalm/vendor/bin/psalm --no-progress --php-version=8.0
 
   composer-normalize:
     name: Composer Normalize

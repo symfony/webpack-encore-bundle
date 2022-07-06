@@ -1,5 +1,7 @@
 composer.lock
 phpunit.xml
+tools/*/composer.lock
+tools/*/vendor
 vendor/
 .php-cs-fixer.cache
 .phpunit.result.cache
