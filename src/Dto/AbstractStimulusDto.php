@@ -39,7 +39,7 @@ abstract class AbstractStimulusDto implements \Stringable
     {
         if ($value instanceof \Stringable || (\is_object($value) && \is_callable([$value, '__toString']))) {
             $value = (string) $value;
-        } elseif (!is_scalar($value)) {
+        } elseif (!\is_scalar($value)) {
             $value = json_encode($value);
         } elseif (\is_bool($value)) {
             $value = $value ? 'true' : 'false';

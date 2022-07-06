@@ -204,6 +204,68 @@ class IntegrationTest extends TestCase
 
     public function provideRenderStimulusController()
     {
+        yield 'normalize-names' => [
+            'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
+            'controllerValues' => [
+                'my"Key"' => true,
+            ],
+            'expectedString' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="true"',
+            'expectedArray' => ['data-controller' => 'symfony--ux-dropzone--dropzone', 'data-symfony--ux-dropzone--dropzone-my-key-value' => 'true'],
+        ];
+
+        yield 'short-single-controller-no-data' => [
+            'dataOrControllerName' => 'my-controller',
+            'controllerValues' => [],
+            'expectedString' => 'data-controller="my-controller"',
+            'expectedArray' => ['data-controller' => 'my-controller'],
+        ];
+
+        yield 'short-single-controller-with-data' => [
+            'dataOrControllerName' => 'my-controller',
+            'controllerValues' => ['myValue' => 'scalar-value'],
+            'expectedString' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
+            'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-my-value-value' => 'scalar-value'],
+        ];
+
+        yield 'false-attribute-value-renders-false' => [
+            'dataOrControllerName' => 'false-controller',
+            'controllerValues' => ['isEnabled' => false],
+            'expectedString' => 'data-controller="false-controller" data-false-controller-is-enabled-value="false"',
+            'expectedArray' => ['data-controller' => 'false-controller', 'data-false-controller-is-enabled-value' => 'false'],
+        ];
+
+        yield 'true-attribute-value-renders-true' => [
+            'dataOrControllerName' => 'true-controller',
+            'controllerValues' => ['isEnabled' => true],
+            'expectedString' => 'data-controller="true-controller" data-true-controller-is-enabled-value="true"',
+            'expectedArray' => ['data-controller' => 'true-controller', 'data-true-controller-is-enabled-value' => 'true'],
+        ];
+
+        yield 'null-attribute-value-does-not-render' => [
+            'dataOrControllerName' => 'null-controller',
+            'controllerValues' => ['firstName' => null],
+            'expectedString' => 'data-controller="null-controller"',
+            'expectedArray' => ['data-controller' => 'null-controller'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideRenderStimulusController
+     */
+    public function testRenderStimulusController($dataOrControllerName, array $controllerValues, string $expectedString, array $expectedArray)
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+
+        $extension = new StimulusTwigExtension();
+        $dto = $extension->renderStimulusController($twig, $dataOrControllerName, $controllerValues);
+        $this->assertSame($expectedString, (string) $dto);
+        $this->assertSame($expectedArray, $dto->toArray());
+    }
+
+    public function provideLegacyRenderMultipleStimulusControllers()
+    {
         yield 'empty' => [
             'dataOrControllerName' => [],
             'controllerValues' => [],
@@ -279,47 +341,13 @@ class IntegrationTest extends TestCase
             'expectedString' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="true"',
             'expectedArray' => ['data-controller' => 'symfony--ux-dropzone--dropzone', 'data-symfony--ux-dropzone--dropzone-my-key-value' => 'true'],
         ];
-
-        yield 'short-single-controller-no-data' => [
-            'dataOrControllerName' => 'my-controller',
-            'controllerValues' => [],
-            'expectedString' => 'data-controller="my-controller"',
-            'expectedArray' => ['data-controller' => 'my-controller'],
-        ];
-
-        yield 'short-single-controller-with-data' => [
-            'dataOrControllerName' => 'my-controller',
-            'controllerValues' => ['myValue' => 'scalar-value'],
-            'expectedString' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
-            'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-my-value-value' => 'scalar-value'],
-        ];
-
-        yield 'false-attribute-value-renders-false' => [
-            'dataOrControllerName' => 'false-controller',
-            'controllerValues' => ['isEnabled' => false],
-            'expectedString' => 'data-controller="false-controller" data-false-controller-is-enabled-value="false"',
-            'expectedArray' => ['data-controller' => 'false-controller', 'data-false-controller-is-enabled-value' => 'false'],
-        ];
-
-        yield 'true-attribute-value-renders-true' => [
-            'dataOrControllerName' => 'true-controller',
-            'controllerValues' => ['isEnabled' => true],
-            'expectedString' => 'data-controller="true-controller" data-true-controller-is-enabled-value="true"',
-            'expectedArray' => ['data-controller' => 'true-controller', 'data-true-controller-is-enabled-value' => 'true'],
-        ];
-
-        yield 'null-attribute-value-does-not-render' => [
-            'dataOrControllerName' => 'null-controller',
-            'controllerValues' => ['firstName' => null],
-            'expectedString' => 'data-controller="null-controller"',
-            'expectedArray' => ['data-controller' => 'null-controller'],
-        ];
     }
 
     /**
-     * @dataProvider provideRenderStimulusController
+     * @dataProvider provideLegacyRenderMultipleStimulusControllers
+     * @legacy
      */
-    public function testRenderStimulusController($dataOrControllerName, array $controllerValues, string $expectedString, array $expectedArray)
+    public function testLegacyRenderMultipleStimulusControllers($dataOrControllerName, array $controllerValues, string $expectedString, array $expectedArray)
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
@@ -374,6 +402,42 @@ class IntegrationTest extends TestCase
             'expectedArray' => ['data-action' => 'my-controller#onClick', 'data-my-controller-bool-param-param' => 'true', 'data-my-controller-int-param-param' => '4', 'data-my-controller-string-param-param' => 'test'],
         ];
 
+        yield 'normalize-name, with default event' => [
+            'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
+            'actionName' => 'onClick',
+            'eventName' => null,
+            'parameters' => [],
+            'expectedString' => 'data-action="symfony--ux-dropzone--dropzone#onClick"',
+            'expectedArray' => ['data-action' => 'symfony--ux-dropzone--dropzone#onClick'],
+        ];
+
+        yield 'normalize-name, with custom event' => [
+            'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
+            'actionName' => 'onClick',
+            'eventName' => 'click',
+            'parameters' => [],
+            'expectedString' => 'data-action="click->symfony--ux-dropzone--dropzone#onClick"',
+            'expectedArray' => ['data-action' => 'click->symfony--ux-dropzone--dropzone#onClick'],
+        ];
+    }
+
+    /**
+     * @dataProvider provideRenderStimulusAction
+     */
+    public function testRenderStimulusAction($dataOrControllerName, ?string $actionName, ?string $eventName, array $parameters, string $expectedString, array $expectedArray)
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+
+        $extension = new StimulusTwigExtension();
+        $dto = $extension->renderStimulusAction($twig, $dataOrControllerName, $actionName, $eventName, $parameters);
+        $this->assertSame($expectedString, (string) $dto);
+        $this->assertSame($expectedArray, $dto->toArray());
+    }
+
+    public function provideLegacyRenderMultipleStimulusAction(): \Generator
+    {
         yield 'multiple actions, with default event' => [
             'dataOrControllerName' => [
                 'my-controller' => 'onClick',
@@ -414,30 +478,13 @@ class IntegrationTest extends TestCase
             'expectedString' => 'data-action="click->my-controller#onClick my-second-controller#onClick click->my-second-controller#onAnotherClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick"',
             'expectedArray' => ['data-action' => 'click->my-controller#onClick my-second-controller#onClick click->my-second-controller#onAnotherClick change->my-second-controller#onSomethingElse resize@window->resize-controller#onWindowResize click->foo--bar-controller#onClick'],
         ];
-
-        yield 'normalize-name, with default event' => [
-            'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
-            'actionName' => 'onClick',
-            'eventName' => null,
-            'parameters' => [],
-            'expectedString' => 'data-action="symfony--ux-dropzone--dropzone#onClick"',
-            'expectedArray' => ['data-action' => 'symfony--ux-dropzone--dropzone#onClick'],
-        ];
-
-        yield 'normalize-name, with custom event' => [
-            'dataOrControllerName' => '@symfony/ux-dropzone/dropzone',
-            'actionName' => 'onClick',
-            'eventName' => 'click',
-            'parameters' => [],
-            'expectedString' => 'data-action="click->symfony--ux-dropzone--dropzone#onClick"',
-            'expectedArray' => ['data-action' => 'click->symfony--ux-dropzone--dropzone#onClick'],
-        ];
     }
 
     /**
-     * @dataProvider provideRenderStimulusAction
+     * @dataProvider provideLegacyRenderMultipleStimulusAction
+     * @legacy
      */
-    public function testRenderStimulusAction($dataOrControllerName, ?string $actionName, ?string $eventName, array $parameters, string $expectedString, array $expectedArray)
+    public function testLegacyRenderMultipleStimulusActions($dataOrControllerName, ?string $actionName, ?string $eventName, array $parameters, string $expectedString, array $expectedArray)
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
@@ -478,19 +525,6 @@ class IntegrationTest extends TestCase
             'expectedString' => 'data-symfony--ux-dropzone--dropzone-target="myTarget"',
             'expectedArray' => ['data-symfony--ux-dropzone--dropzone-target' => 'myTarget'],
         ];
-
-        yield 'multiple' => [
-            'dataOrControllerName' => [
-                'my-controller' => 'myTarget',
-                '@symfony/ux-dropzone/dropzone' => 'anotherTarget fooTarget',
-            ],
-            'targetName' => null,
-            'expectedString' => 'data-my-controller-target="myTarget" data-symfony--ux-dropzone--dropzone-target="anotherTarget&#x20;fooTarget"',
-            'expectedArray' => [
-                'data-my-controller-target' => 'myTarget',
-                'data-symfony--ux-dropzone--dropzone-target' => 'anotherTarget&#x20;fooTarget',
-            ],
-        ];
     }
 
     /**
@@ -506,6 +540,34 @@ class IntegrationTest extends TestCase
         $dto = $extension->renderStimulusTarget($twig, $dataOrControllerName, $targetName);
         $this->assertSame($expectedString, (string) $dto);
         $this->assertSame($expectedArray, $dto->toArray());
+    }
+
+    /**
+     * @legacy
+     */
+    public function testLegacyRenderMultipleStimulusTargets()
+    {
+        $kernel = new WebpackEncoreIntegrationTestKernel(true);
+        $kernel->boot();
+        $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
+
+        $extension = new StimulusTwigExtension();
+        $dto = $extension->renderStimulusTarget($twig, [
+            'my-controller' => 'myTarget',
+            '@symfony/ux-dropzone/dropzone' => 'anotherTarget fooTarget',
+        ]);
+
+        $this->assertSame(
+            'data-my-controller-target="myTarget" data-symfony--ux-dropzone--dropzone-target="anotherTarget&#x20;fooTarget"',
+            (string) $dto
+        );
+
+        $this->assertSame([
+                'data-my-controller-target' => 'myTarget',
+                'data-symfony--ux-dropzone--dropzone-target' => 'anotherTarget&#x20;fooTarget',
+            ],
+            $dto->toArray()
+        );
     }
 
     public function testAppendStimulusTarget()
