@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.15.0](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.15.0)
+
+*July 6th, 2022*
+
+### Feature
+
+- [#178](https://github.com/symfony/webpack-encore-bundle/pull/178) - Add Stimulus Twig filters, handle action parameters & allow filters/functions to return array - *@jmsche*
+
 ## [v1.14.1](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.14.1)
 
 *May 3rd, 2022*
