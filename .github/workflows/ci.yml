@@ -36,6 +36,10 @@ jobs:
             coverage: "none"
             php-version: "${{ matrix.php-version }}"
 
+      - name: Allow Flex Plugin
+        run: |
+          composer global config --no-plugins allow-plugins.symfony/flex true
+
       - name: Install Global Dependencies
         run: |
           composer global require --no-progress --no-scripts --no-plugins symfony/flex @dev
