@@ -15,11 +15,11 @@ jobs:
       fail-fast: false
       matrix:
         # normal, highest, non-dev installs
-        php-version: ['7.2', '7.3', '7.4', '8.0', '8.1']
+        php-version: ['7.1', '7.2', '7.3', '7.4', '8.0', '8.1']
         dependency-versions: ['highest']
         include:
           # testing lowest PHP version with lowest dependencies
-          - php-version: '7.2.5'
+          - php-version: '7.1'
             dependency-versions: 'lowest'
 
           # testing dev versions with highest PHP
@@ -51,3 +51,11 @@ jobs:
           SYMFONY_DEPRECATIONS_HELPER: "max[self]=0"
           SYMFONY_PHPUNIT_VERSION: "8.5"
         run: ./vendor/bin/simple-phpunit
+        if: matrix.php-version != '7.1'
+
+      - name: Run tests
+        env:
+          SYMFONY_DEPRECATIONS_HELPER: "max[self]=0"
+          SYMFONY_PHPUNIT_VERSION: "7.5"
+        run: ./vendor/bin/simple-phpunit
+        if: matrix.php-version == '7.1'
