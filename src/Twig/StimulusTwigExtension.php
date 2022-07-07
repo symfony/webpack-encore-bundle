@@ -48,6 +48,10 @@ final class StimulusTwigExtension extends AbstractExtension
      */
     public function renderStimulusController(Environment $env, $dataOrControllerName, array $controllerValues = []): StimulusControllersDto
     {
+        if (!\is_string($dataOrControllerName)) {
+            trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_controller() is deprecated.');
+        }
+
         $dto = new StimulusControllersDto($env);
         $dto->addController($dataOrControllerName, $controllerValues);
 
@@ -65,6 +69,10 @@ final class StimulusTwigExtension extends AbstractExtension
      */
     public function appendStimulusController(StimulusControllersDto $dto, $dataOrControllerName, array $controllerValues = []): StimulusControllersDto
     {
+        if (!\is_string($dataOrControllerName)) {
+            trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_controller() is deprecated.');
+        }
+
         $dto->addController($dataOrControllerName, $controllerValues);
 
         return $dto;
@@ -83,6 +91,10 @@ final class StimulusTwigExtension extends AbstractExtension
      */
     public function renderStimulusAction(Environment $env, $dataOrControllerName, string $actionName = null, string $eventName = null, array $parameters = []): StimulusActionsDto
     {
+        if (!\is_string($dataOrControllerName)) {
+            trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_action() is deprecated.');
+        }
+
         $dto = new StimulusActionsDto($env);
         $dto->addAction($dataOrControllerName, $actionName, $eventName, $parameters);
 
@@ -102,6 +114,10 @@ final class StimulusTwigExtension extends AbstractExtension
      */
     public function appendStimulusAction(StimulusActionsDto $dto, $dataOrControllerName, string $actionName = null, string $eventName = null, array $parameters = []): StimulusActionsDto
     {
+        if (!\is_string($dataOrControllerName)) {
+            trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_action() is deprecated.');
+        }
+
         $dto->addAction($dataOrControllerName, $actionName, $eventName, $parameters);
 
         return $dto;
@@ -118,6 +134,10 @@ final class StimulusTwigExtension extends AbstractExtension
      */
     public function renderStimulusTarget(Environment $env, $dataOrControllerName, string $targetNames = null): StimulusTargetsDto
     {
+        if (!\is_string($dataOrControllerName)) {
+            trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_target() is deprecated.');
+        }
+
         $dto = new StimulusTargetsDto($env);
         $dto->addTarget($dataOrControllerName, $targetNames);
 
@@ -135,6 +155,10 @@ final class StimulusTwigExtension extends AbstractExtension
      */
     public function appendStimulusTarget(StimulusTargetsDto $dto, $dataOrControllerName, string $targetNames = null): StimulusTargetsDto
     {
+        if (!\is_string($dataOrControllerName)) {
+            trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_target() is deprecated.');
+        }
+
         $dto->addTarget($dataOrControllerName, $targetNames);
 
         return $dto;

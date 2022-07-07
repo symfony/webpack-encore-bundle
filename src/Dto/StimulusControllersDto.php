@@ -30,7 +30,6 @@ final class StimulusControllersDto extends AbstractStimulusDto
         if (\is_string($dataOrControllerName)) {
             $data = [$dataOrControllerName => $controllerValues];
         } else {
-            trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_controller() is deprecated.');
             if ($controllerValues) {
                 throw new \InvalidArgumentException('You cannot pass an array to the first and second argument of stimulus_controller(): check the documentation.');
             }
