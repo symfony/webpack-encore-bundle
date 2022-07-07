@@ -17,26 +17,23 @@ final class StimulusActionsDto extends AbstractStimulusDto
     private $parameters = [];
 
     /**
-     * @param string|array $dataOrControllerName This can either be a map of controller names
-     *                                           as keys set to their "actions" and "events".
-     *                                           Or this can be a string controller name and
-     *                                           action and event are passed as the 2nd and 3rd arguments.
-     * @param string|null  $actionName           The action to trigger if a string is passed to the 1st argument. Optional.
-     * @param string|null  $eventName            The event to listen to trigger if a string is passed to the 1st argument. Optional.
-     * @param array        $parameters           Parameters to pass to the action if a string is passed to the 1st argument. Optional.
+     * @param string      $controllerName the Stimulus controller name
+     * @param string      $actionName     the action to trigger
+     * @param string|null $eventName      The event to listen to trigger. Optional.
+     * @param array       $parameters     Parameters to pass to the action. Optional.
      *
      * @throws \Twig\Error\RuntimeError
      */
-    public function addAction($dataOrControllerName, string $actionName = null, string $eventName = null, array $parameters = []): void
+    public function addAction($controllerName, string $actionName = null, string $eventName = null, array $parameters = []): void
     {
-        if (\is_string($dataOrControllerName)) {
-            $data = [$dataOrControllerName => null === $eventName ? [[$actionName]] : [[$eventName => $actionName]]];
+        if (\is_string($controllerName)) {
+            $data = [$controllerName => null === $eventName ? [[$actionName]] : [[$eventName => $actionName]]];
         } else {
             if ($actionName || $eventName || $parameters) {
                 throw new \InvalidArgumentException('You cannot pass a string to the second or third argument nor an array to the fourth argument while passing an array to the first argument of stimulus_action(): check the documentation.');
             }
 
-            $data = $dataOrControllerName;
+            $data = $controllerName;
 
             if (!$data) {
                 return;

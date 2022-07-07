@@ -17,24 +17,21 @@ final class StimulusControllersDto extends AbstractStimulusDto
     private $values = [];
 
     /**
-     * @param string|array $dataOrControllerName This can either be a map of controller names
-     *                                           as keys set to their "values". Or this
-     *                                           can be a string controller name and data
-     *                                           is passed as the 2nd argument.
-     * @param array        $controllerValues     array of data if a string is passed to the 1st argument
+     * @param string $controllerName   the Stimulus controller name
+     * @param array  $controllerValues array of data if a string is passed to the 1st argument
      *
      * @throws \Twig\Error\RuntimeError
      */
-    public function addController($dataOrControllerName, array $controllerValues = []): void
+    public function addController($controllerName, array $controllerValues = []): void
     {
-        if (\is_string($dataOrControllerName)) {
-            $data = [$dataOrControllerName => $controllerValues];
+        if (\is_string($controllerName)) {
+            $data = [$controllerName => $controllerValues];
         } else {
             if ($controllerValues) {
                 throw new \InvalidArgumentException('You cannot pass an array to the first and second argument of stimulus_controller(): check the documentation.');
             }
 
-            $data = $dataOrControllerName;
+            $data = $controllerName;
 
             if (!$data) {
                 return;
