@@ -16,42 +16,20 @@ final class StimulusControllersDto extends AbstractStimulusDto
     private $controllers = [];
     private $values = [];
 
-    /**
-     * @param string $controllerName   the Stimulus controller name
-     * @param array  $controllerValues array of data if a string is passed to the 1st argument
-     *
-     * @throws \Twig\Error\RuntimeError
-     */
-    public function addController($controllerName, array $controllerValues = []): void
+    public function addController(string $controllerName, array $controllerValues = []): void
     {
-        if (\is_string($controllerName)) {
-            $data = [$controllerName => $controllerValues];
-        } else {
-            if ($controllerValues) {
-                throw new \InvalidArgumentException('You cannot pass an array to the first and second argument of stimulus_controller(): check the documentation.');
+        $controllerName = $this->getFormattedControllerName($controllerName);
+        $this->controllers[] = $controllerName;
+
+        foreach ($controllerValues as $key => $value) {
+            if (null === $value) {
+                continue;
             }
 
-            $data = $controllerName;
+            $key = $this->escapeAsHtmlAttr($this->normalizeKeyName($key));
+            $value = $this->getFormattedValue($value);
 
-            if (!$data) {
-                return;
-            }
-        }
-
-        foreach ($data as $controllerName => $controllerValues) {
-            $controllerName = $this->getFormattedControllerName($controllerName);
-            $this->controllers[] = $controllerName;
-
-            foreach ($controllerValues as $key => $value) {
-                if (null === $value) {
-                    continue;
-                }
-
-                $key = $this->escapeAsHtmlAttr($this->normalizeKeyName($key));
-                $value = $this->getFormattedValue($value);
-
-                $this->values['data-'.$controllerName.'-'.$key.'-value'] = $value;
-            }
+            $this->values['data-'.$controllerName.'-'.$key.'-value'] = $value;
         }
     }
 

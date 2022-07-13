@@ -17,57 +17,21 @@ final class StimulusActionsDto extends AbstractStimulusDto
     private $parameters = [];
 
     /**
-     * @param string      $controllerName the Stimulus controller name
-     * @param string      $actionName     the action to trigger
-     * @param string|null $eventName      The event to listen to trigger. Optional.
-     * @param array       $parameters     Parameters to pass to the action. Optional.
-     *
-     * @throws \Twig\Error\RuntimeError
+     * @param array $parameters Parameters to pass to the action. Optional.
      */
-    public function addAction($controllerName, string $actionName = null, string $eventName = null, array $parameters = []): void
+    public function addAction(string $controllerName, string $actionName, string $eventName = null, array $parameters = []): void
     {
-        if (\is_string($controllerName)) {
-            $data = [$controllerName => null === $eventName ? [[$actionName]] : [[$eventName => $actionName]]];
-        } else {
-            if ($actionName || $eventName || $parameters) {
-                throw new \InvalidArgumentException('You cannot pass a string to the second or third argument nor an array to the fourth argument while passing an array to the first argument of stimulus_action(): check the documentation.');
-            }
+        $controllerName = $this->getFormattedControllerName($controllerName);
+        $action = $controllerName.'#'.$this->escapeAsHtmlAttr($actionName);
 
-            $data = $controllerName;
-
-            if (!$data) {
-                return;
-            }
+        if (null !== $eventName) {
+            $action = $eventName.'->'.$action;
         }
 
-        foreach ($data as $controllerName => $controllerActions) {
-            $controllerName = $this->getFormattedControllerName($controllerName);
+        $this->actions[] = $action;
 
-            if (\is_string($controllerActions)) {
-                $controllerActions = [[$controllerActions]];
-            }
-
-            foreach ($controllerActions as $possibleEventName => $controllerAction) {
-                if (\is_string($possibleEventName) && \is_string($controllerAction)) {
-                    $controllerAction = [$possibleEventName => $controllerAction];
-                } elseif (\is_string($controllerAction)) {
-                    $controllerAction = [$controllerAction];
-                }
-
-                foreach ($controllerAction as $eventName => $actionName) {
-                    $action = $controllerName.'#'.$this->escapeAsHtmlAttr($actionName);
-
-                    if (\is_string($eventName)) {
-                        $action = $eventName.'->'.$action;
-                    }
-
-                    $this->actions[] = $action;
-                }
-            }
-
-            foreach ($parameters as $name => $value) {
-                $this->parameters['data-'.$controllerName.'-'.$name.'-param'] = $this->getFormattedValue($value);
-            }
+        foreach ($parameters as $name => $value) {
+            $this->parameters['data-'.$controllerName.'-'.$name.'-param'] = $this->getFormattedValue($value);
         }
     }
 

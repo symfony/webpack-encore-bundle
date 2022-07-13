@@ -646,6 +646,9 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
                 'utf8' => true,
             ];
         }
+        if (self::VERSION_ID >= 60200) {
+            $frameworkConfig['catch_all_throwables'] = true;
+        }
         $container->loadFromExtension('framework', $frameworkConfig);
 
         $container->loadFromExtension('twig', [
