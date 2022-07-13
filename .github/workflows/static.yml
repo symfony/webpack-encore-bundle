@@ -74,7 +74,7 @@ jobs:
           composer-options: "--working-dir=tools/psalm"
 
       - name: Psalm
-        run: tools/psalm/vendor/bin/psalm --no-progress --php-version=8.0
+        run: tools/psalm/vendor/bin/psalm --no-progress
 
   composer-normalize:
     name: Composer Normalize
