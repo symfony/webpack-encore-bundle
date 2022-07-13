@@ -1,5 +1,15 @@
 # Changelog
 
+## [v1.15.1](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.15.1)
+
+*July 13th, 2022*
+
+### Bug
+
+- [#189](https://github.com/symfony/webpack-encore-bundle/pull/189) - Moving deprecated code handling for stimulus_ functions into Twig extension - *@weaverryan*
+- [#187](https://github.com/symfony/webpack-encore-bundle/pull/187) - Improve Stimulus phpdoc - *@jmsche*
+- [#186](https://github.com/symfony/webpack-encore-bundle/pull/186) - Stimulus: move deprecations from DTOs to filters/functions - *@jmsche*
+
 ## [v1.15.0](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.15.0)
 
 *July 6th, 2022*
