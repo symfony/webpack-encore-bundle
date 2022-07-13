@@ -38,128 +38,110 @@ final class StimulusTwigExtension extends AbstractExtension
     }
 
     /**
-     * @param string|array $dataOrControllerName This can either be a map of controller names
-     *                                           as keys set to their "values". Or this
-     *                                           can be a string controller name and data
-     *                                           is passed as the 2nd argument.
-     * @param array        $controllerValues     array of data if a string is passed to the 1st argument
+     * @param string $controllerName   the Stimulus controller name
+     * @param array  $controllerValues array of data if a string is passed to the 1st argument
      *
      * @throws \Twig\Error\RuntimeError
      */
-    public function renderStimulusController(Environment $env, $dataOrControllerName, array $controllerValues = []): StimulusControllersDto
+    public function renderStimulusController(Environment $env, $controllerName, array $controllerValues = []): StimulusControllersDto
     {
         if (!\is_string($dataOrControllerName)) {
             trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_controller() is deprecated.');
         }
 
         $dto = new StimulusControllersDto($env);
-        $dto->addController($dataOrControllerName, $controllerValues);
+        $dto->addController($controllerName, $controllerValues);
 
         return $dto;
     }
 
     /**
-     * @param string|array $dataOrControllerName This can either be a map of controller names
-     *                                           as keys set to their "values". Or this
-     *                                           can be a string controller name and data
-     *                                           is passed as the 2nd argument.
-     * @param array        $controllerValues     array of data if a string is passed to the 1st argument
+     * @param string $controllerName   the Stimulus controller name
+     * @param array  $controllerValues array of data if a string is passed to the 1st argument
      *
      * @throws \Twig\Error\RuntimeError
      */
-    public function appendStimulusController(StimulusControllersDto $dto, $dataOrControllerName, array $controllerValues = []): StimulusControllersDto
+    public function appendStimulusController(StimulusControllersDto $dto, $controllerName, array $controllerValues = []): StimulusControllersDto
     {
-        if (!\is_string($dataOrControllerName)) {
+        if (!\is_string($controllerName)) {
             trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_controller() is deprecated.');
         }
 
-        $dto->addController($dataOrControllerName, $controllerValues);
+        $dto->addController($controllerName, $controllerValues);
 
         return $dto;
     }
 
     /**
-     * @param string|array $dataOrControllerName This can either be a map of controller names
-     *                                           as keys set to their "actions" and "events".
-     *                                           Or this can be a string controller name and
-     *                                           action and event are passed as the 2nd and 3rd arguments.
-     * @param string|null  $actionName           The action to trigger if a string is passed to the 1st argument. Optional.
-     * @param string|null  $eventName            The event to listen to trigger if a string is passed to the 1st argument. Optional.
-     * @param array        $parameters           Parameters to pass to the action if a string is passed to the 1st argument. Optional.
+     * @param string      $controllerName the Stimulus controller name
+     * @param string      $actionName     the action to trigger
+     * @param string|null $eventName      The event to listen to trigger. Optional.
+     * @param array       $parameters     Parameters to pass to the action. Optional.
      *
      * @throws \Twig\Error\RuntimeError
      */
-    public function renderStimulusAction(Environment $env, $dataOrControllerName, string $actionName = null, string $eventName = null, array $parameters = []): StimulusActionsDto
+    public function renderStimulusAction(Environment $env, $controllerName, string $actionName = null, string $eventName = null, array $parameters = []): StimulusActionsDto
     {
         if (!\is_string($dataOrControllerName)) {
             trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_action() is deprecated.');
         }
 
         $dto = new StimulusActionsDto($env);
-        $dto->addAction($dataOrControllerName, $actionName, $eventName, $parameters);
+        $dto->addAction($controllerName, $actionName, $eventName, $parameters);
 
         return $dto;
     }
 
     /**
-     * @param string|array $dataOrControllerName This can either be a map of controller names
-     *                                           as keys set to their "actions" and "events".
-     *                                           Or this can be a string controller name and
-     *                                           action and event are passed as the 2nd and 3rd arguments.
-     * @param string|null  $actionName           The action to trigger if a string is passed to the 1st argument. Optional.
-     * @param string|null  $eventName            The event to listen to trigger if a string is passed to the 1st argument. Optional.
-     * @param array        $parameters           Parameters to pass to the action if a string is passed to the 1st argument. Optional.
+     * @param string      $controllerName the Stimulus controller name
+     * @param string      $actionName     the action to trigger
+     * @param string|null $eventName      The event to listen to trigger. Optional.
+     * @param array       $parameters     Parameters to pass to the action. Optional.
      *
      * @throws \Twig\Error\RuntimeError
      */
-    public function appendStimulusAction(StimulusActionsDto $dto, $dataOrControllerName, string $actionName = null, string $eventName = null, array $parameters = []): StimulusActionsDto
+    public function appendStimulusAction(StimulusActionsDto $dto, $controllerName, string $actionName = null, string $eventName = null, array $parameters = []): StimulusActionsDto
     {
-        if (!\is_string($dataOrControllerName)) {
+        if (!\is_string($controllerName)) {
             trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_action() is deprecated.');
         }
 
-        $dto->addAction($dataOrControllerName, $actionName, $eventName, $parameters);
+        $dto->addAction($controllerName, $actionName, $eventName, $parameters);
 
         return $dto;
     }
 
     /**
-     * @param string|array $dataOrControllerName This can either be a map of controller names
-     *                                           as keys set to their "targets". Or this can
-     *                                           be a string controller name and targets are
-     *                                           passed as the 2nd argument.
-     * @param string|null  $targetNames          The space-separated list of target names if a string is passed to the 1st argument. Optional.
+     * @param string      $controllerName the Stimulus controller name
+     * @param string|null $targetNames    The space-separated list of target names if a string is passed to the 1st argument. Optional.
      *
      * @throws \Twig\Error\RuntimeError
      */
-    public function renderStimulusTarget(Environment $env, $dataOrControllerName, string $targetNames = null): StimulusTargetsDto
+    public function renderStimulusTarget(Environment $env, $controllerName, string $targetNames = null): StimulusTargetsDto
     {
         if (!\is_string($dataOrControllerName)) {
             trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_target() is deprecated.');
         }
 
         $dto = new StimulusTargetsDto($env);
-        $dto->addTarget($dataOrControllerName, $targetNames);
+        $dto->addTarget($controllerName, $targetNames);
 
         return $dto;
     }
 
     /**
-     * @param string|array $dataOrControllerName This can either be a map of controller names
-     *                                           as keys set to their "targets". Or this can
-     *                                           be a string controller name and targets are
-     *                                           passed as the 2nd argument.
-     * @param string|null  $targetNames          The space-separated list of target names if a string is passed to the 1st argument. Optional.
+     * @param string      $controllerName the Stimulus controller name
+     * @param string|null $targetNames    The space-separated list of target names if a string is passed to the 1st argument. Optional.
      *
      * @throws \Twig\Error\RuntimeError
      */
-    public function appendStimulusTarget(StimulusTargetsDto $dto, $dataOrControllerName, string $targetNames = null): StimulusTargetsDto
+    public function appendStimulusTarget(StimulusTargetsDto $dto, $controllerName, string $targetNames = null): StimulusTargetsDto
     {
-        if (!\is_string($dataOrControllerName)) {
+        if (!\is_string($controllerName)) {
             trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_target() is deprecated.');
         }
 
-        $dto->addTarget($dataOrControllerName, $targetNames);
+        $dto->addTarget($controllerName, $targetNames);
 
         return $dto;
     }

@@ -1,10 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<files psalm-version="4.8.1@f73f2299dbc59a3e6c4d66cff4605176e728ee69">
-  <file src="src/CacheWarmer/EntrypointCacheWarmer.php">
-    <TooManyArguments occurrences="1">
-      <code>parent::__construct($phpArrayFile, $fallbackPool)</code>
-    </TooManyArguments>
-  </file>
+<files psalm-version="4.24.0@06dd975cb55d36af80f242561738f16c5f58264f">
   <file src="src/DependencyInjection/Configuration.php">
     <RedundantCondition occurrences="1">
       <code>method_exists($treeBuilder, 'getRootNode')</code>
@@ -12,6 +7,23 @@
     <UndefinedMethod occurrences="1">
       <code>root</code>
     </UndefinedMethod>
+  </file>
+  <file src="src/Dto/AbstractStimulusDto.php">
+    <UndefinedFunction occurrences="1">
+      <code>twig_escape_filter($this-&gt;env, $value, 'html_attr')</code>
+    </UndefinedFunction>
+  </file>
+  <file src="src/Dto/StimulusActionsDto.php">
+    <InvalidArrayOffset occurrences="1">
+      <code>[$possibleEventName =&gt; $controllerAction]</code>
+    </InvalidArrayOffset>
+    <TypeDoesNotContainType occurrences="5">
+      <code>\is_string($controllerAction)</code>
+      <code>\is_string($controllerAction)</code>
+      <code>\is_string($controllerActions)</code>
+      <code>\is_string($possibleEventName)</code>
+      <code>\is_string($possibleEventName) &amp;&amp; \is_string($controllerAction)</code>
+    </TypeDoesNotContainType>
   </file>
   <file src="src/EventListener/PreLoadAssetsEventListener.php">
     <RedundantCondition occurrences="1">
@@ -29,10 +41,5 @@
       <code>$this-&gt;createLink('preload', $href)</code>
       <code>Link|FigLink</code>
     </UndefinedDocblockClass>
-  </file>
-  <file src="src/Dto/AbstractStimulusDto.php">
-    <UndefinedFunction occurrences="1">
-      <code>twig_escape_filter($this->env, $value, 'html_attr')</code>
-    </UndefinedFunction>
   </file>
 </files>

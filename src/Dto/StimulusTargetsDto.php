@@ -16,24 +16,21 @@ final class StimulusTargetsDto extends AbstractStimulusDto
     private $targets = [];
 
     /**
-     * @param string|array $dataOrControllerName This can either be a map of controller names
-     *                                           as keys set to their "targets". Or this can
-     *                                           be a string controller name and targets are
-     *                                           passed as the 2nd argument.
-     * @param string|null  $targetNames          The space-separated list of target names if a string is passed to the 1st argument. Optional.
+     * @param string      $controllerName the Stimulus controller name
+     * @param string|null $targetNames    The space-separated list of target names if a string is passed to the 1st argument. Optional.
      *
      * @throws \Twig\Error\RuntimeError
      */
-    public function addTarget($dataOrControllerName, string $targetNames = null): void
+    public function addTarget($controllerName, string $targetNames = null): void
     {
-        if (\is_string($dataOrControllerName)) {
-            $data = [$dataOrControllerName => $targetNames];
+        if (\is_string($controllerName)) {
+            $data = [$controllerName => $targetNames];
         } else {
             if ($targetNames) {
                 throw new \InvalidArgumentException('You cannot pass a string to the second argument while passing an array to the first argument of stimulus_target(): check the documentation.');
             }
 
-            $data = $dataOrControllerName;
+            $data = $controllerName;
 
             if (!$data) {
                 return;
