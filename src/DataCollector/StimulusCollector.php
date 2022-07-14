@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Symfony WebpackEncoreBundle package.
+ * (c) Fabien Potencier <fabien@symfony.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\WebpackEncoreBundle\DataCollector;
 
 use Symfony\Bundle\FrameworkBundle\DataCollector\AbstractDataCollector;
@@ -10,7 +17,10 @@ use Symfony\WebpackEncoreBundle\EventListener\RenderStimulusControllerListener;
 
 class StimulusCollector extends AbstractDataCollector
 {
-    private RenderStimulusControllerEvents $events;
+    /**
+     * @var RenderStimulusControllerEvents
+     */
+    private $events;
 
     public function __construct(RenderStimulusControllerListener $logger)
     {
@@ -20,11 +30,6 @@ class StimulusCollector extends AbstractDataCollector
     public function collect(Request $request, Response $response, \Throwable $exception = null)
     {
         $this->data['events'] = $this->events;
-    }
-
-    public static function getTemplate(): ?string
-    {
-        return '@Symfony/WebpackEncoreBundle/Resources/collector/ux.html.twig';
     }
 
     public function getName(): string

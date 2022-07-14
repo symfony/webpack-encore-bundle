@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Symfony WebpackEncoreBundle package.
+ * (c) Fabien Potencier <fabien@symfony.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\WebpackEncoreBundle\Event;
 
 final class RenderStimulusControllerEvent
@@ -21,17 +28,17 @@ final class RenderStimulusControllerEvent
 
     public function isController()
     {
-        return $this->type === self::TYPE_CONTROLLER;
+        return self::TYPE_CONTROLLER === $this->type;
     }
 
     public function isAction()
     {
-        return $this->type === self::TYPE_ACTION;
+        return self::TYPE_ACTION === $this->type;
     }
 
     public function isTarget()
     {
-        return $this->type === self::TYPE_TARGET;
+        return self::TYPE_TARGET === $this->type;
     }
 
     public function getControllerName()

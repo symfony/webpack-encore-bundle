@@ -9,21 +9,28 @@
 
 namespace Symfony\WebpackEncoreBundle\Twig;
 
-use Symfony\Component\EventDispatcher\EventDispatcherInterface;
-use Symfony\Contracts\EventDispatcher\Event;
-use Symfony\WebpackEncoreBundle\DataCollector\StimulusCollector;
 use Symfony\WebpackEncoreBundle\Event\RenderStimulusControllerEvent;
-use Symfony\WebpackEncoreBundle\Dto\StimulusActionsDto;
+use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 use Symfony\WebpackEncoreBundle\Dto\StimulusControllersDto;
+use Symfony\WebpackEncoreBundle\Dto\StimulusActionsDto;
 use Symfony\WebpackEncoreBundle\Dto\StimulusTargetsDto;
-use Twig\Environment;
+use Symfony\Contracts\EventDispatcher\Event;
 use Twig\Extension\AbstractExtension;
-use Twig\TwigFilter;
 use Twig\TwigFunction;
+use Twig\Environment;
+use Twig\TwigFilter;
 
 final class StimulusTwigExtension extends AbstractExtension
 {
-    public function __construct(private EventDispatcherInterface $eventDispatcher){}
+    /**
+     * @var EventDispatcherInterface
+     */
+    private $eventDispatcher;
+
+    public function __construct(EventDispatcherInterface $eventDispatcher)
+    {
+        $this->eventDispatcher = $eventDispatcher;
+    }
 
     public function getFunctions(): array
     {
@@ -103,7 +110,7 @@ final class StimulusTwigExtension extends AbstractExtension
                     }
 
                     foreach ($controllerAction as $eventName => $actionName) {
-                        $event = new Event(RenderStimulusControllerEvent::TYPE_ACTION, $controllerName, $actionName);
+                        $event = new RenderStimulusControllerEvent(RenderStimulusControllerEvent::TYPE_ACTION, $controllerName, $actionName);
                         $this->eventDispatcher->dispatch($event);
 
                         $dto->addAction($controllerName, $actionName, \is_string($eventName) ? $eventName : null);

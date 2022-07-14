@@ -1,5 +1,12 @@
 <?php
 
+/*
+ * This file is part of the Symfony WebpackEncoreBundle package.
+ * (c) Fabien Potencier <fabien@symfony.com>
+ * For the full copyright and license information, please view the LICENSE
+ * file that was distributed with this source code.
+ */
+
 namespace Symfony\WebpackEncoreBundle\EventListener;
 
 use Symfony\Component\EventDispatcher\EventSubscriberInterface;
@@ -9,7 +16,7 @@ use Symfony\WebpackEncoreBundle\Event\RenderStimulusControllerEvents;
 
 class RenderStimulusControllerListener implements EventSubscriberInterface, ResetInterface
 {
-    private RenderStimulusControllerEvents $events;
+    private $events;
 
     public function __construct()
     {
@@ -31,10 +38,10 @@ class RenderStimulusControllerListener implements EventSubscriberInterface, Rese
         return $this->events;
     }
 
-    public static function getSubscribedEvents()
+    public static function getSubscribedEvents(): array
     {
         return [
-            RenderStimulusControllerEvent::class => ['onRenderController', -255]
+            RenderStimulusControllerEvent::class => ['onRenderController', -255],
         ];
     }
 }
