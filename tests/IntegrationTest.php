@@ -209,13 +209,17 @@ class IntegrationTest extends TestCase
             'controllerValues' => [
                 'my"Key"' => true,
             ],
-            'expectedString' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="true"',
-            'expectedArray' => ['data-controller' => 'symfony--ux-dropzone--dropzone', 'data-symfony--ux-dropzone--dropzone-my-key-value' => 'true'],
+            'controllerClasses' => [
+                'second"Key"' => 'loading',
+            ],
+            'expectedString' => 'data-controller="symfony--ux-dropzone--dropzone" data-symfony--ux-dropzone--dropzone-my-key-value="true" data-symfony--ux-dropzone--dropzone-second-key-class="loading"',
+            'expectedArray' => ['data-controller' => 'symfony--ux-dropzone--dropzone', 'data-symfony--ux-dropzone--dropzone-my-key-value' => 'true', 'data-symfony--ux-dropzone--dropzone-second-key-class' => 'loading'],
         ];
 
         yield 'short-single-controller-no-data' => [
             'dataOrControllerName' => 'my-controller',
             'controllerValues' => [],
+            'controllerClasses' => [],
             'expectedString' => 'data-controller="my-controller"',
             'expectedArray' => ['data-controller' => 'my-controller'],
         ];
@@ -223,6 +227,7 @@ class IntegrationTest extends TestCase
         yield 'short-single-controller-with-data' => [
             'dataOrControllerName' => 'my-controller',
             'controllerValues' => ['myValue' => 'scalar-value'],
+            'controllerClasses' => [],
             'expectedString' => 'data-controller="my-controller" data-my-controller-my-value-value="scalar-value"',
             'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-my-value-value' => 'scalar-value'],
         ];
@@ -230,6 +235,7 @@ class IntegrationTest extends TestCase
         yield 'false-attribute-value-renders-false' => [
             'dataOrControllerName' => 'false-controller',
             'controllerValues' => ['isEnabled' => false],
+            'controllerClasses' => [],
             'expectedString' => 'data-controller="false-controller" data-false-controller-is-enabled-value="false"',
             'expectedArray' => ['data-controller' => 'false-controller', 'data-false-controller-is-enabled-value' => 'false'],
         ];
@@ -237,6 +243,7 @@ class IntegrationTest extends TestCase
         yield 'true-attribute-value-renders-true' => [
             'dataOrControllerName' => 'true-controller',
             'controllerValues' => ['isEnabled' => true],
+            'controllerClasses' => [],
             'expectedString' => 'data-controller="true-controller" data-true-controller-is-enabled-value="true"',
             'expectedArray' => ['data-controller' => 'true-controller', 'data-true-controller-is-enabled-value' => 'true'],
         ];
@@ -244,22 +251,31 @@ class IntegrationTest extends TestCase
         yield 'null-attribute-value-does-not-render' => [
             'dataOrControllerName' => 'null-controller',
             'controllerValues' => ['firstName' => null],
+            'controllerClasses' => [],
             'expectedString' => 'data-controller="null-controller"',
             'expectedArray' => ['data-controller' => 'null-controller'],
+        ];
+
+        yield 'short-single-controller-no-data-with-class' => [
+            'dataOrControllerName' => 'my-controller',
+            'controllerValues' => [],
+            'controllerClasses' => ['loading' => 'spinner'],
+            'expectedString' => 'data-controller="my-controller" data-my-controller-loading-class="spinner"',
+            'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-loading-class' => 'spinner'],
         ];
     }
 
     /**
      * @dataProvider provideRenderStimulusController
      */
-    public function testRenderStimulusController($dataOrControllerName, array $controllerValues, string $expectedString, array $expectedArray)
+    public function testRenderStimulusController($dataOrControllerName, array $controllerValues, array $controllerClasses, string $expectedString, array $expectedArray)
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
         $twig = $this->getTwigEnvironmentFromBootedKernel($kernel);
 
         $extension = new StimulusTwigExtension();
-        $dto = $extension->renderStimulusController($twig, $dataOrControllerName, $controllerValues);
+        $dto = $extension->renderStimulusController($twig, $dataOrControllerName, $controllerValues, $controllerClasses);
         $this->assertSame($expectedString, (string) $dto);
         $this->assertSame($expectedArray, $dto->toArray());
     }
