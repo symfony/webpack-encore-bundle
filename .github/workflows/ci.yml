@@ -9,7 +9,7 @@ on:
 jobs:
   tests:
     name: "Tests ${{ matrix.php-version }} deps ${{ matrix.dependency-versions }}"
-    runs-on: ubuntu-18.04
+    runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
