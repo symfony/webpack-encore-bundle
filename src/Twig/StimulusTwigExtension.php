@@ -38,18 +38,19 @@ final class StimulusTwigExtension extends AbstractExtension
     }
 
     /**
-     * @param string $controllerName   the Stimulus controller name
-     * @param array  $controllerValues array of controller values
+     * @param string $controllerName    the Stimulus controller name
+     * @param array  $controllerValues  array of controller values
+     * @param array  $controllerClasses array of controller CSS classes
      */
-    public function renderStimulusController(Environment $env, $controllerName, array $controllerValues = []): StimulusControllersDto
+    public function renderStimulusController(Environment $env, $controllerName, array $controllerValues = [], array $controllerClasses = []): StimulusControllersDto
     {
         $dto = new StimulusControllersDto($env);
 
         if (\is_array($controllerName)) {
             trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_controller() is deprecated.');
 
-            if ($controllerValues) {
-                throw new \InvalidArgumentException('You cannot pass an array to the first and second argument of stimulus_controller(): check the documentation.');
+            if ($controllerValues || $controllerClasses) {
+                throw new \InvalidArgumentException('You cannot pass an array to the first and second/third argument of stimulus_controller(): check the documentation.');
             }
 
             $data = $controllerName;
@@ -61,7 +62,7 @@ final class StimulusTwigExtension extends AbstractExtension
             return $dto;
         }
 
-        $dto->addController($controllerName, $controllerValues);
+        $dto->addController($controllerName, $controllerValues, $controllerClasses);
 
         return $dto;
     }
@@ -107,9 +108,9 @@ final class StimulusTwigExtension extends AbstractExtension
         return $dto;
     }
 
-    public function appendStimulusController(StimulusControllersDto $dto, string $controllerName, array $controllerValues = []): StimulusControllersDto
+    public function appendStimulusController(StimulusControllersDto $dto, string $controllerName, array $controllerValues = [], array $controllerClasses = []): StimulusControllersDto
     {
-        $dto->addController($controllerName, $controllerValues);
+        $dto->addController($controllerName, $controllerValues, $controllerClasses);
 
         return $dto;
     }

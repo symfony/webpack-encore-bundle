@@ -15,8 +15,9 @@ final class StimulusControllersDto extends AbstractStimulusDto
 {
     private $controllers = [];
     private $values = [];
+    private $classes = [];
 
-    public function addController(string $controllerName, array $controllerValues = []): void
+    public function addController(string $controllerName, array $controllerValues = [], array $controllerClasses = []): void
     {
         $controllerName = $this->getFormattedControllerName($controllerName);
         $this->controllers[] = $controllerName;
@@ -31,6 +32,12 @@ final class StimulusControllersDto extends AbstractStimulusDto
 
             $this->values['data-'.$controllerName.'-'.$key.'-value'] = $value;
         }
+
+        foreach ($controllerClasses as $key => $class) {
+            $key = $this->escapeAsHtmlAttr($this->normalizeKeyName($key));
+
+            $this->values['data-'.$controllerName.'-'.$key.'-class'] = $class;
+        }
     }
 
     public function __toString(): string
@@ -39,9 +46,15 @@ final class StimulusControllersDto extends AbstractStimulusDto
             return '';
         }
 
-        return rtrim('data-controller="'.implode(' ', $this->controllers).'" '.implode(' ', array_map(static function (string $attribute, string $value): string {
-            return $attribute.'="'.$value.'"';
-        }, array_keys($this->values), $this->values)));
+        return rtrim(
+            'data-controller="'.implode(' ', $this->controllers).'" '.
+            implode(' ', array_map(static function (string $attribute, string $value): string {
+                return $attribute.'="'.$value.'"';
+            }, array_keys($this->values), $this->values)).' '.
+            implode(' ', array_map(static function (string $attribute, string $value): string {
+                return $attribute.'="'.$value.'"';
+            }, array_keys($this->classes), $this->classes))
+        );
     }
 
     public function toArray(): array
@@ -52,7 +65,7 @@ final class StimulusControllersDto extends AbstractStimulusDto
 
         return [
             'data-controller' => implode(' ', $this->controllers),
-        ] + $this->values;
+        ] + $this->values + $this->classes;
     }
 
     /**

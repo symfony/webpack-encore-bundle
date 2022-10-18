@@ -204,7 +204,8 @@ class ScriptNonceSubscriber implements EventSubscriberInterface
 ### stimulus_controller
 
 This bundle also ships with a special `stimulus_controller()` Twig function
-that can be used to render [Stimulus Controllers & Values](https://stimulus.hotwired.dev/reference/values).
+that can be used to render [Stimulus Controllers & Values](https://stimulus.hotwired.dev/reference/values)
+and [CSS Classes](https://stimulus.hotwired.dev/reference/css-classes).
 See [stimulus-bridge](https://github.com/symfony/stimulus-bridge) for more details.
 
 For example:
@@ -221,6 +222,29 @@ For example:
    data-chart-data-value="&#x5B;1,2,3,4&#x5D;"
 >
    Hello
+</div>
+```
+
+If you want to set CSS classes:
+
+```twig
+<div {{ stimulus_controller('chart', { 'name': 'Likes', 'data': [1, 2, 3, 4] }, { 'loading': 'spinner' }) }}>
+    Hello
+</div>
+
+<!-- would render -->
+<div
+   data-controller="chart"
+   data-chart-name-value="Likes"
+   data-chart-data-value="&#x5B;1,2,3,4&#x5D;"
+   data-chart-loading-class="spinner"
+>
+   Hello
+</div>
+
+<!-- or without values -->
+<div {{ stimulus_controller('chart', controllerClasses: { 'loading': 'spinner' }) }}>
+    Hello
 </div>
 ```
 
