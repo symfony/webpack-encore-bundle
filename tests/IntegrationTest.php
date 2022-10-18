@@ -345,6 +345,7 @@ class IntegrationTest extends TestCase
 
     /**
      * @dataProvider provideLegacyRenderMultipleStimulusControllers
+     *
      * @legacy
      */
     public function testLegacyRenderMultipleStimulusControllers($dataOrControllerName, array $controllerValues, string $expectedString, array $expectedArray)
@@ -482,6 +483,7 @@ class IntegrationTest extends TestCase
 
     /**
      * @dataProvider provideLegacyRenderMultipleStimulusAction
+     *
      * @legacy
      */
     public function testLegacyRenderMultipleStimulusActions($dataOrControllerName, ?string $actionName, ?string $eventName, array $parameters, string $expectedString, array $expectedArray)
