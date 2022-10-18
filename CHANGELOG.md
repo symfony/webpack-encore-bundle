@@ -1,5 +1,13 @@
 # Changelog
 
+## [v1.16.0](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.16.0)
+
+*October 18th, 2022*
+
+### Feature
+
+- [#191](https://github.com/symfony/webpack-encore-bundle/pull/191) - Handle Stimulus CSS Classes - *@jmsche*
+
 ## [v1.15.1](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.15.1)
 
 *July 13th, 2022*
