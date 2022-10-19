@@ -243,7 +243,7 @@ If you want to set CSS classes:
 </div>
 
 <!-- or without values -->
-<div {{ stimulus_controller('chart', controllerClasses: { 'loading': 'spinner' }) }}>
+<div {{ stimulus_controller('chart', controllerClasses = { 'loading': 'spinner' }) }}>
     Hello
 </div>
 ```
