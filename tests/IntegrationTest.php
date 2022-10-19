@@ -665,7 +665,7 @@ abstract class AbstractWebpackEncoreIntegrationTestKernel extends Kernel
             ];
         }
         if (self::VERSION_ID >= 60200) {
-            $frameworkConfig['catch_all_throwables'] = true;
+            $frameworkConfig['handle_all_throwables'] = true;
         }
         $container->loadFromExtension('framework', $frameworkConfig);
 
