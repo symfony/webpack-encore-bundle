@@ -45,7 +45,7 @@ abstract class AbstractStimulusDto implements \Stringable
             $value = $value ? 'true' : 'false';
         }
 
-        return $this->escapeAsHtmlAttr($value);
+        return (string) $value;
     }
 
     protected function escapeAsHtmlAttr($value): string
