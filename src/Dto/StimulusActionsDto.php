@@ -41,8 +41,8 @@ final class StimulusActionsDto extends AbstractStimulusDto
             return '';
         }
 
-        return rtrim('data-action="'.implode(' ', $this->actions).'" '.implode(' ', array_map(static function (string $attribute, string $value): string {
-            return $attribute.'="'.$value.'"';
+        return rtrim('data-action="'.implode(' ', $this->actions).'" '.implode(' ', array_map(function (string $attribute, string $value): string {
+            return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
         }, array_keys($this->parameters), $this->parameters)));
     }
 

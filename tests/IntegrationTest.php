@@ -330,7 +330,7 @@ class IntegrationTest extends TestCase
             ],
             'controllerValues' => [],
             'expectedString' => 'data-controller="my-controller" data-my-controller-my-value-value="&#x7B;&quot;nested&quot;&#x3A;&quot;array&quot;&#x7D;"',
-            'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-my-value-value' => '&#x7B;&quot;nested&quot;&#x3A;&quot;array&quot;&#x7D;'],
+            'expectedArray' => ['data-controller' => 'my-controller', 'data-my-controller-my-value-value' => '{"nested":"array"}'],
         ];
 
         yield 'multiple-controllers-scalar-data' => [
@@ -344,7 +344,7 @@ class IntegrationTest extends TestCase
             ],
             'controllerValues' => [],
             'expectedString' => 'data-controller="my-controller another-controller" data-my-controller-my-value-value="scalar-value" data-another-controller-another-value-value="scalar-value&#x20;2"',
-            'expectedArray' => ['data-controller' => 'my-controller another-controller', 'data-my-controller-my-value-value' => 'scalar-value', 'data-another-controller-another-value-value' => 'scalar-value&#x20;2'],
+            'expectedArray' => ['data-controller' => 'my-controller another-controller', 'data-my-controller-my-value-value' => 'scalar-value', 'data-another-controller-another-value-value' => 'scalar-value 2'],
         ];
 
         yield 'normalize-names' => [
@@ -582,7 +582,7 @@ class IntegrationTest extends TestCase
 
         $this->assertSame([
                 'data-my-controller-target' => 'myTarget',
-                'data-symfony--ux-dropzone--dropzone-target' => 'anotherTarget&#x20;fooTarget',
+                'data-symfony--ux-dropzone--dropzone-target' => 'anotherTarget fooTarget',
             ],
             $dto->toArray()
         );

@@ -48,11 +48,11 @@ final class StimulusControllersDto extends AbstractStimulusDto
 
         return rtrim(
             'data-controller="'.implode(' ', $this->controllers).'" '.
-            implode(' ', array_map(static function (string $attribute, string $value): string {
-                return $attribute.'="'.$value.'"';
+            implode(' ', array_map(function (string $attribute, string $value): string {
+                return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
             }, array_keys($this->values), $this->values)).' '.
-            implode(' ', array_map(static function (string $attribute, string $value): string {
-                return $attribute.'="'.$value.'"';
+            implode(' ', array_map(function (string $attribute, string $value): string {
+                return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
             }, array_keys($this->classes), $this->classes))
         );
     }
