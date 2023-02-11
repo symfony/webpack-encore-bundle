@@ -344,4 +344,38 @@ You can also retrieve the generated attributes as an array, which can be helpful
 {{ form_row(form.password, { attr: stimulus_target('hello-controller', 'a-target').toArray() }) }}
 ```
 
+### stimulus_outlet
+
+The `stimulus_outlet()` Twig function can be used to render [Stimulus Outlets](https://stimulus.hotwired.dev/reference/outlets).
+
+For example:
+
+```twig
+<div {{ stimulus_outlet('controller', 'a-outlet') }}>Hello</div>
+<div {{ stimulus_outlet('controller', 'a-outlet second-outlet') }}>Hello</div>
+
+<!-- would render -->
+<div data-controller-outlet="a-outlet">Hello</div>
+<div data-controller-outlet="a-target second-outlet">Hello</div>
+```
+
+If you have multiple outlets on the same element, you can chain them as there's also a `stimulus_outlet` filter:
+
+```twig
+<div {{ stimulus_outlet('controller', 'a-outlet')|stimulus_outlet('other-controller', 'another-outlet') }}>
+    Hello
+</div>
+
+<!-- would render -->
+<div data-controller-outlet="a-outlet" data-other-controller-outlet="another-outlet">
+    Hello
+</div>
+```
+
+You can also retrieve the generated attributes as an array, which can be helpful e.g. for forms:
+
+```twig
+{{ form_row(form.password, { attr: stimulus_outlet('hello-controller', 'a-outlet').toArray() }) }}
+```
+
 Ok, have fun!
