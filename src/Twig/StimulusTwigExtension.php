@@ -11,6 +11,7 @@ namespace Symfony\WebpackEncoreBundle\Twig;
 
 use Symfony\WebpackEncoreBundle\Dto\StimulusActionsDto;
 use Symfony\WebpackEncoreBundle\Dto\StimulusControllersDto;
+use Symfony\WebpackEncoreBundle\Dto\StimulusOutletsDto;
 use Symfony\WebpackEncoreBundle\Dto\StimulusTargetsDto;
 use Twig\Environment;
 use Twig\Extension\AbstractExtension;
@@ -25,6 +26,7 @@ final class StimulusTwigExtension extends AbstractExtension
             new TwigFunction('stimulus_controller', [$this, 'renderStimulusController'], ['needs_environment' => true, 'is_safe' => ['html_attr']]),
             new TwigFunction('stimulus_action', [$this, 'renderStimulusAction'], ['needs_environment' => true, 'is_safe' => ['html_attr']]),
             new TwigFunction('stimulus_target', [$this, 'renderStimulusTarget'], ['needs_environment' => true, 'is_safe' => ['html_attr']]),
+            new TwigFunction('stimulus_outlet', [$this, 'renderStimulusOutlet'], ['needs_environment' => true, 'is_safe' => ['html_attr']]),
         ];
     }
 
@@ -34,6 +36,7 @@ final class StimulusTwigExtension extends AbstractExtension
             new TwigFilter('stimulus_controller', [$this, 'appendStimulusController'], ['is_safe' => ['html_attr']]),
             new TwigFilter('stimulus_action', [$this, 'appendStimulusAction'], ['is_safe' => ['html_attr']]),
             new TwigFilter('stimulus_target', [$this, 'appendStimulusTarget'], ['is_safe' => ['html_attr']]),
+            new TwigFilter('stimulus_outlet', [$this, 'appendStimulusOutlet'], ['is_safe' => ['html_attr']]),
         ];
     }
 
@@ -155,11 +158,50 @@ final class StimulusTwigExtension extends AbstractExtension
 
     /**
      * @param string      $controllerName the Stimulus controller name
+     * @param string|null $outletNames    The space-separated list of outlet names if a string is passed to the 1st argument. Optional.
+     */
+    public function renderStimulusOutlet(Environment $env, $controllerName, string $outletNames = null): StimulusOutletsDto
+    {
+        $dto = new StimulusOutletsDto($env);
+        if (\is_array($controllerName)) {
+            trigger_deprecation('symfony/webpack-encore-bundle', 'v1.15.0', 'Passing an array as first argument of stimulus_outlet() is deprecated.');
+
+            if ($outletNames) {
+                throw new \InvalidArgumentException('You cannot pass a string to the second argument while passing an array to the first argument of stimulus_outlet(): check the documentation.');
+            }
+
+            $data = $controllerName;
+
+            foreach ($data as $controllerName => $outletNames) {
+                $dto->addOutlet($controllerName, $outletNames);
+            }
+
+            return $dto;
+        }
+
+        $dto->addOutlet($controllerName, $outletNames);
+
+        return $dto;
+    }
+
+    /**
+     * @param string      $controllerName the Stimulus controller name
      * @param string|null $targetNames    The space-separated list of target names if a string is passed to the 1st argument. Optional.
      */
     public function appendStimulusTarget(StimulusTargetsDto $dto, string $controllerName, string $targetNames = null): StimulusTargetsDto
     {
         $dto->addTarget($controllerName, $targetNames);
+
+        return $dto;
+    }
+
+    /**
+     * @param string      $controllerName the Stimulus controller name
+     * @param string|null $outletNames    The space-separated list of outlet names if a string is passed to the 1st argument. Optional.
+     */
+    public function appendStimulusOutlet(StimulusOutletsDto $dto, string $controllerName, string $outletNames = null): StimulusOutletsDto
+    {
+        $dto->addOutlet($controllerName, $outletNames);
 
         return $dto;
     }
