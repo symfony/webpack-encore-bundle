@@ -204,7 +204,7 @@ class ScriptNonceSubscriber implements EventSubscriberInterface
 ### stimulus_controller
 
 This bundle also ships with a special `stimulus_controller()` Twig function
-that can be used to render [Stimulus Controllers & Values](https://stimulus.hotwired.dev/reference/values)
+that can be used to render [Stimulus Controllers & Values](https://stimulus.hotwired.dev/reference/values), [Outlets](https://stimulus.hotwired.dev/reference/outlets)
 and [CSS Classes](https://stimulus.hotwired.dev/reference/css-classes).
 See [stimulus-bridge](https://github.com/symfony/stimulus-bridge) for more details.
 
@@ -258,6 +258,17 @@ If you have multiple controllers on the same element, you can chain them as ther
 <div {{ stimulus_controller('chart', { 'name': 'Likes' })|stimulus_controller('other-controller') }}>
     Hello
 </div>
+```
+
+If you need to attach an [outlet](https://stimulus.hotwired.dev/reference/outlets) to the controller, you can call the `addOutlet()` method.
+
+For example:
+
+```twig
+<div {{ stimulus_controller('chart').addOutlet('outlet-controller', '.css-selector') }}>Hello</div>
+
+<!-- would render -->
+<div data-controller="chart" data-chart-outlet-controller-outlet=".css-selector">Hello</div>
 ```
 
 You can also retrieve the generated attributes as an array, which can be helpful e.g. for forms:
