@@ -11,10 +11,13 @@ declare(strict_types=1);
 
 namespace Symfony\WebpackEncoreBundle\Dto;
 
+use Twig\Markup;
+
 final class StimulusControllersDto extends AbstractStimulusDto
 {
     private $controllers = [];
     private $values = [];
+    private $outlets = [];
     private $classes = [];
 
     public function addController(string $controllerName, array $controllerValues = [], array $controllerClasses = []): void
@@ -40,6 +43,17 @@ final class StimulusControllersDto extends AbstractStimulusDto
         }
     }
 
+    public function addOutlet(string $outletName, string $selector)
+    {
+        if (1 < \count($this->controllers)) {
+            throw new \LengthException('You cannot call addOutlet() method when passing more than one controller identifier to stimulus_controller() function');
+        }
+
+        $this->outlets['data-'.$this->controllers[0].'-'.$outletName.'-outlet'] = $selector;
+
+        return new Markup($this, 'UTF-8');
+    }
+
     public function __toString(): string
     {
         if (0 === \count($this->controllers)) {
@@ -53,7 +67,10 @@ final class StimulusControllersDto extends AbstractStimulusDto
             }, array_keys($this->values), $this->values)).' '.
             implode(' ', array_map(function (string $attribute, string $value): string {
                 return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
-            }, array_keys($this->classes), $this->classes))
+            }, array_keys($this->classes), $this->classes)).' '.
+            implode(' ', array_map(function (string $attribute, string $value): string {
+                return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
+            }, array_keys($this->outlets), $this->outlets))
         );
     }
 
