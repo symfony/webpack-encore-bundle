@@ -39,7 +39,7 @@ final class StimulusControllersDto extends AbstractStimulusDto
         foreach ($controllerClasses as $key => $class) {
             $key = $this->escapeAsHtmlAttr($this->normalizeKeyName($key));
 
-            $this->values['data-'.$controllerName.'-'.$key.'-class'] = $class;
+            $this->classes['data-'.$controllerName.'-'.$key.'-class'] = $class;
         }
     }
 
