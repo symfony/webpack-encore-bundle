@@ -11,8 +11,6 @@ declare(strict_types=1);
 
 namespace Symfony\WebpackEncoreBundle\Dto;
 
-use Twig\Markup;
-
 final class StimulusControllersDto extends AbstractStimulusDto
 {
     private $controllers = [];
@@ -51,7 +49,7 @@ final class StimulusControllersDto extends AbstractStimulusDto
 
         $this->outlets['data-'.$this->controllers[0].'-'.$outletName.'-outlet'] = $selector;
 
-        return $this;
+        return new Markup($this, 'UTF-8');
     }
 
     public function __toString(): string
@@ -61,7 +59,7 @@ final class StimulusControllersDto extends AbstractStimulusDto
         }
 
         return rtrim(
-            'data-controller='.implode(' ', $this->controllers).
+            'data-controller="'.implode(' ', $this->controllers).'"'.
             implode(' ', array_map(function (string $attribute, string $value): string {
                 return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
             }, array_keys($this->values), $this->values)).' '.
@@ -69,7 +67,7 @@ final class StimulusControllersDto extends AbstractStimulusDto
                 return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
             }, array_keys($this->classes), $this->classes)).' '.
             implode(' ', array_map(function (string $attribute, string $value): string {
-                return $attribute.'='.$this->escapeAsHtmlAttr($value);
+                return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
             }, array_keys($this->outlets), $this->outlets))
         );
     }
