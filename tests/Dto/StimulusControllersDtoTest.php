@@ -51,4 +51,20 @@ class StimulusControllersDtoTest extends TestCase
             $attributesArray
         );
     }
+
+    public function testAddOutlet(): void
+    {
+        $this->stimulusControllersDto->addController('foo', ['bar' => '"'], ['baz' => '"']);
+        $this->stimulusControllersDto->addOutlet('outlet-name', '"');
+        $attributesArray = $this->stimulusControllersDto->toArray();
+        self::assertSame(
+            [
+                'data-controller' => 'foo',
+                'data-foo-bar-value' => '"',
+                'data-foo-baz-class' => '"',
+                'data-foo-outlet-name-outlet' => '"',
+            ],
+            $attributesArray
+        );
+    }
 }
