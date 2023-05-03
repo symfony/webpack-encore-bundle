@@ -1,0 +1,17 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2023-05-02T20:25:30Z
+
+Hey! Thanks for getting this rolling :). Really, what we need to do is:
+
+A) Move this to a doc/index.rst file
+B) Create a `.symfony.bundle.yaml` file
+C) Ping Javier to add this to https://symfony.com/bundles
+
+e.g. like https://github.com/symfony/ux/tree/2.x/src/Autocomplete :)
+
+---------------------------------------------------------------------------
+
+by bocharsky-bw at 2023-05-03T13:56:06Z
+
+@weaverryan changes are done! Should this PR be merged first and then we need to ping Javier?
