@@ -15,6 +15,8 @@ use Twig\Environment;
 
 /**
  * @internal
+ *
+ * @deprecated since 1.17.0 - install symfony/stimulus-bundle instead.
  */
 abstract class AbstractStimulusDto implements \Stringable
 {

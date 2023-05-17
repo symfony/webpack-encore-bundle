@@ -1,5 +1,10 @@
 # Changelog
 
+## v1.17.0
+
+- Deprecated the `stimulus_controller()`, `stimulus_action()` and `stimulus_target`
+  functions and related classes. Install `symfony/stimulus-bundle` instead.
+
 ## [v1.16.0](https://github.com/symfony/webpack-encore-bundle/releases/tag/v1.16.0)
 
 *October 18th, 2022*

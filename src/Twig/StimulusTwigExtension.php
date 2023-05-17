@@ -17,6 +17,9 @@ use Twig\Extension\AbstractExtension;
 use Twig\TwigFilter;
 use Twig\TwigFunction;
 
+/**
+ * @deprecated since 1.17.0 - install symfony/stimulus-bundle instead.
+ */
 final class StimulusTwigExtension extends AbstractExtension
 {
     public function getFunctions(): array

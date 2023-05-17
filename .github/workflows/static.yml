@@ -49,7 +49,7 @@ jobs:
           composer-options: "--working-dir=tools/php-cs-fixer"
 
       - name: PHP-CS-Fixer
-        run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --format=checkstyle | cs2pr
+        run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run
 
   psalm:
     name: Psalm
