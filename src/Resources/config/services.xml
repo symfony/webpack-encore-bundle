@@ -36,10 +36,6 @@
             </argument>
         </service>
 
-        <service id="webpack_encore.twig_stimulus_extension" class="Symfony\WebpackEncoreBundle\Twig\StimulusTwigExtension">
-            <tag name="twig.extension" />
-        </service>
-
         <service id="webpack_encore.entrypoint_lookup.cache_warmer" class="Symfony\WebpackEncoreBundle\CacheWarmer\EntrypointCacheWarmer">
             <tag name="kernel.cache_warmer" />
             <argument /> <!-- build list of entrypoint paths -->
