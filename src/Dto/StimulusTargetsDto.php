@@ -11,6 +11,9 @@ declare(strict_types=1);
 
 namespace Symfony\WebpackEncoreBundle\Dto;
 
+/**
+ * @deprecated since 1.17.0 - install symfony/stimulus-bundle instead.
+ */
 final class StimulusTargetsDto extends AbstractStimulusDto
 {
     private $targets = [];

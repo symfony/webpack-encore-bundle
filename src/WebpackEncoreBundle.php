@@ -9,8 +9,14 @@
 
 namespace Symfony\WebpackEncoreBundle;
 
+use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
+use Symfony\WebpackEncoreBundle\DependencyInjection\Compiler\RemoveStimulusServicesPass;
 
 final class WebpackEncoreBundle extends Bundle
 {
+    public function build(ContainerBuilder $container)
+    {
+        $container->addCompilerPass(new RemoveStimulusServicesPass());
+    }
 }
