@@ -1,0 +1,11 @@
+---------------------------------------------------------------------------
+
+by weaverryan at 2023-05-22T15:03:26Z
+
+~I'm going to keep this open, but delay merging it for a bit - as StimulusBundle will initially start as experimental, just to be safe. I don't want to put in the deprecation and force people to switch to an experimental library.~
+
+Instead, in StimulusBundle - https://github.com/symfony/ux/pull/887 - I'll set its Twig extension priority to a higher priority so that its`stimulus_` functions take priority over the ones from WebpackEncoreBundle. The idea is that, once you install StimulusBundle, you're opting into the new `stimulus_` functions.
+
+For the most part, the `stimulus_` functions between StimulusBundle & WebpackEncoreBundle are identical. However, internally, they use different objets to accomplish things. So if you're doing something more advanced, you will notice that difference as soon as StimulusBundle is installed.
+
+Update: on 3rd thought, to keep everything clean, we'll merge and tag this soon, and tag a 2.0 without this. That will also help us have separate recipes - the old "style" and the new style.
