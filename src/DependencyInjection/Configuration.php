@@ -20,7 +20,7 @@ final class Configuration implements ConfigurationInterface
     {
         $treeBuilder = new TreeBuilder('webpack_encore');
         /** @var ArrayNodeDefinition $rootNode */
-        $rootNode = method_exists($treeBuilder, 'getRootNode') ? $treeBuilder->getRootNode() : $treeBuilder->root('webpack_encore');
+        $rootNode = $treeBuilder->getRootNode();
 
         $rootNode
             ->validate()

@@ -10,7 +10,6 @@
 namespace Symfony\WebpackEncoreBundle\Asset;
 
 use Symfony\Component\Asset\Packages;
-use Symfony\Component\DependencyInjection\ServiceLocator;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\ResetInterface;
 use Symfony\WebpackEncoreBundle\Event\RenderAssetTagEvent;
@@ -30,27 +29,14 @@ class TagRenderer implements ResetInterface
     private $renderedFiles = [];
 
     public function __construct(
-        $entrypointLookupCollection,
+        EntrypointLookupCollectionInterface $entrypointLookupCollection,
         Packages $packages,
         array $defaultAttributes = [],
         array $defaultScriptAttributes = [],
         array $defaultLinkAttributes = [],
         EventDispatcherInterface $eventDispatcher = null
     ) {
-        if ($entrypointLookupCollection instanceof EntrypointLookupInterface) {
-            @trigger_error(sprintf('The "$entrypointLookupCollection" argument in method "%s()" must be an instance of EntrypointLookupCollection.', __METHOD__), \E_USER_DEPRECATED);
-
-            $this->entrypointLookupCollection = new EntrypointLookupCollection(
-                new ServiceLocator(['_default' => function () use ($entrypointLookupCollection) {
-                    return $entrypointLookupCollection;
-                }])
-            );
-        } elseif ($entrypointLookupCollection instanceof EntrypointLookupCollectionInterface) {
-            $this->entrypointLookupCollection = $entrypointLookupCollection;
-        } else {
-            throw new \TypeError('The "$entrypointLookupCollection" argument must be an instance of EntrypointLookupCollectionInterface.');
-        }
-
+        $this->entrypointLookupCollection = $entrypointLookupCollection;
         $this->packages = $packages;
         $this->defaultAttributes = $defaultAttributes;
         $this->defaultScriptAttributes = $defaultScriptAttributes;
@@ -150,6 +136,9 @@ class TagRenderer implements ResetInterface
         return $this->defaultAttributes;
     }
 
+    /**
+     * @return void
+     */
     public function reset()
     {
         $this->renderedFiles = [

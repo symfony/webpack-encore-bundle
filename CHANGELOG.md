@@ -1,5 +1,10 @@
 # Changelog
 
+## v2.0.0
+
+- Minimum PHP version is now 8.1
+- Minimum Symfony version is now 5.4
+
 ## v1.17.0
 
 - Deprecated the `stimulus_controller()`, `stimulus_action()` and `stimulus_target`

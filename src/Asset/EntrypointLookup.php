@@ -64,6 +64,8 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
 
     /**
      * Resets the state of this service.
+     *
+     * @return void
      */
     public function reset()
     {
@@ -89,7 +91,7 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
         return $newFiles;
     }
 
-    private function validateEntryName(string $entryName)
+    private function validateEntryName(string $entryName): void
     {
         $entriesData = $this->getEntriesData();
         if (!isset($entriesData['entrypoints'][$entryName]) && $this->strictMode) {
