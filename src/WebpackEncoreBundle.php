@@ -9,6 +9,7 @@
 
 namespace Symfony\WebpackEncoreBundle;
 
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\HttpKernel\Bundle\Bundle;
 use Symfony\WebpackEncoreBundle\DependencyInjection\Compiler\RemoveStimulusServicesPass;
@@ -17,6 +18,7 @@ final class WebpackEncoreBundle extends Bundle
 {
     public function build(ContainerBuilder $container)
     {
-        $container->addCompilerPass(new RemoveStimulusServicesPass());
+        // run before TwigEnvironmentPass to remove the twig extension before it's used
+        $container->addCompilerPass(new RemoveStimulusServicesPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION, 10);
     }
 }
