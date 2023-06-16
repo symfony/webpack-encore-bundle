@@ -1,6 +1,6 @@
 {
     "name": "symfony/webpack-encore-bundle",
-    "description": "Integration with your Symfony app & Webpack Encore!",
+    "description": "Integration of your Symfony app with Webpack Encore",
     "license": "MIT",
     "type": "symfony-bundle",
     "authors": [
