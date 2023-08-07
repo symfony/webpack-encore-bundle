@@ -33,7 +33,7 @@ class PreLoadAssetsEventListenerTest extends TestCase
 
         $request = new Request();
         $response = new Response();
-        $event = $this->createResponseEvent($request, HttpKernelInterface::MASTER_REQUEST, $response);
+        $event = $this->createResponseEvent($request, HttpKernelInterface::MAIN_REQUEST, $response);
         $listener = new PreLoadAssetsEventListener($tagRenderer);
         $listener->onKernelResponse($event);
         $this->assertTrue($request->attributes->has('_links'));
@@ -68,7 +68,7 @@ class PreLoadAssetsEventListenerTest extends TestCase
         $request->attributes->set('_links', $linkProvider);
 
         $response = new Response();
-        $event = $this->createResponseEvent($request, HttpKernelInterface::MASTER_REQUEST, $response);
+        $event = $this->createResponseEvent($request, HttpKernelInterface::MAIN_REQUEST, $response);
         $listener = new PreLoadAssetsEventListener($tagRenderer);
         $listener->onKernelResponse($event);
         /** @var GenericLinkProvider|FigGenericLinkProvider $linkProvider */
