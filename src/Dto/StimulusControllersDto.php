@@ -39,7 +39,7 @@ final class StimulusControllersDto extends AbstractStimulusDto
         foreach ($controllerClasses as $key => $class) {
             $key = $this->escapeAsHtmlAttr($this->normalizeKeyName($key));
 
-            $this->values['data-'.$controllerName.'-'.$key.'-class'] = $class;
+            $this->classes['data-'.$controllerName.'-'.$key.'-class'] = $class;
         }
     }
 
@@ -49,15 +49,11 @@ final class StimulusControllersDto extends AbstractStimulusDto
             return '';
         }
 
-        return rtrim(
-            'data-controller="'.implode(' ', $this->controllers).'" '.
-            implode(' ', array_map(function (string $attribute, string $value): string {
-                return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
-            }, array_keys($this->values), $this->values)).' '.
-            implode(' ', array_map(function (string $attribute, string $value): string {
-                return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
-            }, array_keys($this->classes), $this->classes))
-        );
+        return rtrim(implode(' ', array_filter([
+            'data-controller="'.implode(' ', $this->controllers).'"',
+            $this->formatDataAttribute($this->values),
+            $this->formatDataAttribute($this->classes),
+        ])));
     }
 
     public function toArray(): array
@@ -84,5 +80,12 @@ final class StimulusControllersDto extends AbstractStimulusDto
 
         // Adapted from ByteString::snake
         return strtolower(preg_replace(['/([A-Z]+)([A-Z][a-z])/', '/([a-z\d])([A-Z])/'], '\1-\2', $str));
+    }
+
+    private function formatDataAttribute(array $data): string
+    {
+        return implode(' ', array_map(function (string $attribute, string $value): string {
+            return $attribute.'="'.$this->escapeAsHtmlAttr($value).'"';
+        }, array_keys($data), $data));
     }
 }
