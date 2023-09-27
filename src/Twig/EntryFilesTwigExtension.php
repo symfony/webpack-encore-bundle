@@ -10,13 +10,14 @@
 namespace Symfony\WebpackEncoreBundle\Twig;
 
 use Psr\Container\ContainerInterface;
+use Symfony\Contracts\Service\ServiceSubscriberInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookupInterface;
 use Symfony\WebpackEncoreBundle\Asset\TagRenderer;
 use Twig\Extension\AbstractExtension;
 use Twig\TwigFunction;
 
-final class EntryFilesTwigExtension extends AbstractExtension
+final class EntryFilesTwigExtension extends AbstractExtension implements ServiceSubscriberInterface
 {
     private $container;
 
@@ -79,5 +80,13 @@ final class EntryFilesTwigExtension extends AbstractExtension
     private function getTagRenderer(): TagRenderer
     {
         return $this->container->get('webpack_encore.tag_renderer');
+    }
+
+    public static function getSubscribedServices(): array
+    {
+        return [
+            'webpack_encore.entrypoint_lookup_collection' => EntrypointLookupInterface::class,
+            'webpack_encore.tag_renderer' => TagRenderer::class,
+        ];
     }
 }

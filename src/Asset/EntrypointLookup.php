@@ -127,11 +127,11 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
         $this->entriesData = json_decode(file_get_contents($this->entrypointJsonPath), true);
 
         if (null === $this->entriesData) {
-            throw new \InvalidArgumentException(sprintf('There was a problem JSON decoding the "%s" file', $this->entrypointJsonPath));
+            throw new \InvalidArgumentException(sprintf('There was a problem JSON decoding the "%s" file.', $this->entrypointJsonPath));
         }
 
         if (!isset($this->entriesData['entrypoints'])) {
-            throw new \InvalidArgumentException(sprintf('Could not find an "entrypoints" key in the "%s" file', $this->entrypointJsonPath));
+            throw new \InvalidArgumentException(sprintf('Could not find an "entrypoints" key in the "%s" file.', $this->entrypointJsonPath));
         }
 
         if (isset($cached)) {
