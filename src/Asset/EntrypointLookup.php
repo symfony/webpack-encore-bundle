@@ -117,14 +117,15 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
             }
         }
 
-        if (!file_exists($this->entrypointJsonPath)) {
+        $entrypointJsonContents = file_get_contents($this->entrypointJsonPath);
+        if ($entrypointJsonContents === false) {
             if (!$this->strictMode) {
                 return [];
             }
-            throw new \InvalidArgumentException(sprintf('Could not find the entrypoints file from Webpack: the file "%s" does not exist.', $this->entrypointJsonPath));
+            throw new \InvalidArgumentException(sprintf('Could not find the entrypoints file from Webpack: the file "%s" does not exist or it is not readable.', $this->entrypointJsonPath));
         }
 
-        $this->entriesData = json_decode(file_get_contents($this->entrypointJsonPath), true);
+        $this->entriesData = json_decode($entrypointJsonContents, true);
 
         if (null === $this->entriesData) {
             throw new \InvalidArgumentException(sprintf('There was a problem JSON decoding the "%s" file', $this->entrypointJsonPath));
