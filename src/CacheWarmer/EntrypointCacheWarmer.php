@@ -24,7 +24,7 @@ class EntrypointCacheWarmer extends AbstractPhpFileCacheWarmer
         parent::__construct($phpArrayFile);
     }
 
-    protected function doWarmUp($cacheDir, ArrayAdapter $arrayAdapter): bool
+    protected function doWarmUp(string $cacheDir, ArrayAdapter $arrayAdapter, ?string $buildDir = null): bool
     {
         foreach ($this->cacheKeys as $cacheKey => $path) {
             // If the file does not exist then just skip past this entry point.

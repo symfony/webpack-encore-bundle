@@ -139,7 +139,7 @@ class TagRenderer implements ResetInterface
     /**
      * @return void
      */
-    public function reset()
+    public function reset(): void
     {
         $this->renderedFiles = [
             'scripts' => [],

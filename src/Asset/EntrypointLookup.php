@@ -67,7 +67,7 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
      *
      * @return void
      */
-    public function reset()
+    public function reset(): void
     {
         $this->returnedFiles = [];
     }
