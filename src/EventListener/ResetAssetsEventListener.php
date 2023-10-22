@@ -34,9 +34,6 @@ class ResetAssetsEventListener implements EventSubscriberInterface
         ];
     }
 
-    /**
-     * @return void
-     */
     public function resetAssets(FinishRequestEvent $event): void
     {
         if (!$event->isMainRequest()) {

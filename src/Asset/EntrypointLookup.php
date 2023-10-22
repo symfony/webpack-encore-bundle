@@ -64,8 +64,6 @@ class EntrypointLookup implements EntrypointLookupInterface, IntegrityDataProvid
 
     /**
      * Resets the state of this service.
-     *
-     * @return void
      */
     public function reset(): void
     {

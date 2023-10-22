@@ -136,9 +136,6 @@ class TagRenderer implements ResetInterface
         return $this->defaultAttributes;
     }
 
-    /**
-     * @return void
-     */
     public function reset(): void
     {
         $this->renderedFiles = [
