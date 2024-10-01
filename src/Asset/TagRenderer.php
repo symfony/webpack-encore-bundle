@@ -80,7 +80,7 @@ class TagRenderer implements ResetInterface
                 $this->convertArrayToAttributes($attributes)
             );
 
-            $this->renderedFiles['scripts'][] = $attributes["src"];
+            $this->renderedFiles['scripts'][] = $attributes['src'];
             $this->renderedFilesWithAttributes['scripts'][] = $attributes;
         }
 
@@ -119,7 +119,7 @@ class TagRenderer implements ResetInterface
                 $this->convertArrayToAttributes($attributes)
             );
 
-            $this->renderedFiles['styles'][] = $attributes["href"];
+            $this->renderedFiles['styles'][] = $attributes['href'];
             $this->renderedFilesWithAttributes['styles'][] = $attributes;
         }
 

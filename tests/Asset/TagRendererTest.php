@@ -316,7 +316,6 @@ class TagRendererTest extends TestCase
             ],
         ], $renderer->getRenderedStylesWithAttributes());
 
-
         $renderer->reset();
         $this->assertEmpty($renderer->getRenderedScripts());
         $this->assertEmpty($renderer->getRenderedStyles());
