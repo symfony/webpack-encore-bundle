@@ -308,18 +308,18 @@ class TagRendererTest extends TestCase
             [
                 'src' => 'http://localhost:8080/build/file2.js',
             ],
-        ], $renderer->getRenderedScriptsWithAttributes());
+        ], $renderer->getRenderedScripts(true));
         $this->assertSame([
             [
                 'rel' => 'stylesheet',
                 'href' => 'http://localhost:8080/build/file1.css',
             ],
-        ], $renderer->getRenderedStylesWithAttributes());
+        ], $renderer->getRenderedStyles(true));
 
         $renderer->reset();
         $this->assertEmpty($renderer->getRenderedScripts());
         $this->assertEmpty($renderer->getRenderedStyles());
-        $this->assertEmpty($renderer->getRenderedScriptsWithAttributes());
-        $this->assertEmpty($renderer->getRenderedStylesWithAttributes());
+        $this->assertEmpty($renderer->getRenderedScripts(true));
+        $this->assertEmpty($renderer->getRenderedStyles(true));
     }
 }

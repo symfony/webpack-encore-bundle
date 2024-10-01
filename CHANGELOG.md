@@ -1,5 +1,11 @@
 # Changelog
 
+## v2.2.0
+
+- #236 Allow entrypoints.json to be hosted remotely (@rlvdx & @Kocal)
+- #232 fix: correctly wire the build-time file into kernel.build_dir (@dkarlovi)
+- #237 Fix missing integrity hash on preload (@arnaud-ritti & @Kocal)
+
 ## v2.1.0
 
 - #233 Add support for PHP 8.3 and PHP 8.4 (@Kocal)

@@ -28,7 +28,9 @@ class TagRenderer implements ResetInterface
     private $defaultLinkAttributes;
     private $eventDispatcher;
 
+    // TODO WebpackEncoreBundle 3.0: remove this property
     private $renderedFiles = [];
+    // TODO WebpackEncoreBundle 3.0: rename this property to $renderedFiles
     private $renderedFilesWithAttributes = [];
 
     public function __construct(
@@ -87,7 +89,7 @@ class TagRenderer implements ResetInterface
         return implode('', $scriptTags);
     }
 
-    public function renderWebpackLinkTags(string $entryName, ?string $packageName = null, ?string $entrypointName = null, array $extraAttributes = [], bool $includeAttributes = false): string
+    public function renderWebpackLinkTags(string $entryName, ?string $packageName = null, ?string $entrypointName = null, array $extraAttributes = []): string
     {
         $entrypointName = $entrypointName ?: '_default';
         $scriptTags = [];
@@ -126,24 +128,30 @@ class TagRenderer implements ResetInterface
         return implode('', $scriptTags);
     }
 
-    public function getRenderedScripts(): array
+    /**
+     * @param bool $includeAttributes Whether to include the attributes or not.
+     *                                In WebpackEncoreBundle 3.0, this parameter will be removed,
+     *                                and the attributes will always be included.
+     *                                TODO WebpackEncoreBundle 3.0
+     *
+     * @return ($includeAttributes is true ? list<array<string, mixed>> : list<string>)
+     */
+    public function getRenderedScripts(bool $includeAttributes = false): array
     {
-        return $this->renderedFiles['scripts'];
+        return $includeAttributes ? $this->renderedFilesWithAttributes['scripts'] : $this->renderedFiles['scripts'];
     }
 
-    public function getRenderedStyles(): array
+    /**
+     * @param bool $includeAttributes Whether to include the attributes or not.
+     *                                In WebpackEncoreBundle 3.0, this parameter will be removed,
+     *                                and the attributes will always be included.
+     *                                TODO WebpackEncoreBundle 3.0
+     *
+     * @return ($includeAttributes is true ? list<array<string, mixed>> : list<string>)
+     */
+    public function getRenderedStyles(bool $includeAttributes = false): array
     {
-        return $this->renderedFiles['styles'];
-    }
-
-    public function getRenderedScriptsWithAttributes(): array
-    {
-        return $this->renderedFilesWithAttributes['scripts'];
-    }
-
-    public function getRenderedStylesWithAttributes(): array
-    {
-        return $this->renderedFilesWithAttributes['styles'];
+        return $includeAttributes ? $this->renderedFilesWithAttributes['styles'] : $this->renderedFiles['styles'];
     }
 
     public function getDefaultAttributes(): array

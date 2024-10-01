@@ -47,33 +47,31 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
         /** @var GenericLinkProvider $linkProvider */
         $linkProvider = $request->attributes->get('_links');
         $defaultAttributes = $this->tagRenderer->getDefaultAttributes();
-        $crossOrigin = $defaultAttributes['crossorigin'] ?? false;
 
-        foreach ($this->tagRenderer->getRenderedScriptsWithAttributes() as $attributes) {
-            $attributes = array_merge($defaultAttributes, $attributes);
+        foreach ($this->tagRenderer->getRenderedScripts(true) as $attributes) {
+            $src = $attributes['src'];
+            unset($attributes['src']);
+            $attributes = [...$defaultAttributes, ...$attributes];
 
-            $link = $this->createLink('preload', $attributes['src'])->withAttribute('as', 'script');
+            $link = $this->createLink('preload', $src)
+                ->withAttribute('as', 'script');
 
-            if (!empty($attributes['crossorigin']) && false !== $attributes['crossorigin']) {
-                $link = $link->withAttribute('crossorigin', $attributes['crossorigin']);
-            }
-            if (!empty($attributes['integrity'])) {
-                $link = $link->withAttribute('integrity', $attributes['integrity']);
+            foreach ($attributes as $k => $v) {
+                $link = $link->withAttribute($k, $v);
             }
 
             $linkProvider = $linkProvider->withLink($link);
         }
 
-        foreach ($this->tagRenderer->getRenderedStylesWithAttributes() as $attributes) {
-            $attributes = array_merge($defaultAttributes, $attributes);
+        foreach ($this->tagRenderer->getRenderedStyles(true) as $attributes) {
+            $href = $attributes['href'];
+            unset($attributes['href']);
+            $attributes = [...$defaultAttributes, ...$attributes];
 
-            $link = $this->createLink('preload', $attributes['href'])->withAttribute('as', 'style');
+            $link = $this->createLink('preload', $href)->withAttribute('as', 'style');
 
-            if (!empty($attributes['crossorigin']) && false !== $attributes['crossorigin']) {
-                $link = $link->withAttribute('crossorigin', $attributes['crossorigin']);
-            }
-            if (!empty($attributes['integrity'])) {
-                $link = $link->withAttribute('integrity', $attributes['integrity']);
+            foreach ($attributes as $k => $v) {
+                $link = $link->withAttribute($k, $v);
             }
 
             $linkProvider = $linkProvider->withLink($link);
