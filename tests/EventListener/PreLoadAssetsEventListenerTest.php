@@ -30,8 +30,17 @@ class PreLoadAssetsEventListenerTest extends TestCase
     {
         $tagRenderer = $this->createMock(TagRenderer::class);
         $tagRenderer->expects($this->once())->method('getDefaultAttributes')->willReturn(['crossorigin' => 'anonymous']);
-        $tagRenderer->expects($this->once())->method('getRenderedScripts')->willReturn(['/file1.js']);
-        $tagRenderer->expects($this->once())->method('getRenderedStyles')->willReturn(['/css/file1.css']);
+        $tagRenderer->expects($this->once())->method('getRenderedScripts')->with(true)->willReturn([
+            [
+                'src' => '/file1.js',
+            ],
+        ]);
+        $tagRenderer->expects($this->once())->method('getRenderedStyles')->with(true)->willReturn([
+            [
+                'rel' => 'stylesheet',
+                'href' => '/css/file1.css',
+            ],
+        ]);
 
         $request = new Request();
         $response = new Response();
@@ -53,14 +62,18 @@ class PreLoadAssetsEventListenerTest extends TestCase
 
         $this->assertSame('/css/file1.css', $links[1]->getHref());
         $this->assertSame(['preload'], $links[1]->getRels());
-        $this->assertSame(['as' => 'style', 'crossorigin' => 'anonymous'], $links[1]->getAttributes());
+        $this->assertSame(['as' => 'style', 'crossorigin' => 'anonymous', 'rel' => 'stylesheet'], $links[1]->getAttributes());
     }
 
     public function testItReusesExistingLinkProvider()
     {
         $tagRenderer = $this->createMock(TagRenderer::class);
         $tagRenderer->expects($this->once())->method('getDefaultAttributes')->willReturn(['crossorigin' => 'anonymous']);
-        $tagRenderer->expects($this->once())->method('getRenderedScripts')->willReturn(['/file1.js']);
+        $tagRenderer->expects($this->once())->method('getRenderedScripts')->willReturn([
+            [
+                'src' => '/file1.js',
+            ],
+        ]);
         $tagRenderer->expects($this->once())->method('getRenderedStyles')->willReturn([]);
 
         $request = new Request();
