@@ -1,5 +1,9 @@
 # Changelog
 
+## v2.3.0
+
+- #248 Add support for Symfony 8 (@Kocal)
+
 ## v2.2.0
 
 - #236 Allow entrypoints.json to be hosted remotely (@rlvdx & @Kocal)
