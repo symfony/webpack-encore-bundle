@@ -8,19 +8,38 @@ on:
 
 jobs:
   tests:
-    name: "Tests ${{ matrix.php-version }} deps ${{ matrix.dependency-versions }}"
     runs-on: ubuntu-22.04
 
     strategy:
       fail-fast: false
       matrix:
-        # normal, highest, non-dev installs
         php-version: ['8.1', '8.2', '8.3', '8.4']
-        dependency-versions: ['highest']
+        dependency-version: [ 'highest' ]
+        symfony-version: [ '' ]
+        minimum-stability: ['stable']
         include:
-          # testing lowest PHP version with lowest dependencies
-          - php-version: '8.1'
-            dependency-versions: 'lowest'
+          # dev packages (probably not needed to have multiple such jobs)
+          -   minimum-stability: 'dev'
+              php-version: '8.4'
+          # lowest deps
+          -   php-version: '8.1'
+              dependency-version: 'lowest'
+          # LTS version of Symfony
+          -   php-version: '8.1'
+              symfony-version: '6.4.*'
+          # Explicit Symfony versions
+          -  php-version: '8.1'
+             symfony-version: '5.4'
+          -  php-version: '8.1'
+             symfony-version: '6.2'
+          -  php-version: '8.2'
+             symfony-version: '7.0'
+          -  php-version: '8.4'
+             symfony-version: '8.0.x-dev' # TODO: change to '8.0' when Symfony 8.0 is released
+             minimum-stability: 'dev' # TODO: remove when Symfony 8.0 is released
+
+    env:
+      SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=5.4' }}
 
     steps:
       - name: "Checkout code"
@@ -31,20 +50,20 @@ jobs:
         with:
             coverage: "none"
             php-version: "${{ matrix.php-version }}"
+            tools: flex
 
       - name: Allow Flex Plugin
-        run: |
-          composer global config --no-plugins allow-plugins.symfony/flex true
+        run: composer global config --no-plugins allow-plugins.symfony/flex true
 
-      - name: Install Global Dependencies
-        run: |
-          composer global require --no-progress --no-scripts --no-plugins symfony/flex @dev
+      - name: Configure Composer minimum stability
+        run: composer config minimum-stability ${{ matrix.minimum-stability || 'stable' }} --ansi
 
       - name: "Composer install"
         uses: "ramsey/composer-install@v2"
         with:
-            dependency-versions: "${{ matrix.dependency-versions }}"
+            dependency-versions: "${{ matrix.dependency-version }}"
             composer-options: "--prefer-dist --no-progress"
+            custom-cache-suffix: "min-stability=${{ matrix.minimum-stability || 'stable' }}"
 
       - name: Run tests
         run: ./vendor/bin/simple-phpunit
