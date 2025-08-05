@@ -1,0 +1,19 @@
+---------------------------------------------------------------------------
+
+by xabbuh at 2025-08-05T06:33:54Z
+
+We probably need to tweak the CI matrix a bit as we currently don't have a job running against Symfony 7 (the same was actually already true before for Symfony 6).
+
+---------------------------------------------------------------------------
+
+by Kocal at 2025-08-05T06:40:51Z
+
+Yes! I plan to re-use the matrix from UX Packages (or my packages, based on this same matrix), but with this matrix I'm failing to install Symfony 8 packages (e.g. in https://github.com/Kocal/BiomeJsBundle/pull/33), but here it's working https://github.com/symfony/webpack-encore-bundle/actions/runs/16742430575/job/47393383777?pr=248
+
+Maybe because of `SYMFONY_REQUIRE` env var? 🤔
+
+---------------------------------------------------------------------------
+
+by Kocal at 2025-08-05T06:52:10Z
+
+Nvm, https://github.com/symfony/webpack-encore-bundle/actions/runs/16742766500/job/47394353881?pr=248 correctly install Symfony 8.0.x-dev dependencies, the only difference I see with UX and my packages is how Flex is installed/enabled
