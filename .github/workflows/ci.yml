@@ -1,7 +1,7 @@
 name: Bundle CI
 on:
   push:
-    branches: ['main']
+    branches: ['2.x']
   pull_request:
   schedule:
     - cron: '0 */12 * * *'
