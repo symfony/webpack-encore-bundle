@@ -55,6 +55,20 @@ class StaticObject
         ;
     }
 
+    #[DaggerFunction]
+    #[Doc('Run PHP CS Fixer')]
+    public function cs(): Container
+    {
+        $phpVersion = $this->symfonyContainer->envVariable('PHP_VERSION');
+        $vendorCache = dag()->cacheVolume(sprintf('php-cs-fixer-vendor-%s', $phpVersion));
+
+        return $this->symfonyContainer
+            ->withMountedCache('/bundle/tools/php-cs-fixer/vendor', $vendorCache)
+            ->withExec(['composer', 'install', '--working-dir=tools/php-cs-fixer'])
+            ->withExec(['tools/php-cs-fixer/vendor/bin/php-cs-fixer', 'fix', '--dry-run', '--diff'])
+        ;
+    }
+
     private function installCs2Pr(Container $container): Container
     {
         $phpVersion = $container->envVariable('PHP_VERSION');
