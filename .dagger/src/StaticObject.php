@@ -23,17 +23,8 @@ class StaticObject
     #[Doc('Run PHPStan')]
     public function phpstan(): Container
     {
-//        return $this->installTool($this->installCs2Pr($this->symfonyContainer), 'phpstan')
-//            ->withExec(
-//                ['tools/phpstan/vendor/bin/phpstan', 'analyze', '--no-progress', '--error-format=checkstyle'],
-//                redirectStdout: '/tmp/foo',
-//            )
-//            ->withExec(
-//                ['cs2pr'],
-//                redirectStdin: '/tmp/foo',
-//            )
-        return $this->installTool($this->symfonyContainer, 'phpstan')
-            ->withExec(['tools/phpstan/vendor/bin/phpstan', 'analyze', '--no-progress'])
+        return $this->installTool($this->installCs2Pr($this->symfonyContainer), 'phpstan')
+            ->withExec(['sh', '-c', 'tools/phpstan/vendor/bin/phpstan analyze --no-progress --error-format=checkstyle | cs2pr'])
         ;
     }
 
