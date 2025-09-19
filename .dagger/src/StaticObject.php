@@ -57,7 +57,7 @@ class StaticObject
             ->withMountedCache('/root/.composer/vendor', $vendorCache)
             ->withExec(['composer', 'global', 'require', '--dev', 'ergebnis/composer-normalize'])
             ->withExec(['composer', 'global', 'config', 'allow-plugins.ergebnis/composer-normalize', 'true'])
-            ->withExec(['composer', 'normalize'])
+            ->withExec(['composer', 'normalize', '--dry-run'])
         ;
     }
 
