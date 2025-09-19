@@ -23,12 +23,7 @@ class StaticObject
     #[Doc('Run PHPStan')]
     public function phpstan(): Container
     {
-        $phpVersion = $this->symfonyContainer->envVariable('PHP_VERSION');
-        $vendorCache = dag()->cacheVolume(sprintf('phpstan-vendor-%s', $phpVersion));
-
-        return $this->installCs2Pr($this->symfonyContainer)
-            ->withMountedCache('/bundle/tools/phpstan/vendor', $vendorCache)
-            ->withExec(['composer', 'install', '--working-dir=tools/phpstan'])
+//        return $this->installTool($this->installCs2Pr($this->symfonyContainer), 'phpstan')
 //            ->withExec(
 //                ['tools/phpstan/vendor/bin/phpstan', 'analyze', '--no-progress', '--error-format=checkstyle'],
 //                redirectStdout: '/tmp/foo',
@@ -37,6 +32,7 @@ class StaticObject
 //                ['cs2pr'],
 //                redirectStdin: '/tmp/foo',
 //            )
+        return $this->installTool($this->symfonyContainer, 'phpstan')
             ->withExec(['tools/phpstan/vendor/bin/phpstan', 'analyze', '--no-progress'])
         ;
     }
@@ -45,12 +41,7 @@ class StaticObject
     #[Doc('Run Psalm')]
     public function psalm(): Container
     {
-        $phpVersion = $this->symfonyContainer->envVariable('PHP_VERSION');
-        $vendorCache = dag()->cacheVolume(sprintf('psalm-vendor-%s', $phpVersion));
-
-        return $this->symfonyContainer
-            ->withMountedCache('/bundle/tools/psalm/vendor', $vendorCache)
-            ->withExec(['composer', 'install', '--working-dir=tools/psalm'])
+        return $this->installTool($this->symfonyContainer, 'psalm')
             ->withExec(['tools/psalm/vendor/bin/psalm', '--no-progress'])
         ;
     }
@@ -59,13 +50,19 @@ class StaticObject
     #[Doc('Run PHP CS Fixer')]
     public function cs(): Container
     {
-        $phpVersion = $this->symfonyContainer->envVariable('PHP_VERSION');
-        $vendorCache = dag()->cacheVolume(sprintf('php-cs-fixer-vendor-%s', $phpVersion));
-
-        return $this->symfonyContainer
-            ->withMountedCache('/bundle/tools/php-cs-fixer/vendor', $vendorCache)
-            ->withExec(['composer', 'install', '--working-dir=tools/php-cs-fixer'])
+        return $this->installTool($this->symfonyContainer, 'php-cs-fixer')
             ->withExec(['tools/php-cs-fixer/vendor/bin/php-cs-fixer', 'fix', '--dry-run', '--diff'])
+        ;
+    }
+
+    private function installTool(Container $container, string $tool): Container
+    {
+        $phpVersion = $container->envVariable('PHP_VERSION');
+        $vendorCache = dag()->cacheVolume(sprintf('%s-vendor-%s', $tool, $phpVersion));
+
+        return $container
+            ->withMountedCache(sprintf('/bundle/tools/%s/vendor', $tool), $vendorCache)
+            ->withExec(['composer', 'install', "--working-dir=tools/{$tool}"])
         ;
     }
 
