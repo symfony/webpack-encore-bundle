@@ -55,6 +55,21 @@ class StaticObject
         ;
     }
 
+    #[DaggerFunction]
+    #[Doc('Run PHP CS Fixer')]
+    public function composerNormalize(): Container
+    {
+        $phpVersion = $this->symfonyContainer->envVariable('PHP_VERSION');
+        $vendorCache = dag()->cacheVolume(sprintf('composer-normalize-vendor-%s', $phpVersion));
+
+        return $this->symfonyContainer
+            ->withMountedCache('/root/.composer/vendor', $vendorCache)
+            ->withExec(['composer', 'global', 'require', '--dev', 'ergebnis/composer-normalize'])
+            ->withExec(['composer', 'global', 'config', 'allow-plugins.ergebnis/composer-normalize', 'true'])
+            ->withExec(['composer', 'normalize'])
+        ;
+    }
+
     private function installTool(Container $container, string $tool): Container
     {
         $phpVersion = $container->envVariable('PHP_VERSION');
