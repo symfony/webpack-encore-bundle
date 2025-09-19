@@ -41,6 +41,20 @@ class StaticObject
         ;
     }
 
+    #[DaggerFunction]
+    #[Doc('Run Psalm')]
+    public function psalm(): Container
+    {
+        $phpVersion = $this->symfonyContainer->envVariable('PHP_VERSION');
+        $vendorCache = dag()->cacheVolume(sprintf('psalm-vendor-%s', $phpVersion));
+
+        return $this->symfonyContainer
+            ->withMountedCache('/bundle/tools/psalm/vendor', $vendorCache)
+            ->withExec(['composer', 'install', '--working-dir=tools/psalm'])
+            ->withExec(['tools/psalm/vendor/bin/psalm', '--no-progress'])
+        ;
+    }
+
     private function installCs2Pr(Container $container): Container
     {
         $phpVersion = $container->envVariable('PHP_VERSION');
