@@ -6,6 +6,7 @@ namespace DaggerModule;
 
 use Dagger\Attribute\DaggerFunction;
 use Dagger\Attribute\DaggerObject;
+use Dagger\Attribute\DefaultPath;
 use Dagger\Attribute\Doc;
 use Dagger\Container;
 use Dagger\Directory;
@@ -17,29 +18,17 @@ use function Dagger\dag;
 class WebpackEncoreBundle
 {
     #[DaggerFunction]
-    #[Doc('Returns a container that echoes whatever string argument is provided')]
-    public function containerEcho(string $stringArg): Container
-    {
-        return dag()
-            ->container()
-            ->from('alpine:latest')
-            ->withExec(['echo', $stringArg]);
-    }
+    #[Doc('Access to all tools for static code analysis.')]
+    public function static(
+        #[DefaultPath('.')]
+        Directory $source,
 
-    #[DaggerFunction]
-    #[Doc('Returns lines that match a pattern in the files of the provided Directory')]
-    public function grepDir(
-        #[Doc('The directory to search')]
-        Directory $directoryArg,
-        #[Doc('The pattern to search for')]
-        string $pattern
-    ): string {
-        return dag()
-            ->container()
-            ->from('alpine:latest')
-            ->withMountedDirectory('/mnt', $directoryArg)
-            ->withWorkdir('/mnt')
-            ->withExec(["grep", '-R', $pattern, '.'])
-            ->stdout();
+        string $phpVersion = '8.4',
+        string $symfonyVersion = '7.3',
+        ?Container $symfonyContainer = null,
+    ): StaticObject {
+        $symfonyContainer ??= (new ContainerObject())->symfony($source, $phpVersion, $symfonyVersion);
+
+        return new StaticObject($symfonyContainer);
     }
 }
