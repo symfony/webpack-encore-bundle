@@ -47,7 +47,7 @@ class StaticObject
     }
 
     #[DaggerFunction]
-    #[Doc('Run PHP CS Fixer')]
+    #[Doc('Run Composer Normalize')]
     public function composerNormalize(): Container
     {
         $phpVersion = $this->symfonyContainer->envVariable('PHP_VERSION');
