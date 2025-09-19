@@ -14,7 +14,8 @@
   ],
   "require": {
     "php": "^8.1",
-    "dagger/dagger": "*@dev"
+    "dagger/dagger": "*@dev",
+    "amphp/amp": "^3.1"
   },
   "autoload": {
     "psr-4": {

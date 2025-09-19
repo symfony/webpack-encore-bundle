@@ -52,13 +52,25 @@ class ContainerObject
     ): Container {
         $phpContainer ??= $this->php($source, $phpVersion);
 
-        $vendorCache = dag()->cacheVolume(sprintf('php-%s-symfony-%s-vendor-cache', $phpVersion, $symfonyVersion));
-
         return $phpContainer
-            ->withMountedCache('/bundle/vendor', $vendorCache)
             ->withEnvVariable('SYMFONY_REQUIRE', $symfonyVersion)
             ->withExec(['composer', 'global', 'config', '--no-plugins', 'allow-plugins.symfony/flex', 'true'])
             ->withExec(['composer', 'global', 'require', 'symfony/flex'])
+        ;
+    }
+
+    public function symfonyWithVendor(
+        Directory $source,
+        string $phpVersion,
+        string $symfonyVersion,
+        ?Container $symfonyContainer = null,
+    ): Container {
+        $symfonyContainer ??= $this->symfony($source, $phpVersion, $symfonyVersion);
+
+        $vendorCache = dag()->cacheVolume(sprintf('php-%s-symfony-%s-vendor-cache', $phpVersion, $symfonyVersion));
+
+        return $symfonyContainer
+            ->withMountedCache('/bundle/vendor', $vendorCache)
             ->withExec(['composer', 'update'])
         ;
     }
