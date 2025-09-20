@@ -4,92 +4,100 @@ name: Static analysis
 jobs:
   phpstan:
     name: PHPStan
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: 'Cache Dagger'
+        uses: actions/cache@v4
         with:
-          php-version: 8.1
-          coverage: none
-          tools: cs2pr
+          path: |
+            ~/.config/dagger
+            ~/.cache/dagger
+          key: ${{ runner.os }}-dagger-${{ hashFiles('dagger.json', '.dagger/src/**') }}
+          restore-keys: ${{ runner.os }}-dagger-
 
-      - name: Download dependencies
-        uses: ramsey/composer-install@v1
-
-      - name: Install PHPStan
-        uses: ramsey/composer-install@v1
+      - name: 'Run PHPStan'
+        uses: dagger/dagger-for-github@8.0.0
         with:
-          composer-options: "--working-dir=tools/phpstan"
-
-      - name: PHPStan
-        run: tools/phpstan/vendor/bin/phpstan analyze --no-progress --error-format=checkstyle | cs2pr
+          version: 'latest'
+          call: 'static phpstan'
+        env:
+          DAGGER_NO_NAG: '1'
 
   php-cs-fixer:
     name: PHP-CS-Fixer
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: 'Cache Dagger'
+        uses: actions/cache@v4
         with:
-          php-version: 8.1
-          coverage: none
-          tools: cs2pr
+          path: |
+            ~/.config/dagger
+            ~/.cache/dagger
+          key: ${{ runner.os }}-dagger-${{ hashFiles('dagger.json', '.dagger/src/**') }}
+          restore-keys: ${{ runner.os }}-dagger-
 
-      - name: Install php-cs-fixer
-        uses: ramsey/composer-install@v1
+      - name: 'Run test suite'
+        uses: dagger/dagger-for-github@8.0.0
         with:
-          composer-options: "--working-dir=tools/php-cs-fixer"
-
-      - name: PHP-CS-Fixer
-        run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
+          version: 'latest'
+          call: 'static cs'
+        env:
+          DAGGER_NO_NAG: '1'
 
   psalm:
     name: Psalm
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+
     steps:
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+      - name: 'Cache Dagger'
+        uses: actions/cache@v4
         with:
-          php-version: 8.1
-          coverage: none
-          tools: vimeo/psalm:4.11.2
+          path: |
+            ~/.config/dagger
+            ~/.cache/dagger
+          key: ${{ runner.os }}-dagger-${{ hashFiles('dagger.json', '.dagger/src/**') }}
+          restore-keys: ${{ runner.os }}-dagger-
 
-      - name: Download dependencies
-        uses: ramsey/composer-install@v1
-
-      - name: Install psalm
-        uses: ramsey/composer-install@v1
+      - name: 'Run test suite'
+        uses: dagger/dagger-for-github@8.0.0
         with:
-          composer-options: "--working-dir=tools/psalm"
-
-      - name: Psalm
-        run: tools/psalm/vendor/bin/psalm --no-progress
+          version: 'latest'
+          call: 'static psalm'
+        env:
+          DAGGER_NO_NAG: '1'
 
   composer-normalize:
     name: Composer Normalize
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
 
     steps:
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.1
-          coverage: none
-          tools: composer-normalize
-
       - name: Checkout code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
-      - name: Normalize
-        run: composer-normalize --dry-run
+      - name: 'Cache Dagger'
+        uses: actions/cache@v4
+        with:
+          path: |
+            ~/.config/dagger
+            ~/.cache/dagger
+          key: ${{ runner.os }}-dagger-${{ hashFiles('dagger.json', '.dagger/src/**') }}
+          restore-keys: ${{ runner.os }}-dagger-
+
+      - name: 'Run test suite'
+        uses: dagger/dagger-for-github@8.0.0
+        with:
+          version: 'latest'
+          call: 'static composer-normalize'
+        env:
+          DAGGER_NO_NAG: '1'
