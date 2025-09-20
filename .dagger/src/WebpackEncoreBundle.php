@@ -50,7 +50,7 @@ class WebpackEncoreBundle
 
     #[DaggerFunction]
     #[Doc('Matrix tests')]
-    #[ReturnsListOfType(Container::class)]
+    #[ReturnsListOfType(TestObject::class)]
     public function testMatrix(
         #[DefaultPath('.')]
         Directory $source,
@@ -59,22 +59,33 @@ class WebpackEncoreBundle
 
         $tests = [];
         foreach ($matrix as $job) {
-            $symfonyArgs = array_filter([
-                'phpVersion' => $job['php-version'] ?? null,
-                'symfonyVersion' => $job['symfony-version'] ?? null,
-            ], fn ($value) => null !== $value);
+            $tests[] = async(function () use ($source, $job) {
+                $symfonyArgs = array_filter([
+                    'phpVersion' => $job['php-version'] ?? null,
+                    'symfonyVersion' => $job['symfony-version'] ?? null,
+                ], fn ($value) => null !== $value);
 
-            $testArgs = array_filter([
-                'minimumStability' => $job['minimum-stability'] ?? null,
-                'dependencyVersion' => $job['dependency-version'] ?? null,
-            ], fn ($value) => null !== $value);
+                $testObject = $this->test($source, ...$symfonyArgs);
 
-            $tests[] = async(fn () => $this
-                ->test($source, ...$symfonyArgs)
-                ->phpunit(...$testArgs)
-            );
+                if ($job['minimum-stability'] ?? false) {
+                    $testObject->setMinimumStability($job['minimum-stability']);
+                }
+
+                if ($job['dependency-version'] ?? false) {
+                    $testObject->setDependencyVersion($job['dependency-version']);
+                }
+
+                return $testObject;
+            });
         }
 
         return await($tests);
+    }
+
+    #[DaggerFunction]
+    #[Doc('Get test matrix as json.')]
+    public function testMatrixJson(): string
+    {
+        return json_encode(require __DIR__.'/../matrix-tests.php');
     }
 }

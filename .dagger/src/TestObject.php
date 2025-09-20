@@ -16,21 +16,38 @@ use function Dagger\dag;
 #[Doc('Declaration of functions to run bundle tests.')]
 class TestObject
 {
+    private string $minimumStability = 'stable';
+    private string $dependencyVersion = 'locked';
+
     public function __construct(
         private readonly Container $symfonyContainer,
     ) {
     }
 
+    public function setMinimumStability(string $minimumStability): self
+    {
+        $this->minimumStability = $minimumStability;
+
+        return $this;
+    }
+
+    public function setDependencyVersion(string $dependencyVersion): self
+    {
+        $this->dependencyVersion = $dependencyVersion;
+
+        return $this;
+    }
+
     #[DaggerFunction]
     #[Doc('Run PHPUnit')]
     public function phpunit(
-        string $minimumStability = 'stable',
-        string $dependencyVersion = 'locked',
+        string $minimumStability = null,
+        string $dependencyVersion = null,
 //        MinimumStabilityEnum $minimumStability = MinimumStabilityEnum::STABLE,
 //        DependencyVersionEnum $dependencyVersion = DependencyVersionEnum::LOCKED,
     ): Container {
-        $minimumStability = MinimumStabilityEnum::from($minimumStability);
-        $dependencyVersion = DependencyVersionEnum::from($dependencyVersion);
+        $minimumStability = MinimumStabilityEnum::from($minimumStability ?? $this->minimumStability);
+        $dependencyVersion = DependencyVersionEnum::from($dependencyVersion ?? $this->dependencyVersion);
 
         $composerCommand = [
             'composer',
