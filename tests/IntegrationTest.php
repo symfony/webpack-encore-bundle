@@ -328,7 +328,6 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
                 __DIR__.'/fixtures' => 'integration_test',
             ],
             'strict_variables' => true,
-            'exception_controller' => null,
         ]);
 
         $container->loadFromExtension('webpack_encore', [
