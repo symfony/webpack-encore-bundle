@@ -15,17 +15,6 @@ tools/phpstan/vendor/bin/phpstan analyze
 tools/phpstan/vendor/bin/phpstan analyze --generate-baseline
 ```
 
-PHP CS Fixer
-------------
-
-```bash
-composer install --working-dir=tools/php-cs-fixer
-# Check what can be fixed
-tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
-# Fix them
-tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --diff
-```
-
 Psalm
 -----
 

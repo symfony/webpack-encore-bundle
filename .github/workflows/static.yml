@@ -28,29 +28,6 @@ jobs:
       - name: PHPStan
         run: tools/phpstan/vendor/bin/phpstan analyze --no-progress --error-format=checkstyle | cs2pr
 
-  php-cs-fixer:
-    name: PHP-CS-Fixer
-    runs-on: ubuntu-22.04
-
-    steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
-
-      - name: Setup PHP
-        uses: shivammathur/setup-php@v2
-        with:
-          php-version: 8.1
-          coverage: none
-          tools: cs2pr
-
-      - name: Install php-cs-fixer
-        uses: ramsey/composer-install@v1
-        with:
-          composer-options: "--working-dir=tools/php-cs-fixer"
-
-      - name: PHP-CS-Fixer
-        run: tools/php-cs-fixer/vendor/bin/php-cs-fixer fix --dry-run --diff
-
   psalm:
     name: Psalm
     runs-on: ubuntu-22.04
