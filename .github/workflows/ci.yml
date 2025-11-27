@@ -20,7 +20,7 @@ jobs:
         include:
           # dev packages (probably not needed to have multiple such jobs)
           -   minimum-stability: 'dev'
-              php-version: '8.4'
+              php-version: '8.5'
           # lowest deps
           -   php-version: '8.1'
               dependency-version: 'lowest'
@@ -30,13 +30,10 @@ jobs:
           # Explicit Symfony versions
           -  php-version: '8.1'
              symfony-version: '5.4.*'
-          -  php-version: '8.1'
-             symfony-version: '6.2.*'
           -  php-version: '8.2'
-             symfony-version: '7.0.*'
+             symfony-version: '7.3.*'
           -  php-version: '8.4'
-             symfony-version: '8.0.x-dev' # TODO: change to '8.0' when Symfony 8.0 is released
-             minimum-stability: 'dev' # TODO: remove when Symfony 8.0 is released
+             symfony-version: '8.0.*'
 
     env:
       SYMFONY_REQUIRE: ${{ matrix.symfony-version || '>=5.4' }}
