@@ -14,7 +14,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@083d5237d9340d541bf95e2a6eceaf3529b85892
+        uses: shivammathur/setup-php@3fa88f249467922a9b7f10bd5980d53bce780336
         with:
           php-version: 8.1
           coverage: none
@@ -43,7 +43,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@083d5237d9340d541bf95e2a6eceaf3529b85892
+        uses: shivammathur/setup-php@3fa88f249467922a9b7f10bd5980d53bce780336
         with:
           php-version: 8.1
           coverage: none
@@ -67,7 +67,7 @@ jobs:
 
     steps:
       - name: Setup PHP
-        uses: shivammathur/setup-php@083d5237d9340d541bf95e2a6eceaf3529b85892
+        uses: shivammathur/setup-php@3fa88f249467922a9b7f10bd5980d53bce780336
         with:
           php-version: 8.1
           coverage: none
