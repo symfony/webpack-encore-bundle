@@ -9,7 +9,7 @@ permissions:
 jobs:
   call-fabbot:
     name: Fabbot
-    uses: symfony-tools/fabbot/.github/workflows/fabbot.yml@main
+    uses: symfony-tools/fabbot/.github/workflows/fabbot.yml@main # zizmor: ignore[unpinned-uses]
     with:
       package: WebpackEncoreBundle
       check_license: true

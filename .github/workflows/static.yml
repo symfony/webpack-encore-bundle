@@ -4,24 +4,27 @@ name: Static analysis
 jobs:
   phpstan:
     name: PHPStan
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    permissions: {}
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@083d5237d9340d541bf95e2a6eceaf3529b85892
         with:
           php-version: 8.1
           coverage: none
           tools: cs2pr
 
       - name: Download dependencies
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6
 
       - name: Install PHPStan
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6
         with:
           composer-options: "--working-dir=tools/phpstan"
 
@@ -30,23 +33,27 @@ jobs:
 
   psalm:
     name: Psalm
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    permissions: {}
+
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@083d5237d9340d541bf95e2a6eceaf3529b85892
         with:
           php-version: 8.1
           coverage: none
           tools: vimeo/psalm:4.11.2
 
       - name: Download dependencies
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6
 
       - name: Install psalm
-        uses: ramsey/composer-install@v1
+        uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6
         with:
           composer-options: "--working-dir=tools/psalm"
 
@@ -55,18 +62,21 @@ jobs:
 
   composer-normalize:
     name: Composer Normalize
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
+    permissions: {}
 
     steps:
       - name: Setup PHP
-        uses: shivammathur/setup-php@v2
+        uses: shivammathur/setup-php@083d5237d9340d541bf95e2a6eceaf3529b85892
         with:
           php-version: 8.1
           coverage: none
           tools: composer-normalize
 
-      - name: Checkout code
-        uses: actions/checkout@v2
+      - name: Checkout
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        with:
+          persist-credentials: false
 
       - name: Normalize
         run: composer-normalize --dry-run
