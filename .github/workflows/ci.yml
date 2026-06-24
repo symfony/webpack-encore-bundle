@@ -58,6 +58,11 @@ jobs:
       - name: Configure Composer minimum stability
         run: composer config minimum-stability ${{ matrix.minimum-stability || 'stable' }} --ansi
 
+      # Symfony deps may temporarily have no advisory-free release (unpatched CVE upstream);
+      # don't let Composer's advisory blocking turn the bundle's CI red in the meantime.
+      - name: Disable Composer security advisories blocking
+        run: composer config --no-plugins policy.advisories.block false
+
       - name: "Composer install"
         uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6
         with:
