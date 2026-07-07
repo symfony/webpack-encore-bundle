@@ -46,7 +46,7 @@ jobs:
           persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@529ee057c4434195612e6712b010adc92893e0ef
+        uses: shivammathur/setup-php@93f351c169514bd9f4630bd31dd63fde23a79f9f
         with:
             coverage: "none"
             php-version: "${{ matrix.php-version }}"
