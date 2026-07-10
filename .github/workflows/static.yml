@@ -9,22 +9,22 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@93f351c169514bd9f4630bd31dd63fde23a79f9f
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: 8.1
           coverage: none
           tools: cs2pr
 
       - name: Download dependencies
-        uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
       - name: Install PHPStan
-        uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
         with:
           composer-options: "--working-dir=tools/phpstan"
 
@@ -38,22 +38,22 @@ jobs:
 
     steps:
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
       - name: Setup PHP
-        uses: shivammathur/setup-php@93f351c169514bd9f4630bd31dd63fde23a79f9f
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: 8.1
           coverage: none
           tools: vimeo/psalm:4.11.2
 
       - name: Download dependencies
-        uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
 
       - name: Install psalm
-        uses: ramsey/composer-install@26d8a556604053a9612623447203a691f406fbe6
+        uses: ramsey/composer-install@65e4f84970763564f46a70b8a54b90d033b3bdda # 4.0.0
         with:
           composer-options: "--working-dir=tools/psalm"
 
@@ -67,14 +67,14 @@ jobs:
 
     steps:
       - name: Setup PHP
-        uses: shivammathur/setup-php@93f351c169514bd9f4630bd31dd63fde23a79f9f
+        uses: shivammathur/setup-php@f3e473d116dcccaddc5834248c87452386958240 # 2.37.2
         with:
           php-version: 8.1
           coverage: none
           tools: composer-normalize
 
       - name: Checkout
-        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0
+        uses: actions/checkout@9c091bb21b7c1c1d1991bb908d89e4e9dddfe3e0 # v7.0.0
         with:
           persist-credentials: false
 
