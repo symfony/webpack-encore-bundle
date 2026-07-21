@@ -11,6 +11,7 @@
 
 namespace Symfony\WebpackEncoreBundle\Asset;
 
+use Symfony\Component\Asset\Exception\AssetNotFoundException;
 use Symfony\Component\Asset\Packages;
 use Symfony\Contracts\EventDispatcher\EventDispatcherInterface;
 use Symfony\Contracts\Service\ResetInterface;
@@ -173,10 +174,19 @@ class TagRenderer implements ResetInterface
             throw new \Exception('To render the script or link tags, run "composer require symfony/asset".');
         }
 
-        return $this->packages->getUrl(
-            $assetPath,
-            $packageName
-        );
+        try {
+            return $this->packages->getUrl(
+                $assetPath,
+                $packageName
+            );
+        } catch (AssetNotFoundException) {
+            // entrypoints.json already stores the final public paths, so an
+            // asset package backed by the JSON manifest (with strict_mode
+            // enabled) cannot resolve them a second time and throws. The path
+            // is already the correct one in that case, so use it as-is, which
+            // is also what happens when strict_mode is disabled.
+            return $assetPath;
+        }
     }
 
     private function getEntrypointLookup(string $buildName): EntrypointLookupInterface
