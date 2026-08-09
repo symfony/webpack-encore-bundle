@@ -1,6 +1,9 @@
 WebpackEncoreBundle: Symfony integration with Webpack Encore!
 =============================================================
 
+> [!IMPORTANT]
+> Webpack Encore is now in low-maintenance mode (bug fixes, security patches, and `peerDependencies` updates only). If your project needs a bundler, we recommend migrating to [Symfony Reprise](https://github.com/symfony/reprise).
+
 This bundle allows you to use the `splitEntryChunks()` feature
 from [Webpack Encore][1] by reading an `entrypoints.json` file
 and helping you render all of the dynamic `script` and `link`
