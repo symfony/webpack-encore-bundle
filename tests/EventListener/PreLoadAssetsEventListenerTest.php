@@ -62,7 +62,42 @@ class PreLoadAssetsEventListenerTest extends TestCase
 
         $this->assertSame('/css/file1.css', $links[1]->getHref());
         $this->assertSame(['preload'], $links[1]->getRels());
-        $this->assertSame(['as' => 'style', 'crossorigin' => 'anonymous', 'rel' => 'stylesheet'], $links[1]->getAttributes());
+        $this->assertSame(['as' => 'style', 'crossorigin' => 'anonymous'], $links[1]->getAttributes());
+    }
+
+    public function testItDoesNotCopyRelAndAsAttributesOntoLinks()
+    {
+        $tagRenderer = $this->createMock(TagRenderer::class);
+        $tagRenderer->expects($this->once())->method('getDefaultAttributes')->willReturn(['rel' => 'noopener', 'as' => 'fetch']);
+        $tagRenderer->expects($this->once())->method('getRenderedScripts')->with(true)->willReturn([
+            [
+                'src' => '/file1.js',
+                'rel' => 'modulepreload',
+                'as' => 'document',
+            ],
+        ]);
+        $tagRenderer->expects($this->once())->method('getRenderedStyles')->with(true)->willReturn([
+            [
+                'rel' => 'stylesheet',
+                'href' => '/css/file1.css',
+            ],
+        ]);
+
+        $request = new Request();
+        $response = new Response();
+        $event = $this->createResponseEvent($request, HttpKernelInterface::MAIN_REQUEST, $response);
+        $listener = new PreLoadAssetsEventListener($tagRenderer);
+        $listener->onKernelResponse($event);
+
+        /** @var GenericLinkProvider|FigGenericLinkProvider $linkProvider */
+        $linkProvider = $request->attributes->get('_links');
+        /** @var Link[]|FigLink[] $links */
+        $links = array_values($linkProvider->getLinks());
+        $this->assertCount(2, $links);
+        $this->assertSame(['preload'], $links[0]->getRels());
+        $this->assertSame(['as' => 'script'], $links[0]->getAttributes());
+        $this->assertSame(['preload'], $links[1]->getRels());
+        $this->assertSame(['as' => 'style'], $links[1]->getAttributes());
     }
 
     public function testItReusesExistingLinkProvider()

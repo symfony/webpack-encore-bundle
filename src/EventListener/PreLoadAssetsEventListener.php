@@ -50,8 +50,9 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
 
         foreach ($this->tagRenderer->getRenderedScripts(true) as $attributes) {
             $src = $attributes['src'];
-            unset($attributes['src']);
             $attributes = [...$defaultAttributes, ...$attributes];
+            // "rel" would end up duplicated in the header, "as" would override the one set below
+            unset($attributes['src'], $attributes['rel'], $attributes['as']);
 
             $link = $this->createLink('preload', $src)
                 ->withAttribute('as', 'script');
@@ -65,8 +66,9 @@ class PreLoadAssetsEventListener implements EventSubscriberInterface
 
         foreach ($this->tagRenderer->getRenderedStyles(true) as $attributes) {
             $href = $attributes['href'];
-            unset($attributes['href']);
             $attributes = [...$defaultAttributes, ...$attributes];
+            // "rel" would end up duplicated in the header, "as" would override the one set below
+            unset($attributes['href'], $attributes['rel'], $attributes['as']);
 
             $link = $this->createLink('preload', $href)->withAttribute('as', 'style');
 
