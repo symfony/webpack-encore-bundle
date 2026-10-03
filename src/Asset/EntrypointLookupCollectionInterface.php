@@ -13,6 +13,9 @@ namespace Symfony\WebpackEncoreBundle\Asset;
 
 use Symfony\WebpackEncoreBundle\Exception\UndefinedBuildException;
 
+/**
+ * Returns the entrypoint lookup of a given Encore build.
+ */
 interface EntrypointLookupCollectionInterface
 {
     /**
