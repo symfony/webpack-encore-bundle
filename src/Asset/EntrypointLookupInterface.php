@@ -14,6 +14,9 @@ namespace Symfony\WebpackEncoreBundle\Asset;
 use Symfony\Contracts\Service\ResetInterface;
 use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
 
+/**
+ * Returns the JavaScript and CSS files of an Encore entry.
+ */
 interface EntrypointLookupInterface extends ResetInterface
 {
     /**
