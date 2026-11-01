@@ -37,7 +37,7 @@ use Twig\Environment;
 
 class IntegrationTest extends TestCase
 {
-    public function testTwigIntegration()
+    public function testTwigIntegration(): void
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->scriptAttributes = ['referrerpolicy' => 'origin'];
@@ -95,7 +95,7 @@ class IntegrationTest extends TestCase
         );
     }
 
-    public function testEntriesAreNotRepeatedWhenAlreadyOutputIntegration()
+    public function testEntriesAreNotRepeatedWhenAlreadyOutputIntegration(): void
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
@@ -124,7 +124,7 @@ class IntegrationTest extends TestCase
         );
     }
 
-    public function testEntriesExistsWhenDoingSubRequestIntegration()
+    public function testEntriesExistsWhenDoingSubRequestIntegration(): void
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
@@ -145,7 +145,7 @@ class IntegrationTest extends TestCase
         $this->assertSame(1, $containsCount2);
     }
 
-    public function testCacheWarmer()
+    public function testCacheWarmer(): void
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
@@ -162,7 +162,7 @@ class IntegrationTest extends TestCase
         $this->assertSame(['_default', 'different_build', 'remote_build'], array_keys($data[0] ?? $data));
     }
 
-    public function testEnabledStrictModeThrowsExceptionIfBuildMissing()
+    public function testEnabledStrictModeThrowsExceptionIfBuildMissing(): void
     {
         $this->expectException(\Twig\Error\RuntimeError::class);
         $this->expectExceptionMessage('Could not find the entrypoints file from Webpack: the file "missing_build/entrypoints.json" does not exist.');
@@ -175,7 +175,7 @@ class IntegrationTest extends TestCase
         $twig->render('@integration_test/template.twig');
     }
 
-    public function testDisabledStrictModeIgnoresMissingBuild()
+    public function testDisabledStrictModeIgnoresMissingBuild(): void
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->outputPath = 'missing_build';
@@ -187,7 +187,7 @@ class IntegrationTest extends TestCase
         self::assertSame('', trim($html));
     }
 
-    public function testEnabledStrictModeThrowsExceptionIfRemoteBuildMissing()
+    public function testEnabledStrictModeThrowsExceptionIfRemoteBuildMissing(): void
     {
         $this->expectException(\Twig\Error\RuntimeError::class);
         $this->expectExceptionMessage('Could not find the entrypoints file from URL "https://example.com/missing_build/entrypoints.json": the HTTP request failed with status code 404.');
@@ -200,7 +200,7 @@ class IntegrationTest extends TestCase
         $twig->render('@integration_test/template_remote.twig');
     }
 
-    public function testDisabledStrictModeIgnoresMissingRemoteBuild()
+    public function testDisabledStrictModeIgnoresMissingRemoteBuild(): void
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->outputPath = 'remote_build';
@@ -212,7 +212,7 @@ class IntegrationTest extends TestCase
         self::assertSame('', trim($html));
     }
 
-    public function testAutowireableInterfaces()
+    public function testAutowireableInterfaces(): void
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
@@ -220,7 +220,7 @@ class IntegrationTest extends TestCase
         $this->assertInstanceOf(WebpackEncoreAutowireTestService::class, $container->get(WebpackEncoreAutowireTestService::class));
     }
 
-    public function testPreload()
+    public function testPreload(): void
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
@@ -236,7 +236,7 @@ class IntegrationTest extends TestCase
         $this->assertStringContainsString('</build/file1.js>; rel="preload"; as="script"', $response->headers->get('Link'));
     }
 
-    public function testAutowireDefaultBuildArgument()
+    public function testAutowireDefaultBuildArgument(): void
     {
         $kernel = new WebpackEncoreIntegrationTestKernel(true);
         $kernel->boot();
@@ -301,7 +301,7 @@ class WebpackEncoreIntegrationTestKernel extends Kernel
         $routes->add('render_sub_requests', '/render-sub-requests')->controller('kernel::renderSubRequests');
     }
 
-    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader)
+    protected function configureContainer(ContainerBuilder $container, LoaderInterface $loader): void
     {
         $frameworkConfig = [
             'secret' => 'foo',
@@ -406,7 +406,7 @@ class WebpackEncoreCacheWarmerTester
         $this->entrypointCacheWarmer = $entrypointCacheWarmer;
     }
 
-    public function warmCache(string $cacheDir)
+    public function warmCache(string $cacheDir): void
     {
         $this->entrypointCacheWarmer->warmUp($cacheDir);
     }

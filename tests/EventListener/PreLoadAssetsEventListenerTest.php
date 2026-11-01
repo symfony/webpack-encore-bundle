@@ -26,7 +26,7 @@ use Symfony\WebpackEncoreBundle\EventListener\PreLoadAssetsEventListener;
 
 class PreLoadAssetsEventListenerTest extends TestCase
 {
-    public function testItPreloadsAssets()
+    public function testItPreloadsAssets(): void
     {
         $tagRenderer = $this->createMock(TagRenderer::class);
         $tagRenderer->expects($this->once())->method('getDefaultAttributes')->willReturn(['crossorigin' => 'anonymous']);
@@ -65,7 +65,7 @@ class PreLoadAssetsEventListenerTest extends TestCase
         $this->assertSame(['as' => 'style', 'crossorigin' => 'anonymous'], $links[1]->getAttributes());
     }
 
-    public function testItDoesNotCopyRelAndAsAttributesOntoLinks()
+    public function testItDoesNotCopyRelAndAsAttributesOntoLinks(): void
     {
         $tagRenderer = $this->createMock(TagRenderer::class);
         $tagRenderer->expects($this->once())->method('getDefaultAttributes')->willReturn(['rel' => 'noopener', 'as' => 'fetch']);
@@ -100,7 +100,7 @@ class PreLoadAssetsEventListenerTest extends TestCase
         $this->assertSame(['as' => 'style'], $links[1]->getAttributes());
     }
 
-    public function testItReusesExistingLinkProvider()
+    public function testItReusesExistingLinkProvider(): void
     {
         $tagRenderer = $this->createMock(TagRenderer::class);
         $tagRenderer->expects($this->once())->method('getDefaultAttributes')->willReturn(['crossorigin' => 'anonymous']);
@@ -126,7 +126,7 @@ class PreLoadAssetsEventListenerTest extends TestCase
         $this->assertCount(2, $linkProvider->getLinks());
     }
 
-    public function testItDoesNothingOnSubRequest()
+    public function testItDoesNothingOnSubRequest(): void
     {
         $tagRenderer = $this->createMock(TagRenderer::class);
         $tagRenderer->expects($this->never())->method('getDefaultAttributes');

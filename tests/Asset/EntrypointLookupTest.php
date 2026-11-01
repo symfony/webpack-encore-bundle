@@ -55,7 +55,7 @@ EOF;
         $this->entrypointLookup = new EntrypointLookup($filename);
     }
 
-    public function testGetJavaScriptFiles()
+    public function testGetJavaScriptFiles(): void
     {
         $this->assertEquals(
             ['file1.js', 'file2.js'],
@@ -75,7 +75,7 @@ EOF;
         );
     }
 
-    public function testGetJavaScriptFilesReturnsUniqueFilesOnly()
+    public function testGetJavaScriptFilesReturnsUniqueFilesOnly(): void
     {
         $this->assertEquals(
             ['file1.js', 'file2.js'],
@@ -89,7 +89,7 @@ EOF;
         );
     }
 
-    public function testGetCssFiles()
+    public function testGetCssFiles(): void
     {
         $this->assertEquals(
             ['styles.css', 'styles2.css'],
@@ -97,14 +97,14 @@ EOF;
         );
     }
 
-    public function testEmptyReturnOnValidEntryNoJsOrCssFile()
+    public function testEmptyReturnOnValidEntryNoJsOrCssFile(): void
     {
         $this->assertEmpty(
             $this->entrypointLookup->getCssFiles('other_entry')
         );
     }
 
-    public function testGetIntegrityData()
+    public function testGetIntegrityData(): void
     {
         $this->assertEquals([
             'file1.js' => 'sha384-Q86c+opr0lBUPWN28BLJFqmLhho+9ZcJpXHorQvX6mYDWJ24RQcdDarXFQYN8HLc',
@@ -112,7 +112,7 @@ EOF;
         ], $this->entrypointLookup->getIntegrityData());
     }
 
-    public function testMissingIntegrityData()
+    public function testMissingIntegrityData(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
         file_put_contents($filename, '{ "entrypoints": { "other_entry": { "js": { } } } }');
@@ -121,7 +121,7 @@ EOF;
         $this->assertEquals([], $this->entrypointLookup->getIntegrityData());
     }
 
-    public function testExceptionOnInvalidJson()
+    public function testExceptionOnInvalidJson(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('There was a problem JSON decoding the');
@@ -133,7 +133,7 @@ EOF;
         $this->entrypointLookup->getJavaScriptFiles('an_entry');
     }
 
-    public function testExceptionOnMissingEntrypointsKeyInJson()
+    public function testExceptionOnMissingEntrypointsKeyInJson(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not find an "entrypoints" key in the');
@@ -145,7 +145,7 @@ EOF;
         $this->entrypointLookup->getJavaScriptFiles('an_entry');
     }
 
-    public function testExceptionOnBadFilename()
+    public function testExceptionOnBadFilename(): void
     {
         $this->expectException(\InvalidArgumentException::class);
         $this->expectExceptionMessage('Could not find the entrypoints file');
@@ -154,7 +154,7 @@ EOF;
         $entrypointLookup->getCssFiles('anything');
     }
 
-    public function testExceptionOnMissingEntry()
+    public function testExceptionOnMissingEntry(): void
     {
         $this->expectException(\Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException::class);
         $this->expectExceptionMessageMatches('/^Could not find the entry "fake_entry" in "[a-zA-Z0-9\/_]+". Found: my_entry, other_entry\.$/');
@@ -162,7 +162,7 @@ EOF;
         $this->entrypointLookup->getCssFiles('fake_entry');
     }
 
-    public function testExceptionOnEntryWithExtension()
+    public function testExceptionOnEntryWithExtension(): void
     {
         $this->expectException(\Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException::class);
         $this->expectExceptionMessage('Try "my_entry" instead');
@@ -170,7 +170,7 @@ EOF;
         $this->entrypointLookup->getJavaScriptFiles('my_entry.js');
     }
 
-    public function testCachingEntryPointLookupCacheMissed()
+    public function testCachingEntryPointLookupCacheMissed(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
         file_put_contents($filename, self::$testJson);
@@ -188,7 +188,7 @@ EOF;
         $this->assertEquals(json_decode(self::$testJson, true), $cached->get());
     }
 
-    public function testCachingEntryPointLookupCacheHit()
+    public function testCachingEntryPointLookupCacheHit(): void
     {
         $filename = tempnam(sys_get_temp_dir(), 'WebpackEncoreBundle');
         file_put_contents($filename, self::$testJson);

@@ -22,7 +22,7 @@ use Symfony\WebpackEncoreBundle\EventListener\ExceptionListener;
 
 class ExceptionListenerTest extends TestCase
 {
-    public function testItResetsAllEntrypointLookups()
+    public function testItResetsAllEntrypointLookups(): void
     {
         /** @var EntrypointLookupInterface[]|Prophecy\Prophecy\ObjectProphecy[] $entrypointLookups */
         $entrypointLookups = [];

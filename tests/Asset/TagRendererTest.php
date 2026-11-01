@@ -22,7 +22,7 @@ use Symfony\WebpackEncoreBundle\Tests\TestEntrypointLookupIntegrityDataProviderI
 
 class TagRendererTest extends TestCase
 {
-    public function testRenderScriptTagsWithDefaultAttributes()
+    public function testRenderScriptTagsWithDefaultAttributes(): void
     {
         $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
@@ -57,7 +57,7 @@ class TagRendererTest extends TestCase
         );
     }
 
-    public function testRenderScriptTagsWithExtraAttributes()
+    public function testRenderScriptTagsWithExtraAttributes(): void
     {
         $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
@@ -87,7 +87,7 @@ class TagRendererTest extends TestCase
         );
     }
 
-    public function testRenderScriptTagsWithFalseyAttributes()
+    public function testRenderScriptTagsWithFalseyAttributes(): void
     {
         $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
@@ -116,7 +116,7 @@ class TagRendererTest extends TestCase
         );
     }
 
-    public function testRenderScriptTagsDispatchesAnEvent()
+    public function testRenderScriptTagsDispatchesAnEvent(): void
     {
         $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
@@ -150,7 +150,7 @@ class TagRendererTest extends TestCase
         );
     }
 
-    public function testRenderScriptTagsWithBadFilename()
+    public function testRenderScriptTagsWithBadFilename(): void
     {
         $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
@@ -177,7 +177,7 @@ class TagRendererTest extends TestCase
         );
     }
 
-    public function testRenderScriptTagsWithinAnEntryPointCollection()
+    public function testRenderScriptTagsWithinAnEntryPointCollection(): void
     {
         $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
@@ -233,7 +233,7 @@ class TagRendererTest extends TestCase
         );
     }
 
-    public function testRenderScriptTagsWithHashes()
+    public function testRenderScriptTagsWithHashes(): void
     {
         $entrypointLookup = $this->createMock(TestEntrypointLookupIntegrityDataProviderInterface::class);
         $entrypointLookup->expects($this->once())
@@ -274,7 +274,7 @@ class TagRendererTest extends TestCase
         );
     }
 
-    public function testGetRenderedFilesAndReset()
+    public function testGetRenderedFilesAndReset(): void
     {
         $entrypointLookup = $this->createMock(EntrypointLookupInterface::class);
         $entrypointLookup->expects($this->once())
