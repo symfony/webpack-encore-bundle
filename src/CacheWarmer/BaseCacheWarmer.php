@@ -15,18 +15,18 @@ use Symfony\Bundle\FrameworkBundle\CacheWarmer\AbstractPhpFileCacheWarmer as Leg
 use Symfony\Component\Cache\CacheWarmer\AbstractPhpFileCacheWarmer;
 
 // The base cache warmer moved from FrameworkBundle to the Cache component in Symfony 8.2
-if (class_exists(AbstractPhpFileCacheWarmer::class)) {
+if (!class_exists(AbstractPhpFileCacheWarmer::class)) {
     /**
      * @internal
      */
-    abstract class BaseCacheWarmer extends AbstractPhpFileCacheWarmer
+    abstract class BaseCacheWarmer extends LegacyAbstractPhpFileCacheWarmer
     {
     }
 } else {
     /**
      * @internal
      */
-    abstract class BaseCacheWarmer extends LegacyAbstractPhpFileCacheWarmer
+    abstract class BaseCacheWarmer extends AbstractPhpFileCacheWarmer
     {
     }
 }
