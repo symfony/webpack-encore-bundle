@@ -1,0 +1,13 @@
+---------------------------------------------------------------------------
+
+by Amoifr at 2026-07-21T16:32:49Z
+
+Heads-up on the red Fabbot check: it is a false positive coming from two of its steps disagreeing with each other. `Check PHP code style` wants a `: void` return type on the test methods, while `Check test-case methods` forbids it ("Test case methods should not have a return type"), so both cannot be satisfied at once.
+
+I went without the return type, which matches every existing test method in the suite and the `Check test-case methods` convention. All the blocking checks (tests on 8.1 to 8.5, PHPStan, Psalm, Composer Normalize) are green. Happy to flip it the other way if you prefer. 🍒
+
+---------------------------------------------------------------------------
+
+by Amoifr at 2026-10-03T11:53:16Z
+
+Hi @Kocal, a bug fix for #230 that should fit the low-maintenance scope: with `strict_mode` enabled, entrypoint paths that are already resolved fall back to the raw path instead of being rejected. Fabbot is the only red check, for the reason given above. Anything you'd want changed?
