@@ -37,7 +37,7 @@ return (new PhpCsFixer\Config())
     ->setRiskyAllowed(true)
     ->setFinder(
         (new PhpCsFixer\Finder())
-            ->in([__DIR__.'/src', __DIR__.'/tests'])
+            ->in(__DIR__)
             ->append([__FILE__])
     )
     ->setCacheFile('.php-cs-fixer.cache')
