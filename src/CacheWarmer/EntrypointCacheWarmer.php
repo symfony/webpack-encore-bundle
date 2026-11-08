@@ -11,13 +11,12 @@
 
 namespace Symfony\WebpackEncoreBundle\CacheWarmer;
 
-use Symfony\Bundle\FrameworkBundle\CacheWarmer\AbstractPhpFileCacheWarmer;
 use Symfony\Component\Cache\Adapter\ArrayAdapter;
 use Symfony\Contracts\HttpClient\HttpClientInterface;
 use Symfony\WebpackEncoreBundle\Asset\EntrypointLookup;
 use Symfony\WebpackEncoreBundle\Exception\EntrypointNotFoundException;
 
-class EntrypointCacheWarmer extends AbstractPhpFileCacheWarmer
+class EntrypointCacheWarmer extends BaseCacheWarmer
 {
     private $cacheKeys;
     private $httpClient;
